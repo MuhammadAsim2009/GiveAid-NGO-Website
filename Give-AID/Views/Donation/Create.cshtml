@@ -1,0 +1,163 @@
+@model Give_AID.Models.DonationViewModel
+@{
+    ViewData["Title"] = "Donate - GIVE-AID";
+}
+
+<section class="py-4 bg-light border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small mb-1">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-success text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Make a Donation</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1" style="color: #1E8E5A;">Donate & Change a Life Today</h2>
+        <p class="text-muted mb-0">Your contribution reaches verified NGO welfare programmes directly.</p>
+    </div>
+</section>
+
+<div class="container py-5">
+    <div class="row g-4 justify-content-center">
+        <!-- Donation Form -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-3 p-4 p-md-5 bg-white">
+                <form asp-action="Create" method="post" id="donationForm">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                    <h5 class="fw-bold mb-4 pb-2 border-bottom">Step 1 — Choose Your Cause</h5>
+
+                    <div class="mb-3">
+                        <label asp-for="CauseId" class="form-label fw-semibold small text-secondary">Charitable Cause *</label>
+                        <select asp-for="CauseId" class="form-select" asp-items="ViewBag.Causes">
+                            <option value="">-- Select a welfare cause --</option>
+                        </select>
+                        <span asp-validation-for="CauseId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="NgoId" class="form-label fw-semibold small text-secondary">Direct to a Specific NGO <span class="text-muted fw-normal">(optional)</span></label>
+                        <select asp-for="NgoId" class="form-select" asp-items="ViewBag.Ngos">
+                            <option value="">-- Any verified partner NGO --</option>
+                        </select>
+                        <span asp-validation-for="NgoId" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Quick amount selector buttons -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Quick Amount (Rs.)</label>
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            @foreach (var amt in new[] { 500, 1000, 2500, 5000, 10000 })
+                            {
+                                <button type="button" class="btn btn-outline-secondary btn-sm quick-amount" data-amount="@amt">
+                                    Rs. @amt.ToString("N0")
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <label asp-for="Amount" class="form-label fw-semibold small text-secondary">Custom Amount *</label>
+                        <div class="input-group">
+                            <span class="input-group-text fw-bold bg-light">Rs.</span>
+                            <input asp-for="Amount" class="form-control form-control-lg fw-bold" id="amountInput" placeholder="Enter amount" min="1" />
+                        </div>
+                        <span asp-validation-for="Amount" class="text-danger small"></span>
+                    </div>
+
+                    <h5 class="fw-bold mb-4 pb-2 border-bottom">Step 2 — Secure Card Payment</h5>
+
+                    <div class="p-3 mb-4 bg-light rounded-3 d-flex align-items-center gap-2 small text-muted">
+                        <i class="bi bi-shield-lock-fill text-success fs-5"></i>
+                        <span>Your card details are encrypted and never stored. Only the last 4 digits are saved for your receipt.</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CardName" class="form-label fw-semibold small text-secondary">Name on Card *</label>
+                        <input asp-for="CardName" class="form-control" placeholder="JOHN DOE" autocomplete="cc-name" />
+                        <span asp-validation-for="CardName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CardNumber" class="form-label fw-semibold small text-secondary">Card Number *</label>
+                        <input asp-for="CardNumber" class="form-control font-monospace" id="cardNumber"
+                               placeholder="1234 5678 9012 3456" maxlength="19"
+                               autocomplete="cc-number" inputmode="numeric" />
+                        <span asp-validation-for="CardNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3 mb-5">
+                        <div class="col-6">
+                            <label asp-for="CardExpiry" class="form-label fw-semibold small text-secondary">Expiry (MM/YY) *</label>
+                            <input asp-for="CardExpiry" class="form-control font-monospace" id="cardExpiry"
+                                   placeholder="08/27" maxlength="5" autocomplete="cc-exp" />
+                            <span asp-validation-for="CardExpiry" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="CardCvv" class="form-label fw-semibold small text-secondary">CVV *</label>
+                            <input asp-for="CardCvv" class="form-control font-monospace" placeholder="•••"
+                                   maxlength="4" autocomplete="off" inputmode="numeric" />
+                            <span asp-validation-for="CardCvv" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Submit button — disabled after one click to prevent duplicate donations -->
+                    <button type="submit" class="btn btn-donate-amber w-100 fw-bold py-3 fs-5 shadow"
+                            id="submitDonateBtn" onclick="this.disabled=true; this.innerText='Processing...'; this.form.submit();">
+                        <i class="bi bi-heart-fill me-2"></i>Confirm Donation
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right summary panel -->
+        <div class="col-lg-4">
+            <div class="giveaid-card p-4 bg-white mb-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-info-circle text-success me-2"></i>What Happens Next?</h6>
+                <ul class="list-unstyled small text-muted">
+                    <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Payment is processed and verified.</li>
+                    <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Receipt number is generated for your records.</li>
+                    <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Funds are routed to your selected cause/NGO.</li>
+                    <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>You can track this donation in "My Donations".</li>
+                </ul>
+            </div>
+
+            <div class="p-4 rounded-3 text-white" style="background-color: #1E8E5A;">
+                <h6 class="fw-bold text-white mb-2"><i class="bi bi-lock-fill me-2"></i>100% Secure Giving</h6>
+                <p class="small mb-0 text-white-50">We use industry-standard card validation. Your full card number and CVV are never stored in our system.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Auto-format card number with spaces every 4 digits as user types
+        document.getElementById("cardNumber").addEventListener("input", function () {
+            let val = this.value.replace(/\D/g, "").substring(0, 16);
+            this.value = val.replace(/(.{4})/g, "$1 ").trim();
+        });
+
+        // Auto-insert slash in expiry field after 2 digits
+        document.getElementById("cardExpiry").addEventListener("input", function () {
+            let val = this.value.replace(/\D/g, "").substring(0, 4);
+            if (val.length >= 3) {
+                this.value = val.substring(0, 2) + "/" + val.substring(2);
+            } else {
+                this.value = val;
+            }
+        });
+
+        // Quick amount buttons populate the amount input field
+        document.querySelectorAll(".quick-amount").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                document.getElementById("amountInput").value = this.dataset.amount;
+                document.querySelectorAll(".quick-amount").forEach(b => b.classList.remove("btn-primary-green", "text-white"));
+                this.classList.add("btn-primary-green", "text-white");
+            });
+        });
+    </script>
+}
+

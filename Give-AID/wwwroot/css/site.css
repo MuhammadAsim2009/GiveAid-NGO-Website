@@ -1,31 +1,211 @@
-html {
-  font-size: 14px;
+/* Google Fonts: Poppins (Headings) and Open Sans (Body) */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:wght@500;600;700;800&display=swap');
+
+/* Color Variables and Global Typography */
+:root {
+    --primary-green: #1E8E5A;
+    --primary-green-dark: #166e45;
+    --primary-green-light: #e8f5ee;
+    --accent-amber: #F59E0B;
+    --accent-amber-dark: #d97706;
+    --accent-amber-light: #fef3c7;
+    --dark-text: #1F2937;
+    --light-bg: #F8FAF9;
+    --card-white: #FFFFFF;
+    --danger-red: #DC2626;
+    --border-color: #E5E7EB;
 }
 
-@media (min-width: 768px) {
-  html {
+html {
     font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
+    color: var(--dark-text);
+    background-color: var(--light-bg);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+main {
+    flex: 1 0 auto;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* Headings Typography */
+h1, h2, h3, h4, h5, h6, .navbar-brand {
+    font-family: 'Poppins', sans-serif;
+    color: var(--dark-text);
+    font-weight: 600;
+}
+
+h1 { font-size: 2.25rem; }  /* 36px */
+h2 { font-size: 1.75rem; }  /* 28px */
+h3 { font-size: 1.375rem; } /* 22px */
+
+/* Navbar Customization */
+.giveaid-navbar {
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+.giveaid-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-green) !important;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.giveaid-nav-link {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #4B5563 !important;
+    padding: 0.5rem 0.85rem !important;
+    transition: color 0.2s ease;
+}
+
+.giveaid-nav-link:hover, .giveaid-nav-link.active {
+    color: var(--primary-green) !important;
+}
+
+/* Buttons */
+.btn-primary-green {
+    background-color: var(--primary-green);
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.btn-primary-green:hover {
+    background-color: var(--primary-green-dark);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(30, 142, 90, 0.25);
+}
+
+.btn-donate-amber {
+    background-color: var(--accent-amber);
+    color: #ffffff;
+    border: none;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+}
+
+.btn-donate-amber:hover {
+    background-color: var(--accent-amber-dark);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+    transform: translateY(-1px);
+}
+
+.btn-outline-green {
+    border: 2px solid var(--primary-green);
+    color: var(--primary-green);
+    background-color: transparent;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.45rem 1.15rem;
+}
+
+.btn-outline-green:hover {
+    background-color: var(--primary-green);
+    color: #ffffff;
+}
+
+/* Card Styles */
+.giveaid-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.giveaid-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+}
+
+/* Footer */
+.giveaid-footer {
+    background-color: #111827;
+    color: #D1D5DB;
+    padding-top: 3.5rem;
+    padding-bottom: 1.5rem;
+    margin-top: auto;
+}
+
+.giveaid-footer h5 {
+    color: #ffffff;
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+    font-weight: 700;
+}
+
+.giveaid-footer a {
+    color: #9CA3AF;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.giveaid-footer a:hover {
+    color: #ffffff;
+}
+
+.footer-bottom {
+    border-top: 1px solid #1F2937;
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+}
+
+/* Admin Layout Styles */
+.admin-navbar {
+    background-color: #111827;
+    color: #ffffff;
+}
+
+.admin-sidebar {
+    background-color: #1F2937;
+    min-height: calc(100vh - 56px);
+}
+
+.admin-sidebar .nav-link {
+    color: #9CA3AF;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+    border-radius: 6px;
+    margin: 0.2rem 0.5rem;
+}
+
+.admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active {
+    color: #ffffff;
+    background-color: #374151;
+}
+
+.admin-sidebar .nav-link i {
+    margin-right: 0.75rem;
+}
+
+.stat-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border-left: 4px solid var(--primary-green);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }

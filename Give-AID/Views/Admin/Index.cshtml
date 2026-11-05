@@ -1,0 +1,173 @@
+@model Give_AID.Models.AdminDashboardViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Administrator Dashboard";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <div>
+        <h1 class="h2 fw-bold text-dark mb-1">System Overview</h1>
+        <p class="text-muted small mb-0">Live summary of donations, members, and welfare activities</p>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0 gap-2">
+        <a asp-action="CreateCause" class="btn btn-sm btn-primary-green">
+            <i class="bi bi-plus-circle me-1"></i>New Cause
+        </a>
+        <a asp-action="CreateProgramme" class="btn btn-sm btn-outline-dark">
+            <i class="bi bi-calendar-plus me-1"></i>New Programme
+        </a>
+    </div>
+</div>
+
+<!-- Key Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-sm-6">
+        <div class="card border-0 shadow-sm rounded-3 p-3 border-start border-4 border-success">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Funds Raised</span>
+                    <h3 class="fw-bold text-success mb-0">Rs. @Model.TotalFundsRaised.ToString("N0")</h3>
+                </div>
+                <div class="p-3 bg-success-subtle text-success rounded-circle fs-4">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+            </div>
+            <div class="mt-2 small text-muted">
+                <a asp-action="Donations" class="text-decoration-none text-success fw-semibold">View all donations &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+        <div class="card border-0 shadow-sm rounded-3 p-3 border-start border-4 border-primary">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Donors / Members</span>
+                    <h3 class="fw-bold text-primary mb-0">@Model.TotalMembersCount</h3>
+                </div>
+                <div class="p-3 bg-primary-subtle text-primary rounded-circle fs-4">
+                    <i class="bi bi-people"></i>
+                </div>
+            </div>
+            <div class="mt-2 small text-muted">
+                <a asp-action="Members" class="text-decoration-none text-primary fw-semibold">View member roster &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+        <div class="card border-0 shadow-sm rounded-3 p-3 border-start border-4 border-warning">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Open Queries</span>
+                    <h3 class="fw-bold text-warning mb-0">@Model.OpenQueriesCount</h3>
+                </div>
+                <div class="p-3 bg-warning-subtle text-warning rounded-circle fs-4">
+                    <i class="bi bi-chat-left-dots"></i>
+                </div>
+            </div>
+            <div class="mt-2 small text-muted">
+                <a asp-action="Queries" class="text-decoration-none text-warning fw-semibold">Reply to inquiries &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+        <div class="card border-0 shadow-sm rounded-3 p-3 border-start border-4 border-info">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Partner NGOs</span>
+                    <h3 class="fw-bold text-info mb-0">@Model.TotalNgosCount</h3>
+                </div>
+                <div class="p-3 bg-info-subtle text-info rounded-circle fs-4">
+                    <i class="bi bi-buildings"></i>
+                </div>
+            </div>
+            <div class="mt-2 small text-muted">
+                <a asp-action="Ngos" class="text-decoration-none text-info fw-semibold">Manage NGO partners &rarr;</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Two-Column Recent Activity Tables -->
+<div class="row g-4 mb-4">
+    <!-- Recent Donations -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-0">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-wallet2 text-success me-2"></i>Recent Donations</h5>
+                <a asp-action="Donations" class="btn btn-sm btn-outline-secondary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light small text-muted">
+                            <tr>
+                                <th>Donor</th>
+                                <th>Cause</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentDonations.Any())
+                            {
+                                @foreach (var don in Model.RecentDonations)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@(don.User?.Name ?? "Anonymous")</td>
+                                        <td class="small">@(don.Cause?.Name ?? "General Relief")</td>
+                                        <td class="fw-bold text-success">Rs. @don.Amount.ToString("N0")</td>
+                                        <td class="small text-muted">@don.CreatedAt.ToString("MMM dd, HH:mm")</td>
+                                        <td><span class="badge bg-success-subtle text-success">@don.Status</span></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted small">No donations recorded yet.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Queries Awaiting Reply -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-0">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-question-circle text-warning me-2"></i>Pending Queries</h5>
+                <a asp-action="Queries" class="btn btn-sm btn-outline-secondary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    @if (Model.RecentQueries.Any())
+                    {
+                        @foreach (var q in Model.RecentQueries)
+                        {
+                            <div class="list-group-item py-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="fw-semibold small text-dark">@(q.User?.Name ?? "Member")</span>
+                                    <span class="badge @(q.Status == "Open" ? "bg-warning text-dark" : "bg-success-subtle text-success")">@q.Status</span>
+                                </div>
+                                <h6 class="mb-1 text-truncate fw-bold">@q.Subject</h6>
+                                <p class="text-muted small mb-0 text-truncate">@q.Message</p>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-4 text-muted small">No pending queries.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

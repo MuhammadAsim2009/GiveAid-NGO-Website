@@ -1,0 +1,132 @@
+@* Invite/Index — invite form + table of invitations the user has already sent *@
+@model IEnumerable<Give_AID.Models.Invites>
+
+@{
+    ViewData["Title"] = "Invite a Friend";
+}
+
+<div class="container py-5">
+
+    <div class="row g-4">
+
+        @* ── LEFT: invite form ───────────────────────────────────── *@
+        <div class="col-lg-5">
+            <div class="giveaid-card p-4 p-md-5">
+
+                @* Heading *@
+                <div class="text-center mb-4">
+                    <i class="bi bi-envelope-heart" style="font-size:3rem; color:#1E8E5A;"></i>
+                    <h4 class="fw-bold mt-2" style="color:#1E8E5A;">Invite a Friend</h4>
+                    <p class="text-muted">
+                        Spread the word! Invite your friends to join GIVE-AID and make a difference together.
+                    </p>
+                </div>
+
+                @* TempData messages *@
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <i class="bi bi-exclamation-circle me-2"></i>@TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["Warning"] != null)
+                {
+                    <div class="alert alert-warning alert-dismissible fade show">
+                        <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Warning"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @* Invite form — posts to InviteController.Send *@
+                <form method="post" action="/Invite/Send">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label for="friendEmail" class="form-label fw-semibold">
+                            Friend's Email Address <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-envelope"></i>
+                            </span>
+                            <input type="email"
+                                   id="friendEmail"
+                                   name="friendEmail"
+                                   class="form-control"
+                                   placeholder="friend@example.com"
+                                   required />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-green w-100">
+                        <i class="bi bi-send me-2"></i>Send Invitation
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
+        @* ── RIGHT: table of past invites ────────────────────────── *@
+        <div class="col-lg-7">
+
+            <h5 class="fw-bold mb-3" style="color:#1E8E5A;">
+                <i class="bi bi-clock-history me-2"></i>Invitations Sent
+            </h5>
+
+            @if (!Model.Any())
+            {
+                @* No invites sent yet *@
+                <div class="giveaid-card p-5 text-center text-muted">
+                    <i class="bi bi-people" style="font-size:3rem; color:#1E8E5A;"></i>
+                    <p class="mt-3 mb-0">You have not sent any invitations yet. Use the form to invite your first friend!</p>
+                </div>
+            }
+            else
+            {
+                @* Table of sent invites *@
+                <div class="giveaid-card p-0 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead style="background:#1E8E5A; color:#fff;">
+                                <tr>
+                                    <th class="px-4 py-3">#</th>
+                                    <th class="px-4 py-3">Friend's Email</th>
+                                    <th class="px-4 py-3">Date Sent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int row = 1;
+                                }
+                                @foreach (var invite in Model)
+                                {
+                                    <tr>
+                                        <td class="px-4 py-3 text-muted">@row</td>
+                                        <td class="px-4 py-3">
+                                            <i class="bi bi-envelope me-2 text-muted"></i>@invite.FriendEmail
+                                        </td>
+                                        <td class="px-4 py-3 text-muted">
+                                            @invite.SentAt.ToString("dd MMM yyyy")
+                                        </td>
+                                    </tr>
+                                    row++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+    </div>
+</div>
+

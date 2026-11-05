@@ -1,0 +1,100 @@
+@* Programme/MyInterests — shows all programmes the user has registered interest in *@
+@model IEnumerable<Give_AID.Models.ProgrammeInterests>
+
+@{
+    ViewData["Title"] = "My Programme Interests";
+}
+
+<div class="container py-5">
+
+    @* ── Page heading ───────────────────────────────────────────── *@
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold" style="color:#1E8E5A;">
+                    <i class="bi bi-bookmark-heart me-2"></i>My Programme Interests
+                </h2>
+                <p class="text-muted mb-0">Programmes you have registered interest in.</p>
+            </div>
+            <a href="/Home/Programmes" class="btn btn-primary-green">
+                <i class="bi bi-grid me-1"></i> Browse Programmes
+            </a>
+        </div>
+    </div>
+
+    @* ── Empty state ─────────────────────────────────────────────── *@
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-bookmark" style="font-size:4rem; color:#1E8E5A;"></i>
+            <h4 class="mt-3 fw-semibold">No interests registered yet</h4>
+            <p class="text-muted">Browse our programmes and register your interest in any that inspire you.</p>
+            <a href="/Home/Programmes" class="btn btn-primary-green mt-2">
+                <i class="bi bi-grid me-1"></i> Explore Programmes
+            </a>
+        </div>
+    }
+    else
+    {
+        @* ── Interests list as cards ─────────────────────────────── *@
+        <div class="row g-4">
+            @foreach (var interest in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="giveaid-card p-4 h-100">
+
+                        @* Programme category badge *@
+                        @if (interest.Programme != null)
+                        {
+                            <span class="badge mb-2" style="background:#1E8E5A;">
+                                @interest.Programme.Category
+                            </span>
+                        }
+
+                        @* Programme title *@
+                        <h5 class="fw-bold mb-2">
+                            @(interest.Programme?.Title ?? "Programme")
+                        </h5>
+
+                        @* Short description *@
+                        @if (interest.Programme?.Description != null)
+                        {
+                            <p class="text-muted small mb-3">
+                                @(interest.Programme.Description.Length > 100
+                                    ? interest.Programme.Description.Substring(0, 100) + "…"
+                                    : interest.Programme.Description)
+                            </p>
+                        }
+
+                        @* User's message if provided *@
+                        @if (!string.IsNullOrWhiteSpace(interest.Message))
+                        {
+                            <div class="p-3 rounded-3 mb-3" style="background:#f0faf5; font-size:0.88rem;">
+                                <i class="bi bi-chat-quote me-1 text-muted"></i>
+                                <em>@interest.Message</em>
+                            </div>
+                        }
+
+                        @* Registration date *@
+                        <p class="text-muted small mb-3">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            Registered on @interest.CreatedAt.ToString("dd MMM yyyy")
+                        </p>
+
+                        @* Link to programme detail page *@
+                        @if (interest.Programme != null)
+                        {
+                            <a href="/Programme/Details/@interest.ProgrammeId"
+                               class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-eye me-1"></i> View Programme
+                            </a>
+                        }
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</div>
+

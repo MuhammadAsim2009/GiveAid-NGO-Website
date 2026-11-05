@@ -1,0 +1,99 @@
+@model IEnumerable<Give_AID.Models.Queries>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "User Queries & Support Tickets";
+}
+
+<div class="pt-3 pb-2 mb-3 border-bottom">
+    <h2 class="fw-bold text-dark mb-0">User Queries & Support Tickets</h2>
+    <p class="text-muted small mb-0">Review submitted questions and post admin replies</p>
+</div>
+
+<div class="accordion shadow-sm" id="queriesAccordion">
+    @if (Model != null && Model.Any())
+    {
+        int idx = 0;
+        @foreach (var query in Model)
+        {
+            idx++;
+            string collapseId = $"query-{query.Id}";
+            bool isOpen = query.Status == "Open";
+            <div class="accordion-item border-0 border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button @(isOpen ? "" : "collapsed") fw-semibold py-3" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#@collapseId" aria-expanded="@(isOpen ? "true" : "false")">
+                        <div class="d-flex align-items-center w-100 me-2 gap-3">
+                            <span class="badge @(isOpen ? "bg-warning text-dark" : "bg-success-subtle text-success")">
+                                @query.Status
+                            </span>
+                            <span class="fw-bold flex-grow-1">@query.Subject</span>
+                            <span class="small text-muted fw-normal">
+                                @(query.User?.Name ?? "Member") &mdash; @query.CreatedAt.ToString("MMM dd, yyyy")
+                            </span>
+                        </div>
+                    </button>
+                </h2>
+                <div id="@collapseId" class="accordion-collapse collapse @(isOpen ? "show" : "")" data-bs-parent="#queriesAccordion">
+                    <div class="accordion-body bg-light">
+                        <!-- Member Query -->
+                        <div class="mb-3 p-3 bg-white rounded-3 shadow-sm">
+                            <div class="small text-muted mb-1 fw-semibold text-uppercase">Member's Query</div>
+                            <p class="mb-0">@query.Message</p>
+                        </div>
+
+                        <!-- Existing admin reply if present -->
+                        @if (!string.IsNullOrEmpty(query.Reply))
+                        {
+                            <div class="mb-3 p-3 rounded-3 shadow-sm border-start border-4 border-success" style="background:#f0fdf4;">
+                                <div class="small fw-semibold text-success mb-1 text-uppercase">Admin Response</div>
+                                <p class="mb-0">@query.Reply</p>
+                            </div>
+                        }
+
+                        <!-- Reply form -->
+                        <form asp-action="ReplyQuery" asp-route-id="@query.Id" method="post" class="mt-3">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-2">
+                                <label class="form-label fw-semibold small text-secondary">Write / Update Reply</label>
+                                <textarea name="reply" class="form-control" rows="3" placeholder="Type a helpful, concise reply...">@query.Reply</textarea>
+                            </div>
+                            <div class="d-flex gap-2 align-items-center">
+                                <select name="status" class="form-select form-select-sm" style="max-width: 180px;">
+                                    @if (query.Status == "Open")
+                                    {
+                                        <option value="Open" selected>Open</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Resolved">Resolved</option>
+                                    }
+                                    else if (query.Status == "In Progress")
+                                    {
+                                        <option value="Open">Open</option>
+                                        <option value="In Progress" selected>In Progress</option>
+                                        <option value="Resolved">Resolved</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="Open">Open</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Resolved" selected>Resolved</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-primary-green btn-sm px-3 fw-semibold">
+                                    <i class="bi bi-send me-1"></i>Save Reply
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm p-5 text-center text-muted rounded-3">
+            <i class="bi bi-chat-left-dots fs-1 d-block mb-2"></i>
+            No support queries submitted yet.
+        </div>
+    }
+</div>
+

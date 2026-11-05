@@ -1,0 +1,74 @@
+@* Query/Details — shows a single query and the admin reply if one exists *@
+@model Give_AID.Models.Queries
+
+@{
+    ViewData["Title"] = "Query Details";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            @* ── Back button ─────────────────────────────────────── *@
+            <a href="/Query/Index" class="btn btn-outline-secondary btn-sm mb-4">
+                <i class="bi bi-arrow-left me-1"></i> Back to My Queries
+            </a>
+
+            @* ── Query card ──────────────────────────────────────── *@
+            <div class="giveaid-card p-4 p-md-5 mb-4">
+
+                @* Status badge at top-right *@
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h4 class="fw-bold" style="color:#1E8E5A;">
+                        <i class="bi bi-chat-dots me-2"></i>@Model.Subject
+                    </h4>
+                    @if (Model.Status == "Resolved")
+                    {
+                        <span class="badge bg-success fs-6">Resolved</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark fs-6">Open</span>
+                    }
+                </div>
+
+                @* Submitted date *@
+                <p class="text-muted small mb-3">
+                    <i class="bi bi-calendar3 me-1"></i>
+                    Submitted on @Model.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")
+                </p>
+
+                <hr />
+
+                @* The original query message *@
+                <h6 class="fw-semibold text-muted text-uppercase mb-2">Your Message</h6>
+                <p class="lead" style="white-space:pre-wrap;">@Model.Message</p>
+
+            </div>
+
+            @* ── Admin reply card — only shown if a reply exists ─── *@
+            @* The Reply property is set by the admin from the Admin panel *@
+            @if (!string.IsNullOrWhiteSpace(Model.Reply))
+            {
+                <div class="giveaid-card p-4 p-md-5"
+                     style="border-left: 4px solid #1E8E5A;">
+                    <h6 class="fw-semibold text-uppercase mb-2" style="color:#1E8E5A;">
+                        <i class="bi bi-person-badge me-2"></i>GIVE-AID Support Reply
+                    </h6>
+                    <p style="white-space:pre-wrap;">@Model.Reply</p>
+                </div>
+            }
+            else
+            {
+                @* Waiting for reply *@
+                <div class="giveaid-card p-4 text-center text-muted">
+                    <i class="bi bi-hourglass-split" style="font-size:2rem; color:#F59E0B;"></i>
+                    <p class="mt-2 mb-0">
+                        No reply yet. Our support team will respond within 24 hours.
+                    </p>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>

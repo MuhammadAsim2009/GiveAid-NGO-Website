@@ -1,0 +1,68 @@
+@model IEnumerable<Give_AID.Models.Users>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Registered Members";
+}
+
+<div class="pt-3 pb-2 mb-3 border-bottom">
+    <h2 class="fw-bold text-dark mb-0">Registered Donors & Members</h2>
+    <p class="text-muted small mb-0">View registered donor profiles, professional details, and roles</p>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small text-muted">
+                    <tr>
+                        <th>#</th>
+                        <th>Donor Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Profession / Organization</th>
+                        <th>Total Contributions</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@user.Id</td>
+                                <td class="fw-bold">@user.Name</td>
+                                <td class="small">@user.Email</td>
+                                <td class="small text-muted">@(user.Phone ?? "-")</td>
+                                <td class="small">
+                                    @(user.Occupation ?? "-")
+                                    @if (!string.IsNullOrEmpty(user.Organization))
+                                    {
+                                        <span class="text-muted">(@user.Organization)</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge bg-success-subtle text-success">
+                                        @(user.Donations?.Count ?? 0) donations
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge @(user.Role == "Admin" ? "bg-warning text-dark" : "bg-primary-subtle text-primary")">
+                                        @user.Role
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">No members found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

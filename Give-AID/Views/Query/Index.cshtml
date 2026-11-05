@@ -1,0 +1,117 @@
+@* Query/Index — shows the logged-in user's submitted support queries *@
+@model IEnumerable<Give_AID.Models.Queries>
+
+@{
+    ViewData["Title"] = "My Queries";
+}
+
+<div class="container py-5">
+
+    @* ── Page heading ───────────────────────────────────────────── *@
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold" style="color:#1E8E5A;">
+                    <i class="bi bi-chat-dots me-2"></i>My Queries
+                </h2>
+                <p class="text-muted mb-0">Track your support queries and read admin replies.</p>
+            </div>
+            <a href="/Query/Create" class="btn btn-primary-green">
+                <i class="bi bi-plus-circle me-1"></i> New Query
+            </a>
+        </div>
+    </div>
+
+    @* ── Show TempData messages ──────────────────────────────────── *@
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-circle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @* ── Empty state ─────────────────────────────────────────────── *@
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-chat-square-dots" style="font-size:4rem; color:#1E8E5A;"></i>
+            <h4 class="mt-3 fw-semibold">No queries yet</h4>
+            <p class="text-muted">Have a question? Submit a query and our team will respond shortly.</p>
+            <a href="/Query/Create" class="btn btn-primary-green mt-2">
+                <i class="bi bi-plus-circle me-1"></i> Submit a Query
+            </a>
+        </div>
+    }
+    else
+    {
+        @* ── Queries table ───────────────────────────────────────── *@
+        <div class="giveaid-card p-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead style="background:#1E8E5A; color:#fff;">
+                        <tr>
+                            <th class="px-4 py-3">#</th>
+                            <th class="px-4 py-3">Subject</th>
+                            <th class="px-4 py-3">Submitted</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int row = 1;
+                        }
+                        @foreach (var query in Model)
+                        {
+                            <tr>
+                                <td class="px-4 py-3 text-muted">@row</td>
+
+                                @* Subject text — truncated if too long *@
+                                <td class="px-4 py-3 fw-semibold">
+                                    @(query.Subject.Length > 60
+                                        ? query.Subject.Substring(0, 60) + "…"
+                                        : query.Subject)
+                                </td>
+
+                                @* Date the query was submitted *@
+                                <td class="px-4 py-3 text-muted">
+                                    @query.CreatedAt.ToString("dd MMM yyyy")
+                                </td>
+
+                                @* Status badge: yellow for Open, green for Resolved *@
+                                <td class="px-4 py-3">
+                                    @if (query.Status == "Resolved")
+                                    {
+                                        <span class="badge bg-success">Resolved</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Open</span>
+                                    }
+                                </td>
+
+                                @* Link to view the full query and admin reply *@
+                                <td class="px-4 py-3">
+                                    <a href="/Query/Details/@query.Id" class="btn btn-sm btn-outline-success">
+                                        <i class="bi bi-eye me-1"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            row++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+</div>
+

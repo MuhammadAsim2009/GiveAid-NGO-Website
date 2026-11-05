@@ -1,6 +1,92 @@
-﻿@{
+@* Home/Privacy — Privacy and Data Policy for GIVE-AID *@
+@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            @* ── Heading ─────────────────────────────────────────── *@
+            <div class="text-center mb-5">
+                <h2 class="fw-bold" style="color:#1E8E5A;">Privacy Policy</h2>
+                <p class="text-muted">Last updated: November 2026</p>
+            </div>
+
+            @* ── Policy sections ─────────────────────────────────── *@
+            <div class="giveaid-card p-4 p-md-5">
+
+                @* Section 1 *@
+                <h5 class="fw-bold mb-3" style="color:#1E8E5A;">1. Information We Collect</h5>
+                <p>
+                    When you register on GIVE-AID, we collect your name, email address, phone number,
+                    organisation name, and designation. When you make a donation, we collect only the
+                    <strong>last four digits</strong> of your payment card; we never store your full
+                    card number or CVV.
+                </p>
+
+                @* Section 2 *@
+                <h5 class="fw-bold mb-3 mt-4" style="color:#1E8E5A;">2. How We Use Your Information</h5>
+                <ul>
+                    <li>To process your donations and send you confirmation.</li>
+                    <li>To register your interest in our programmes and keep you informed.</li>
+                    <li>To respond to queries you submit through our Help Centre.</li>
+                    <li>To send invitation emails on your behalf when you use our Invite feature.</li>
+                    <li>To improve and personalise your experience on our platform.</li>
+                </ul>
+
+                @* Section 3 *@
+                <h5 class="fw-bold mb-3 mt-4" style="color:#1E8E5A;">3. Data Security</h5>
+                <p>
+                    Your password is stored using PBKDF2 hashing with SHA-256 and 100,000 iterations —
+                    it is never stored in plain text. All connections to our database use encrypted
+                    protocols. We apply role-based access control so that only administrators can view
+                    all user data.
+                </p>
+
+                @* Section 4 *@
+                <h5 class="fw-bold mb-3 mt-4" style="color:#1E8E5A;">4. Cookies and Sessions</h5>
+                <p>
+                    We use a server-side session cookie to keep you logged in. This cookie is marked
+                    <code>HttpOnly</code> and <code>Essential</code> and expires after 60 minutes of
+                    inactivity. We do not use advertising or tracking cookies.
+                </p>
+
+                @* Section 5 *@
+                <h5 class="fw-bold mb-3 mt-4" style="color:#1E8E5A;">5. Sharing Your Data</h5>
+                <p>
+                    We do not sell, trade, or rent your personal information to third parties.
+                    Data may be shared with NGO partners only when you explicitly register interest
+                    in a programme they run.
+                </p>
+
+                @* Section 6 *@
+                <h5 class="fw-bold mb-3 mt-4" style="color:#1E8E5A;">6. Your Rights</h5>
+                <p>
+                    You have the right to access, correct, or request deletion of the personal
+                    information we hold about you. To make such a request, please contact us through
+                    our <a href="/Home/Contact" style="color:#1E8E5A;">Contact</a> page.
+                </p>
+
+                @* Section 7 *@
+                <h5 class="fw-bold mb-3 mt-4" style="color:#1E8E5A;">7. Changes to This Policy</h5>
+                <p>
+                    We may update this Privacy Policy from time to time. Any changes will be posted
+                    on this page with an updated date. Continued use of GIVE-AID after changes are
+                    posted constitutes acceptance of the revised policy.
+                </p>
+
+                @* Contact line *@
+                <div class="mt-4 p-3 rounded-3" style="background:#f0faf5;">
+                    <p class="mb-0">
+                        <i class="bi bi-envelope me-2" style="color:#1E8E5A;"></i>
+                        Questions about this policy?
+                        <a href="/Home/Contact" style="color:#1E8E5A;" class="fw-semibold">Contact us</a>.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

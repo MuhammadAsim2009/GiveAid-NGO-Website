@@ -1,0 +1,109 @@
+@model IEnumerable<Give_AID.Models.GalleryImages>
+@{
+    ViewData["Title"] = "Photo Gallery - GIVE-AID";
+    var programmes = ViewBag.Programmes as List<Give_AID.Models.Programmes> ?? new List<Give_AID.Models.Programmes>();
+}
+
+<section class="py-4 bg-light border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small mb-1">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-success text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Photo Gallery</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1" style="color: #1E8E5A;">Welfare In Action: Media Gallery</h2>
+        <p class="text-muted mb-0">Visual proof of aid delivery, medical camps, student distributions, and community smiles.</p>
+    </div>
+</section>
+
+<div class="container py-5">
+    <!-- Filter by Programme dropdown -->
+    @if (programmes.Any())
+    {
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <span class="text-muted small fw-semibold">Filter by Programme:</span>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Select Programme
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                    <li><a class="dropdown-item" asp-action="Gallery">All Photos</a></li>
+                    @foreach (var prog in programmes)
+                    {
+                        <li><a class="dropdown-item" asp-action="Gallery" asp-route-programmeId="@prog.Id">@prog.Title</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+    <!-- Image Gallery Grid -->
+    <div class="row g-4">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="giveaid-card overflow-hidden h-100 bg-white">
+                        <div style="height: 240px; overflow: hidden; background-color: #f3f4f6;" class="d-flex align-items-center justify-content-center">
+                            @if (!string.IsNullOrEmpty(item.ImagePath))
+                            {
+                                <img src="@item.ImagePath" alt="@item.Title" class="img-fluid w-100 h-100 object-fit-cover" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-image fs-1 text-muted"></i>
+                            }
+                        </div>
+                        <div class="p-3">
+                            <h6 class="fw-bold mb-1">@item.Title</h6>
+                            @if (item.Programme != null)
+                            {
+                                <span class="badge bg-success-subtle text-success small">@item.Programme.Title</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <!-- Default photo showcase when no database photos exist yet -->
+            <div class="col-lg-4 col-md-6">
+                <div class="giveaid-card overflow-hidden h-100 bg-white">
+                    <div class="p-5 bg-light text-center d-flex align-items-center justify-content-center" style="height: 220px;">
+                        <i class="bi bi-book-fill display-3 text-success"></i>
+                    </div>
+                    <div class="p-3">
+                        <h6 class="fw-bold mb-1">School Book Distribution 2026</h6>
+                        <span class="badge bg-success-subtle text-success small">Education Drive</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="giveaid-card overflow-hidden h-100 bg-white">
+                    <div class="p-5 bg-light text-center d-flex align-items-center justify-content-center" style="height: 220px;">
+                        <i class="bi bi-heart-pulse-fill display-3 text-danger"></i>
+                    </div>
+                    <div class="p-3">
+                        <h6 class="fw-bold mb-1">Rural Medical Relief Camp</h6>
+                        <span class="badge bg-danger-subtle text-danger small">Healthcare Camp</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="giveaid-card overflow-hidden h-100 bg-white">
+                    <div class="p-5 bg-light text-center d-flex align-items-center justify-content-center" style="height: 220px;">
+                        <i class="bi bi-person-wheelchair display-3 text-warning"></i>
+                    </div>
+                    <div class="p-3">
+                        <h6 class="fw-bold mb-1">Assistive Devices Handover</h6>
+                        <span class="badge bg-warning-subtle text-warning small">Specially Challenged Care</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

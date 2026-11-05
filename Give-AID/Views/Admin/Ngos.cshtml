@@ -1,0 +1,71 @@
+@model IEnumerable<Give_AID.Models.Ngos>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Manage NGOs";
+}
+
+<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <div>
+        <h2 class="fw-bold text-dark mb-0">Verified NGOs</h2>
+        <p class="text-muted small mb-0">Manage accredited charity and welfare organizations</p>
+    </div>
+    <a asp-action="CreateNgo" class="btn btn-primary-green btn-sm fw-semibold">
+        <i class="bi bi-plus-circle me-1"></i>Add New NGO
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small text-muted">
+                    <tr>
+                        <th>#</th>
+                        <th>Organization Name</th>
+                        <th>Description</th>
+                        <th>Contact & Location</th>
+                        <th>Active Programmes</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var ngo in Model)
+                        {
+                            <tr>
+                                <td>@ngo.Id</td>
+                                <td class="fw-bold">@ngo.Name</td>
+                                <td class="small text-muted text-truncate" style="max-width: 280px;">@ngo.Description</td>
+                                <td class="small">@ngo.Contact</td>
+                                <td>
+                                    <span class="badge bg-primary-subtle text-primary">
+                                        @(ngo.Programmes?.Count ?? 0) programmes
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <a asp-action="EditNgo" asp-route-id="@ngo.Id" class="btn btn-sm btn-outline-primary me-1">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="DeleteNgo" asp-route-id="@ngo.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to remove this NGO?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No NGOs registered yet.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

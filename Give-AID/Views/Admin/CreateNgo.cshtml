@@ -1,0 +1,63 @@
+@model Give_AID.Models.Ngos
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Register NGO";
+}
+
+<div class="pt-3 pb-2 mb-3 border-bottom">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb small mb-1">
+            <li class="breadcrumb-item"><a asp-action="Ngos" class="text-success text-decoration-none">NGOs</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Register</li>
+        </ol>
+    </nav>
+    <h2 class="fw-bold text-dark mb-0">Register Partner NGO</h2>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm rounded-3 p-4 bg-white">
+            <form asp-action="CreateNgo" method="post">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-semibold small text-secondary">Organization Name *</label>
+                    <input asp-for="Name" class="form-control" placeholder="e.g. Edhi Foundation, Saylani Welfare" autofocus />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-semibold small text-secondary">Overview & Mission *</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe the mission, field capabilities, and focus areas..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Contact" class="form-label fw-semibold small text-secondary">Contact Details & City *</label>
+                    <input asp-for="Contact" class="form-control" placeholder="e.g. Karachi, Pakistan - info@ngo.org - 021-30000000" />
+                    <span asp-validation-for="Contact" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Logo" class="form-label fw-semibold small text-secondary">Logo Filename / URL</label>
+                    <input asp-for="Logo" class="form-control" placeholder="/images/logos/ngo-logo.png" />
+                    <span asp-validation-for="Logo" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary-green px-4 fw-semibold">
+                        <i class="bi bi-check-lg me-1"></i>Register NGO
+                    </button>
+                    <a asp-action="Ngos" class="btn btn-outline-secondary px-3">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

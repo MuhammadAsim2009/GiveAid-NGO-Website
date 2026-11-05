@@ -1,0 +1,139 @@
+@* Programme/Details — shows full programme info and interest registration form *@
+@model Give_AID.Models.Programmes
+
+@{
+    ViewData["Title"] = Model.Title;
+    bool alreadyRegistered = ViewBag.AlreadyRegistered ?? false;
+    bool loggedIn = Context.Session.GetInt32("UserId").HasValue;
+}
+
+<div class="container py-5">
+
+    @* ── Back button ─────────────────────────────────────────────── *@
+    <a href="/Home/Programmes" class="btn btn-outline-secondary btn-sm mb-4">
+        <i class="bi bi-arrow-left me-1"></i> All Programmes
+    </a>
+
+    @* ── Show TempData messages ──────────────────────────────────── *@
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-circle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+
+        @* ── LEFT: programme information ─────────────────────────── *@
+        <div class="col-lg-7">
+            <div class="giveaid-card p-4 p-md-5">
+
+                @* Category badge *@
+                <span class="badge mb-3" style="background:#1E8E5A; font-size:0.85rem;">
+                    @Model.Category
+                </span>
+
+                <h2 class="fw-bold mb-2">@Model.Title</h2>
+
+                @* NGO name if linked *@
+                @if (Model.Ngo != null)
+                {
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-building me-1"></i>
+                        Organised by <strong>@Model.Ngo.Name</strong>
+                    </p>
+                }
+
+                <hr />
+
+                @* Full programme description *@
+                <p class="lead" style="white-space:pre-wrap;">@Model.Description</p>
+
+                @* Event Date *@
+                <div class="row mt-4 g-3">
+                    <div class="col-12 col-sm-6">
+                        <div class="p-3 rounded-3" style="background:#f0faf5;">
+                            <div class="text-muted small">Event Date</div>
+                            <div class="fw-semibold">
+                                <i class="bi bi-calendar-event me-1 text-success"></i>
+                                @Model.EventDate.ToString("dd MMM yyyy")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        @* ── RIGHT: interest registration form ───────────────────── *@
+        <div class="col-lg-5">
+            <div class="giveaid-card p-4 p-md-5">
+
+                <h5 class="fw-bold mb-1" style="color:#1E8E5A;">
+                    <i class="bi bi-hand-thumbs-up me-2"></i>Register Your Interest
+                </h5>
+                <p class="text-muted small mb-4">
+                    Let us know you are interested and we will keep you updated.
+                </p>
+
+                @if (!loggedIn)
+                {
+                    @* User is not logged in — prompt to sign in *@
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Please <a href="/Auth/Login" class="fw-semibold">sign in</a> to register your interest.
+                    </div>
+                }
+                else if (alreadyRegistered)
+                {
+                    @* User already registered for this programme *@
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle me-2"></i>
+                        You have already registered interest in this programme.
+                    </div>
+                    <a href="/Programme/MyInterests" class="btn btn-outline-success w-100">
+                        <i class="bi bi-list-ul me-2"></i>View My Interests
+                    </a>
+                }
+                else
+                {
+                    @* Interest registration form *@
+                    <form method="post" action="/Programme/RegisterInterest">
+                        @Html.AntiForgeryToken()
+
+                        @* Hidden field: programme ID *@
+                        <input type="hidden" name="programmeId" value="@Model.Id" />
+
+                        @* Optional message field *@
+                        <div class="mb-3">
+                            <label for="message" class="form-label fw-semibold">
+                                Message <span class="text-muted small">(optional)</span>
+                            </label>
+                            <textarea id="message"
+                                      name="message"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Tell us why you are interested or any questions you have…"
+                                      maxlength="500"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary-green w-100">
+                            <i class="bi bi-hand-thumbs-up me-2"></i>Register Interest
+                        </button>
+                    </form>
+                }
+
+            </div>
+        </div>
+
+    </div>
+</div>
+

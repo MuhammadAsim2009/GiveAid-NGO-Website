@@ -1,24 +1,45 @@
 using Microsoft.EntityFrameworkCore;
+using Give_AID;
+using Give_AID.Data;
+
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("Give_AIDContext") ?? throw new InvalidOperationException("Connection string 'Give_AIDContext' not found.");
 
-builder.Services.AddDbContext<Give_AIDContext>(options => options.UseSqlServer(connectionString));
+// Configure database connection with SQL Server
+var connectionString = builder.Configuration.GetConnectionString("Give_AIDContext") 
+    ?? throw new InvalidOperationException("Connection string 'Give_AIDContext' not found.");
 
-// Add services to the container.
+builder.Services.AddDbContext<Give_AIDContext>(options => 
+    options.UseSqlServer(connectionString));
+
+// Configure Session support (same pattern as LMS project)
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+// Add MVC controllers and views
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
+// Show a friendly 404 page when a route is not found (e.g. /Home/Error/404)
+app.UseStatusCodePagesWithReExecute("/Home/Error404");
+
 app.UseHttpsRedirection();
 app.UseRouting();
+
+// Enable Session middleware before authorization and endpoints
+app.UseSession();
 
 app.UseAuthorization();
 
@@ -29,5 +50,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// Seed default administrator and baseline CMS content if not already present
+DbInitializer.SeedData(app);
 
 app.Run();

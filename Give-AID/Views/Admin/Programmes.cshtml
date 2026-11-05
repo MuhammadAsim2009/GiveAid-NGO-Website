@@ -1,0 +1,75 @@
+@model IEnumerable<Give_AID.Models.Programmes>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Manage Programmes";
+}
+
+<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <div>
+        <h2 class="fw-bold text-dark mb-0">Welfare Programmes</h2>
+        <p class="text-muted small mb-0">Manage charitable drives, medical camps, and education initiatives</p>
+    </div>
+    <a asp-action="CreateProgramme" class="btn btn-primary-green btn-sm fw-semibold">
+        <i class="bi bi-plus-circle me-1"></i>Add New Programme
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small text-muted">
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Host NGO</th>
+                        <th>Event Date</th>
+                        <th>Volunteer Interests</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var prog in Model)
+                        {
+                            <tr>
+                                <td>@prog.Id</td>
+                                <td class="fw-bold">@prog.Title</td>
+                                <td>
+                                    <span class="badge bg-primary-subtle text-primary">@prog.Category</span>
+                                </td>
+                                <td>@(prog.Ngo?.Name ?? "Unassigned")</td>
+                                <td class="small text-muted">@prog.EventDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        @(prog.ProgrammeInterests?.Count ?? 0) volunteers
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <a asp-action="EditProgramme" asp-route-id="@prog.Id" class="btn btn-sm btn-outline-primary me-1">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="DeleteProgramme" asp-route-id="@prog.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this programme?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">No welfare programmes registered yet.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

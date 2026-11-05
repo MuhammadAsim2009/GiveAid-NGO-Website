@@ -1,0 +1,76 @@
+@model IEnumerable<Give_AID.Models.Partners>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Manage Partners";
+}
+
+<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <div>
+        <h2 class="fw-bold text-dark mb-0">Corporate Partners</h2>
+        <p class="text-muted small mb-0">Manage sponsors, CSR contributors, and strategic allies</p>
+    </div>
+    <a asp-action="CreatePartner" class="btn btn-primary-green btn-sm fw-semibold">
+        <i class="bi bi-plus-circle me-1"></i>Add New Partner
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small text-muted">
+                    <tr>
+                        <th>#</th>
+                        <th>Partner Name</th>
+                        <th>Logo Path</th>
+                        <th>Website Link</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var partner in Model)
+                        {
+                            <tr>
+                                <td>@partner.Id</td>
+                                <td class="fw-bold">@partner.Name</td>
+                                <td class="small text-muted font-monospace">@partner.LogoPath</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(partner.Website))
+                                    {
+                                        <a href="@partner.Website" target="_blank" class="small text-decoration-none">
+                                            @partner.Website <i class="bi bi-box-arrow-up-right small"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">N/A</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <a asp-action="EditPartner" asp-route-id="@partner.Id" class="btn btn-sm btn-outline-primary me-1">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="DeletePartner" asp-route-id="@partner.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this partner?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">No partners registered yet.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

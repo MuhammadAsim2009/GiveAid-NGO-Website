@@ -1,0 +1,143 @@
+@* Donation History view — shows the logged-in user's past donations *@
+@model IEnumerable<Give_AID.Models.Donations>
+
+@{
+    ViewData["Title"] = "My Donation History";
+}
+
+<div class="container py-5">
+
+    @* ── Page heading ───────────────────────────────────────────── *@
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold" style="color:#1E8E5A;">
+                    <i class="bi bi-clock-history me-2"></i>My Donation History
+                </h2>
+                <p class="text-muted mb-0">Every donation you have made through GIVE-AID.</p>
+            </div>
+            <a href="/Donation/Create" class="btn btn-donate-amber">
+                <i class="bi bi-heart-fill me-1"></i> Make a Donation
+            </a>
+        </div>
+    </div>
+
+    @* ── Show a friendly message if there are no donations yet ──── *@
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-emoji-smile" style="font-size:4rem; color:#1E8E5A;"></i>
+            <h4 class="mt-3 fw-semibold">No donations yet!</h4>
+            <p class="text-muted">Be the first to make a difference. Every contribution counts.</p>
+            <a href="/Donation/Create" class="btn btn-primary-green mt-2">
+                <i class="bi bi-heart-fill me-1"></i> Donate Now
+            </a>
+        </div>
+    }
+    else
+    {
+        @* ── Summary strip — total donated ──────────────────────── *@
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="giveaid-card text-center p-4">
+                    <div class="stat-number" style="color:#1E8E5A; font-size:2rem; font-weight:700;">
+                        @Model.Count()
+                    </div>
+                    <div class="text-muted small">Total Donations</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="giveaid-card text-center p-4">
+                    <div class="stat-number" style="color:#1E8E5A; font-size:2rem; font-weight:700;">
+                        $@Model.Sum(d => d.Amount).ToString("N2")
+                    </div>
+                    <div class="text-muted small">Total Contributed</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="giveaid-card text-center p-4">
+                    <div class="stat-number" style="color:#F59E0B; font-size:2rem; font-weight:700;">
+                        @Model.Count(d => d.Status == "Completed")
+                    </div>
+                    <div class="text-muted small">Completed Donations</div>
+                </div>
+            </div>
+        </div>
+
+        @* ── Donations table ─────────────────────────────────────── *@
+        <div class="giveaid-card p-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead style="background:#1E8E5A; color:#fff;">
+                        <tr>
+                            <th class="px-4 py-3">#</th>
+                            <th class="px-4 py-3">Cause</th>
+                            <th class="px-4 py-3">Amount</th>
+                            <th class="px-4 py-3">Card (Last 4)</th>
+                            <th class="px-4 py-3">Date</th>
+                            <th class="px-4 py-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int rowNum = 1; // row counter for display
+                        }
+                        @foreach (var donation in Model)
+                        {
+                            <tr>
+                                <td class="px-4 py-3 text-muted">@rowNum</td>
+
+                                @* Cause name from navigation property *@
+                                <td class="px-4 py-3 fw-semibold">
+                                    @(donation.Cause?.Name ?? "General Fund")
+                                </td>
+
+                                @* Donation amount formatted as currency *@
+                                <td class="px-4 py-3 fw-bold" style="color:#1E8E5A;">
+                                    $@donation.Amount.ToString("N2")
+                                </td>
+
+                                @* Last 4 digits of card — full number is never stored *@
+                                <td class="px-4 py-3">
+                                    <span class="text-muted">**** **** ****</span>
+                                    <strong>@(donation.CardLast4 ?? "----")</strong>
+                                </td>
+
+                                @* Donation date *@
+                                <td class="px-4 py-3 text-muted">
+                                    @donation.CreatedAt.ToString("dd MMM yyyy")
+                                </td>
+
+                                @* Status badge: green for Completed, yellow for Pending *@
+                                <td class="px-4 py-3">
+                                    @if (donation.Status == "Completed")
+                                    {
+                                        <span class="badge bg-success">Completed</span>
+                                    }
+                                    else if (donation.Status == "Pending")
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@donation.Status</span>
+                                    }
+                                </td>
+                            </tr>
+                            rowNum++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* ── CTA at bottom ───────────────────────────────────────── *@
+        <div class="text-center mt-4">
+            <a href="/Donation/Create" class="btn btn-donate-amber btn-lg px-5">
+                <i class="bi bi-heart-fill me-2"></i>Make Another Donation
+            </a>
+        </div>
+    }
+
+</div>
+

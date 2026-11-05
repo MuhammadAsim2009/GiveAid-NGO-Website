@@ -1,0 +1,76 @@
+@model IEnumerable<Give_AID.Models.Ngos>
+@{
+    ViewData["Title"] = "Associated NGOs - GIVE-AID";
+}
+
+<section class="py-4 bg-light border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small mb-1">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-success text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Associated NGOs</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1" style="color: #1E8E5A;">Verified Non-Governmental Organizations</h2>
+        <p class="text-muted mb-0">Learn about our certified NGO partners operating on the frontlines of humanitarian relief.</p>
+    </div>
+</section>
+
+<div class="container py-5">
+    <div class="row g-4">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var ngo in Model)
+            {
+                <div class="col-lg-6">
+                    <div class="giveaid-card p-4 h-100 d-flex flex-column justify-content-between bg-white">
+                        <div>
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="p-3 bg-light rounded-circle text-success fs-3">
+                                    <i class="bi bi-building"></i>
+                                </div>
+                                <div>
+                                    <h4 class="fw-bold mb-1">@ngo.Name</h4>
+                                    <span class="badge bg-success-subtle text-success small">Verified Partner</span>
+                                </div>
+                            </div>
+
+                            <p class="text-muted mb-3">@ngo.Description</p>
+
+                            <div class="p-3 bg-light rounded-3 small mb-3">
+                                <div><i class="bi bi-geo-alt text-success me-2"></i><strong>Contact & Location:</strong> @ngo.Contact</div>
+                                @if (ngo.Programmes != null && ngo.Programmes.Any())
+                                {
+                                    <div class="mt-2 pt-2 border-top">
+                                        <i class="bi bi-calendar-check text-primary me-2"></i><strong>Active Programmes:</strong> @ngo.Programmes.Count active campaigns
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 pt-2">
+                            <a asp-controller="Donation" asp-action="Create" asp-route-ngoId="@ngo.Id" class="btn btn-donate-amber btn-sm w-100 fw-bold">
+                                <i class="bi bi-heart-fill me-1"></i>Donate to this NGO
+                            </a>
+                            <a asp-controller="Home" asp-action="Programmes" class="btn btn-outline-green btn-sm px-3 fw-semibold">
+                                View Activities
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <div class="p-5 bg-white rounded-3 shadow-sm">
+                    <i class="bi bi-buildings display-3 text-muted mb-3 d-inline-block"></i>
+                    <h4 class="fw-bold text-secondary">Partner NGOs Being Onboarded</h4>
+                    <p class="text-muted mb-3">Our compliance team is auditing NGO applications. Check back soon for the full verified roster.</p>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary-green btn-sm px-4">Back to Home</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

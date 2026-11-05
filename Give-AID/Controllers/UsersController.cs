@@ -1,6 +1,6 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Give_AID;
 using Give_AID.Models;
 
 public class UsersController : Controller
@@ -12,13 +12,13 @@ public class UsersController : Controller
         _context = context;
     }
 
-    // GET: USERSS
+    // GET: Users
     public async Task<IActionResult> Index()    
     {
         return View(await _context.Users.ToListAsync());
     }
 
-    // GET: USERSS/Details/5
+    // GET: Users/Details/5
     public async Task<IActionResult> Details(int? id)
     {
         if (id == null)
@@ -36,15 +36,13 @@ public class UsersController : Controller
         return View(users);
     }
 
-    // GET: USERSS/Create
+    // GET: Users/Create
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: USERSS/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    // POST: Users/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Id,Name,Email,Password,Role,Phone,Address,Occupation,Organization")] Users users)
@@ -58,7 +56,7 @@ public class UsersController : Controller
         return View(users);
     }
 
-    // GET: USERSS/Edit/5
+    // GET: Users/Edit/5
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -74,9 +72,7 @@ public class UsersController : Controller
         return View(users);
     }
 
-    // POST: USERSS/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    // POST: Users/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int? id, [Bind("Id,Name,Email,Password,Role,Phone,Address,Occupation,Organization")] Users users)
@@ -109,7 +105,7 @@ public class UsersController : Controller
         return View(users);
     }
 
-    // GET: USERSS/Delete/5
+    // GET: Users/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -127,7 +123,7 @@ public class UsersController : Controller
         return View(users);
     }
 
-    // POST: USERSS/Delete/5
+    // POST: Users/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int? id)
