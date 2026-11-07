@@ -1,163 +1,547 @@
 @model Give_AID.Models.DonationViewModel
 @{
-    ViewData["Title"] = "Donate - GIVE-AID";
+    ViewData["Title"] = "Secure Donation Checkout - GIVE-AID";
+    var settings = ViewBag.PaymentSettings as Give_AID.Models.PaymentSettings ?? new Give_AID.Models.PaymentSettings();
 }
 
-<section class="py-4 bg-light border-bottom">
+<!-- Page Header Strip -->
+<section class="py-4 border-bottom" style="background: #F8FAFC;">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb small mb-1">
-                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-success text-decoration-none">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Make a Donation</li>
-            </ol>
-        </nav>
-        <h2 class="fw-bold mb-1" style="color: #1E8E5A;">Donate & Change a Life Today</h2>
-        <p class="text-muted mb-0">Your contribution reaches verified NGO welfare programmes directly.</p>
+        <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+            <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Home</a>
+            <span>/</span>
+            <span class="text-dark fw-semibold">Make a Contribution</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-green); font-size: 1.6rem; letter-spacing: -0.5px;">
+                    <i class="bi bi-heart-pulse-fill me-2 text-danger"></i>Make a Difference Today
+                </h2>
+                <p class="text-muted small mb-0">100% transparent. Verified NGO allocation. Multiple payment channels.</p>
+            </div>
+            <div class="d-none d-md-flex align-items-center gap-2 text-muted small">
+                <i class="bi bi-shield-check text-success fs-5"></i>
+                <span class="fw-semibold text-dark">Encrypted & Secure</span>
+            </div>
+        </div>
     </div>
 </section>
 
 <div class="container py-5">
     <div class="row g-4 justify-content-center">
-        <!-- Donation Form -->
-        <div class="col-lg-7">
-            <div class="card border-0 shadow-sm rounded-3 p-4 p-md-5 bg-white">
-                <form asp-action="Create" method="post" id="donationForm">
+        <!-- Main Donation Form Column -->
+        <div class="col-12 col-lg-8">
+            <div class="giveaid-card p-4 p-md-5 bg-white border">
+                <form asp-action="Create" method="post" enctype="multipart/form-data" id="donationForm">
                     @Html.AntiForgeryToken()
 
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small rounded-3" role="alert"></div>
 
-                    <h5 class="fw-bold mb-4 pb-2 border-bottom">Step 1 — Choose Your Cause</h5>
-
-                    <div class="mb-3">
-                        <label asp-for="CauseId" class="form-label fw-semibold small text-secondary">Charitable Cause *</label>
-                        <select asp-for="CauseId" class="form-select" asp-items="ViewBag.Causes">
-                            <option value="">-- Select a welfare cause --</option>
-                        </select>
-                        <span asp-validation-for="CauseId" class="text-danger small"></span>
+                    <!-- Step 1: Cause & Allocation -->
+                    <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                        <span class="badge bg-success rounded-circle px-2 py-1 font-mono">1</span>
+                        <h5 class="fw-bold text-dark mb-0">Choose Impact Portfolio</h5>
                     </div>
 
-                    <div class="mb-4">
-                        <label asp-for="NgoId" class="form-label fw-semibold small text-secondary">Direct to a Specific NGO <span class="text-muted fw-normal">(optional)</span></label>
-                        <select asp-for="NgoId" class="form-select" asp-items="ViewBag.Ngos">
-                            <option value="">-- Any verified partner NGO --</option>
-                        </select>
-                        <span asp-validation-for="NgoId" class="text-danger small"></span>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="CauseId" class="form-label fw-semibold small text-dark">Charitable Cause <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-bookmark-heart-fill text-success"></i>
+                                </span>
+                                <select asp-for="CauseId" class="form-select border-start-0 ps-0" asp-items="ViewBag.Causes">
+                                    <option value="">-- Select targeted cause --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="CauseId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NgoId" class="form-label fw-semibold small text-dark">Direct to Partner NGO <span class="text-muted fw-normal">(Optional)</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-building"></i>
+                                </span>
+                                <select asp-for="NgoId" class="form-select border-start-0 ps-0" asp-items="ViewBag.Ngos">
+                                    <option value="">-- Any verified partner NGO --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="NgoId" class="text-danger small"></span>
+                        </div>
                     </div>
 
-                    <!-- Quick amount selector buttons -->
+                    <!-- Quick Amount Preset Buttons -->
                     <div class="mb-3">
-                        <label class="form-label fw-semibold small text-secondary">Quick Amount (Rs.)</label>
-                        <div class="d-flex flex-wrap gap-2 mb-2">
-                            @foreach (var amt in new[] { 500, 1000, 2500, 5000, 10000 })
+                        <label class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Contribution Amount (PKR) <span class="text-danger">*</span></span>
+                            <span class="text-muted small">One-time gift</span>
+                        </label>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            @foreach (var amt in new[] { 500, 1000, 2500, 5000, 10000, 25000 })
                             {
-                                <button type="button" class="btn btn-outline-secondary btn-sm quick-amount" data-amount="@amt">
+                                <button type="button" class="btn btn-outline-secondary btn-sm quick-amount fw-semibold px-3 py-2 rounded-3" data-amount="@amt">
                                     Rs. @amt.ToString("N0")
                                 </button>
                             }
                         </div>
                     </div>
 
-                    <div class="mb-5">
-                        <label asp-for="Amount" class="form-label fw-semibold small text-secondary">Custom Amount *</label>
-                        <div class="input-group">
-                            <span class="input-group-text fw-bold bg-light">Rs.</span>
-                            <input asp-for="Amount" class="form-control form-control-lg fw-bold" id="amountInput" placeholder="Enter amount" min="1" />
+                    <div class="mb-4">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text fw-bold bg-light border-end-0 font-mono text-success">Rs.</span>
+                            <input asp-for="Amount" class="form-control fw-bold border-start-0 font-mono" id="amountInput" placeholder="Custom amount" min="1" autofocus />
                         </div>
                         <span asp-validation-for="Amount" class="text-danger small"></span>
                     </div>
 
-                    <h5 class="fw-bold mb-4 pb-2 border-bottom">Step 2 — Secure Card Payment</h5>
-
-                    <div class="p-3 mb-4 bg-light rounded-3 d-flex align-items-center gap-2 small text-muted">
-                        <i class="bi bi-shield-lock-fill text-success fs-5"></i>
-                        <span>Your card details are encrypted and never stored. Only the last 4 digits are saved for your receipt.</span>
+                    <!-- Step 2: Payment Method Selection -->
+                    <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                        <span class="badge bg-success rounded-circle px-2 py-1 font-mono">2</span>
+                        <h5 class="fw-bold text-dark mb-0">Select Payment Method</h5>
                     </div>
 
-                    <div class="mb-3">
-                        <label asp-for="CardName" class="form-label fw-semibold small text-secondary">Name on Card *</label>
-                        <input asp-for="CardName" class="form-control" placeholder="JOHN DOE" autocomplete="cc-name" />
-                        <span asp-validation-for="CardName" class="text-danger small"></span>
-                    </div>
+                    <!-- Hidden input storing selected method -->
+                    <input type="hidden" asp-for="PaymentMethod" id="selectedPaymentMethod" value="@(Model?.PaymentMethod ?? "Card")" />
 
-                    <div class="mb-3">
-                        <label asp-for="CardNumber" class="form-label fw-semibold small text-secondary">Card Number *</label>
-                        <input asp-for="CardNumber" class="form-control font-monospace" id="cardNumber"
-                               placeholder="1234 5678 9012 3456" maxlength="19"
-                               autocomplete="cc-number" inputmode="numeric" />
-                        <span asp-validation-for="CardNumber" class="text-danger small"></span>
-                    </div>
-
-                    <div class="row g-3 mb-5">
-                        <div class="col-6">
-                            <label asp-for="CardExpiry" class="form-label fw-semibold small text-secondary">Expiry (MM/YY) *</label>
-                            <input asp-for="CardExpiry" class="form-control font-monospace" id="cardExpiry"
-                                   placeholder="08/27" maxlength="5" autocomplete="cc-exp" />
-                            <span asp-validation-for="CardExpiry" class="text-danger small"></span>
+                    <!-- Payment Method Selector Tabs -->
+                    <div class="row g-2 mb-4">
+                        <div class="col-6 col-md-3">
+                            <button type="button" class="method-btn w-100 p-3 rounded-3 text-center border @( (Model?.PaymentMethod ?? "Card") == "Card" ? "active-method" : "")" data-method="Card">
+                                <i class="bi bi-credit-card-2-front fs-3 d-block mb-1 text-primary"></i>
+                                <span class="fw-bold small d-block">Debit / Card</span>
+                                <span class="text-muted" style="font-size: 0.7rem;">Instant Auth</span>
+                            </button>
                         </div>
-                        <div class="col-6">
-                            <label asp-for="CardCvv" class="form-label fw-semibold small text-secondary">CVV *</label>
-                            <input asp-for="CardCvv" class="form-control font-monospace" placeholder="•••"
-                                   maxlength="4" autocomplete="off" inputmode="numeric" />
-                            <span asp-validation-for="CardCvv" class="text-danger small"></span>
+                        <div class="col-6 col-md-3">
+                            <button type="button" class="method-btn w-100 p-3 rounded-3 text-center border @( Model?.PaymentMethod == "EasyPaisa" ? "active-method" : "")" data-method="EasyPaisa">
+                                <i class="bi bi-phone-fill fs-3 d-block mb-1 text-success"></i>
+                                <span class="fw-bold small d-block">EasyPaisa</span>
+                                <span class="text-muted" style="font-size: 0.7rem;">Mobile Wallet</span>
+                            </button>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <button type="button" class="method-btn w-100 p-3 rounded-3 text-center border @( Model?.PaymentMethod == "JazzCash" ? "active-method" : "")" data-method="JazzCash">
+                                <i class="bi bi-wallet2 fs-3 d-block mb-1 text-danger"></i>
+                                <span class="fw-bold small d-block">JazzCash</span>
+                                <span class="text-muted" style="font-size: 0.7rem;">Mobile Wallet</span>
+                            </button>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <button type="button" class="method-btn w-100 p-3 rounded-3 text-center border @( Model?.PaymentMethod == "BankTransfer" ? "active-method" : "")" data-method="BankTransfer">
+                                <i class="bi bi-bank2 fs-3 d-block mb-1 text-info"></i>
+                                <span class="fw-bold small d-block">Bank Transfer</span>
+                                <span class="text-muted" style="font-size: 0.7rem;">Online / Wire</span>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Submit button — disabled after one click to prevent duplicate donations -->
-                    <button type="submit" class="btn btn-donate-amber w-100 fw-bold py-3 fs-5 shadow"
-                            id="submitDonateBtn" onclick="this.disabled=true; this.innerText='Processing...'; this.form.submit();">
-                        <i class="bi bi-heart-fill me-2"></i>Confirm Donation
+                    <!-- ========================================== -->
+                    <!-- PANEL 1: CARD PAYMENT                      -->
+                    <!-- ========================================== -->
+                    <div id="cardSection" class="payment-channel-panel @( (Model?.PaymentMethod ?? "Card") == "Card" ? "" : "d-none")">
+                        <div class="p-3 mb-4 rounded-3 d-flex align-items-center gap-3 border" style="background: #F8FAFC; border-color: #E2E8F0 !important;">
+                            <i class="bi bi-shield-lock-fill text-success fs-4"></i>
+                            <span class="small text-muted">
+                                Card data is validated securely using the Luhn algorithm. We store <strong>only the last 4 digits</strong> for audit receipts.
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CardName" class="form-label fw-semibold small text-dark">Cardholder Name <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-person"></i>
+                                </span>
+                                <input asp-for="CardName" class="form-control border-start-0 ps-0" placeholder="JOHN DOE" autocomplete="cc-name" />
+                            </div>
+                            <span asp-validation-for="CardName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CardNumber" class="form-label fw-semibold small text-dark">Card Number <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-credit-card-2-front"></i>
+                                </span>
+                                <input asp-for="CardNumber" class="form-control font-mono border-start-0 ps-0" id="cardNumber"
+                                       placeholder="4000 1234 5678 9010" maxlength="19"
+                                       autocomplete="cc-number" inputmode="numeric" />
+                            </div>
+                            <span asp-validation-for="CardNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <label asp-for="CardExpiry" class="form-label fw-semibold small text-dark">Expiry (MM/YY) <span class="text-danger">*</span></label>
+                                <input asp-for="CardExpiry" class="form-control font-mono" id="cardExpiry"
+                                       placeholder="08/28" maxlength="5" autocomplete="cc-exp" />
+                                <span asp-validation-for="CardExpiry" class="text-danger small"></span>
+                            </div>
+                            <div class="col-6">
+                                <label asp-for="CardCvv" class="form-label fw-semibold small text-dark">CVV Code <span class="text-danger">*</span></label>
+                                <input asp-for="CardCvv" class="form-control font-mono" placeholder="•••"
+                                       maxlength="4" autocomplete="off" inputmode="numeric" />
+                                <span asp-validation-for="CardCvv" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- PANEL 2: EASYPAISA                         -->
+                    <!-- ========================================== -->
+                    <div id="easyPaisaSection" class="payment-channel-panel @( Model?.PaymentMethod == "EasyPaisa" ? "" : "d-none")">
+                        <div class="p-3 mb-4 rounded-3 border bg-light">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-success px-2 py-1">EasyPaisa Account</span>
+                                    <span class="fw-bold text-dark">@settings.EasyPaisaTitle</span>
+                                </div>
+                                <button type="button" class="btn btn-outline-success btn-sm py-0 px-2 copy-btn" data-copy="@settings.EasyPaisaNumber">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-muted small">Account / Mobile Number:</span>
+                                <span class="font-mono fw-bold text-dark fs-5">@settings.EasyPaisaNumber</span>
+                            </div>
+                            <div class="small text-muted mt-2">
+                                <i class="bi bi-info-circle me-1 text-primary"></i>
+                                Open your EasyPaisa App > Send Money > Enter number above > Transfer amount > Save transaction screenshot.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- PANEL 3: JAZZCASH                          -->
+                    <!-- ========================================== -->
+                    <div id="jazzCashSection" class="payment-channel-panel @( Model?.PaymentMethod == "JazzCash" ? "" : "d-none")">
+                        <div class="p-3 mb-4 rounded-3 border bg-light">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-danger px-2 py-1">JazzCash Account</span>
+                                    <span class="fw-bold text-dark">@settings.JazzCashTitle</span>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2 copy-btn" data-copy="@settings.JazzCashNumber">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-muted small">Account / Mobile Number:</span>
+                                <span class="font-mono fw-bold text-dark fs-5">@settings.JazzCashNumber</span>
+                            </div>
+                            <div class="small text-muted mt-2">
+                                <i class="bi bi-info-circle me-1 text-danger"></i>
+                                Open your JazzCash App > Send Money to JazzCash > Enter number above > Transfer amount > Save transaction receipt.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- PANEL 4: BANK TRANSFER                     -->
+                    <!-- ========================================== -->
+                    <div id="bankSection" class="payment-channel-panel @( Model?.PaymentMethod == "BankTransfer" ? "" : "d-none")">
+                        <div class="p-3 mb-4 rounded-3 border bg-light">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-primary px-2 py-1">Official Bank Account</span>
+                                <button type="button" class="btn btn-outline-primary btn-sm py-0 px-2 copy-btn" data-copy="@settings.BankAccountNumber">
+                                    <i class="bi bi-clipboard me-1"></i>Copy Account #
+                                </button>
+                            </div>
+                            <div class="row g-2 small">
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">Bank Name:</span>
+                                    <strong class="text-dark">@settings.BankName</strong>
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">Account Title:</span>
+                                    <strong class="text-dark">@settings.BankAccountTitle</strong>
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">Account Number:</span>
+                                    <span class="font-mono fw-bold text-dark fs-6">@settings.BankAccountNumber</span>
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">IBAN:</span>
+                                    <span class="font-mono fw-semibold text-secondary">@settings.BankIBAN</span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(settings.BankBranch))
+                                {
+                                    <div class="col-12">
+                                        <span class="text-muted d-block">Branch:</span>
+                                        <span class="text-muted">@settings.BankBranch</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- MANUAL RECEIPT & TRANSACTION REF UPLOAD    -->
+                    <!-- (Visible for EasyPaisa, JazzCash, Bank)   -->
+                    <!-- ========================================== -->
+                    <div id="manualTransferFields" class="@( (Model?.PaymentMethod ?? "Card") == "Card" ? "d-none" : "")">
+                        <div class="mb-3">
+                            <label asp-for="TransactionRef" class="form-label fw-semibold small text-dark">
+                                Transaction ID (TID) / Deposit Reference <span class="text-muted fw-normal">(Optional)</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-hash"></i>
+                                </span>
+                                <input asp-for="TransactionRef" class="form-control font-mono border-start-0 ps-0" placeholder="e.g. 19283746501 or TRX-88219" />
+                            </div>
+                            <span asp-validation-for="TransactionRef" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                                <span>Attach Transfer Receipt / Screenshot <span class="text-danger">*</span></span>
+                                <span class="text-muted small">JPG, PNG, WEBP, or PDF (Max 8MB)</span>
+                            </label>
+
+                            <!-- Modern SaaS Upload Browse Zone -->
+                            <div class="saas-image-upload-zone" id="receiptUploadZone">
+                                <i class="bi bi-cloud-arrow-up saas-upload-icon text-success"></i>
+                                <div class="saas-upload-title">Click to browse or drag & drop receipt file</div>
+                                <div class="saas-upload-hint">Upload screenshot from your banking or mobile app</div>
+                                <input type="file" asp-for="ReceiptFile" id="receiptFileInput" accept=".jpg,.jpeg,.png,.webp,.pdf,image/*,application/pdf" style="display: none;" />
+                            </div>
+                            <span asp-validation-for="ReceiptFile" class="text-danger small"></span>
+
+                            <!-- Receipt Preview Card -->
+                            <div id="receiptPreviewContainer" class="mt-3 d-none">
+                                <div class="saas-image-preview-card d-flex align-items-center justify-content-between p-2 border rounded-3 bg-light">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-file-earmark-check-fill text-success fs-3"></i>
+                                        <div>
+                                            <div class="fw-semibold text-dark small" id="receiptFileName">receipt.png</div>
+                                            <div class="text-muted" style="font-size:0.75rem;" id="receiptFileSize">240 KB</div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-danger btn-sm py-1 px-2" id="removeReceiptBtn">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-donate-amber w-100 fw-bold py-3 fs-5 shadow-sm mt-3"
+                            id="submitDonateBtn">
+                        <i class="bi bi-heart-fill me-2"></i>
+                        <span id="submitBtnText">Authorize & Complete Donation</span>
                     </button>
                 </form>
             </div>
         </div>
 
-        <!-- Right summary panel -->
-        <div class="col-lg-4">
-            <div class="giveaid-card p-4 bg-white mb-4">
-                <h6 class="fw-bold mb-3"><i class="bi bi-info-circle text-success me-2"></i>What Happens Next?</h6>
-                <ul class="list-unstyled small text-muted">
-                    <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Payment is processed and verified.</li>
-                    <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Receipt number is generated for your records.</li>
-                    <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Funds are routed to your selected cause/NGO.</li>
-                    <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>You can track this donation in "My Donations".</li>
+        <!-- Right Summary & Assurance Column -->
+        <div class="col-12 col-lg-4">
+            <!-- Donation Guarantee Card -->
+            <div class="giveaid-card p-4 bg-white border mb-4">
+                <h6 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
+                    <i class="bi bi-patch-check-fill text-success"></i> The GIVE-AID Promise
+                </h6>
+                <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-2">
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check2 text-success fs-6 mt-0"></i>
+                        <span><strong>100% Directed:</strong> Your donation goes entirely to the cause or NGO selected.</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check2 text-success fs-6 mt-0"></i>
+                        <span><strong>Verified Receipts:</strong> Instant ledger entry and downloadable receipt for all transactions.</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check2 text-success fs-6 mt-0"></i>
+                        <span><strong>Zero Platform Cuts:</strong> All operations are funded through direct corporate sponsorships.</span>
+                    </li>
                 </ul>
             </div>
 
-            <div class="p-4 rounded-3 text-white" style="background-color: #1E8E5A;">
-                <h6 class="fw-bold text-white mb-2"><i class="bi bi-lock-fill me-2"></i>100% Secure Giving</h6>
-                <p class="small mb-0 text-white-50">We use industry-standard card validation. Your full card number and CVV are never stored in our system.</p>
+            <!-- Security Badge Banner -->
+            <div class="p-4 rounded-3 text-white shadow-sm" style="background: linear-gradient(135deg, #1E8E5A 0%, #166E45 100%);">
+                <h6 class="fw-bold text-white mb-2 d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-check"></i> Account Verification
+                </h6>
+                <p class="small mb-0 text-white-50" style="line-height: 1.5;">
+                    Direct mobile and bank transfers are verified against the official ledger by our financial operations team within a few hours.
+                </p>
             </div>
         </div>
     </div>
 </div>
 
+<style>
+    .method-btn {
+        background: #F8FAFC;
+        border-color: #E2E8F0 !important;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+    .method-btn:hover {
+        background: #F1F5F9;
+        border-color: #CBD5E1 !important;
+    }
+    .method-btn.active-method {
+        background: #EFF6FF !important;
+        border-color: #3B82F6 !important;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+</style>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // Auto-format card number with spaces every 4 digits as user types
-        document.getElementById("cardNumber").addEventListener("input", function () {
-            let val = this.value.replace(/\D/g, "").substring(0, 16);
-            this.value = val.replace(/(.{4})/g, "$1 ").trim();
-        });
+        // Auto-format card number
+        const cardInput = document.getElementById("cardNumber");
+        if (cardInput) {
+            cardInput.addEventListener("input", function () {
+                let val = this.value.replace(/\D/g, "").substring(0, 16);
+                this.value = val.replace(/(.{4})/g, "$1 ").trim();
+            });
+        }
 
-        // Auto-insert slash in expiry field after 2 digits
-        document.getElementById("cardExpiry").addEventListener("input", function () {
-            let val = this.value.replace(/\D/g, "").substring(0, 4);
-            if (val.length >= 3) {
-                this.value = val.substring(0, 2) + "/" + val.substring(2);
-            } else {
-                this.value = val;
-            }
-        });
+        // Auto-insert slash in expiry field
+        const expInput = document.getElementById("cardExpiry");
+        if (expInput) {
+            expInput.addEventListener("input", function () {
+                let val = this.value.replace(/\D/g, "").substring(0, 4);
+                if (val.length >= 3) {
+                    this.value = val.substring(0, 2) + "/" + val.substring(2);
+                } else {
+                    this.value = val;
+                }
+            });
+        }
 
-        // Quick amount buttons populate the amount input field
+        // Quick amount buttons
         document.querySelectorAll(".quick-amount").forEach(function (btn) {
             btn.addEventListener("click", function () {
-                document.getElementById("amountInput").value = this.dataset.amount;
-                document.querySelectorAll(".quick-amount").forEach(b => b.classList.remove("btn-primary-green", "text-white"));
+                const amount = this.dataset.amount;
+                document.getElementById("amountInput").value = amount;
+                document.querySelectorAll(".quick-amount").forEach(b => {
+                    b.classList.remove("btn-primary-green", "text-white");
+                    b.classList.add("btn-outline-secondary");
+                });
+                this.classList.remove("btn-outline-secondary");
                 this.classList.add("btn-primary-green", "text-white");
             });
         });
+
+        // Copy button helper
+        document.querySelectorAll(".copy-btn").forEach(btn => {
+            btn.addEventListener("click", function () {
+                const text = this.getAttribute("data-copy");
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalHtml = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-check-lg me-1"></i>Copied!';
+                    setTimeout(() => { this.innerHTML = originalHtml; }, 2000);
+                });
+            });
+        });
+
+        // Payment Method Switcher
+        const methodButtons = document.querySelectorAll(".method-btn");
+        const hiddenMethodInput = document.getElementById("selectedPaymentMethod");
+        const cardSection = document.getElementById("cardSection");
+        const easyPaisaSection = document.getElementById("easyPaisaSection");
+        const jazzCashSection = document.getElementById("jazzCashSection");
+        const bankSection = document.getElementById("bankSection");
+        const manualTransferFields = document.getElementById("manualTransferFields");
+        const submitBtnText = document.getElementById("submitBtnText");
+
+        function switchPaymentMethod(method) {
+            hiddenMethodInput.value = method;
+
+            methodButtons.forEach(btn => {
+                if (btn.getAttribute("data-method") === method) {
+                    btn.classList.add("active-method");
+                } else {
+                    btn.classList.remove("active-method");
+                }
+            });
+
+            // Hide all panels
+            cardSection.classList.add("d-none");
+            easyPaisaSection.classList.add("d-none");
+            jazzCashSection.classList.add("d-none");
+            bankSection.classList.add("d-none");
+
+            if (method === "Card") {
+                cardSection.classList.remove("d-none");
+                manualTransferFields.classList.add("d-none");
+                submitBtnText.innerText = "Authorize & Complete Donation";
+            } else {
+                manualTransferFields.classList.remove("d-none");
+                submitBtnText.innerText = "Submit Transfer Proof for Verification";
+
+                if (method === "EasyPaisa") {
+                    easyPaisaSection.classList.remove("d-none");
+                } else if (method === "JazzCash") {
+                    jazzCashSection.classList.remove("d-none");
+                } else if (method === "BankTransfer") {
+                    bankSection.classList.remove("d-none");
+                }
+            }
+        }
+
+        methodButtons.forEach(btn => {
+            btn.addEventListener("click", function () {
+                const method = this.getAttribute("data-method");
+                switchPaymentMethod(method);
+            });
+        });
+
+        // File browse & drag-drop for receipt
+        const uploadZone = document.getElementById("receiptUploadZone");
+        const fileInput = document.getElementById("receiptFileInput");
+        const previewContainer = document.getElementById("receiptPreviewContainer");
+        const fileNameSpan = document.getElementById("receiptFileName");
+        const fileSizeSpan = document.getElementById("receiptFileSize");
+        const removeBtn = document.getElementById("removeReceiptBtn");
+
+        if (uploadZone && fileInput) {
+            uploadZone.addEventListener("click", () => fileInput.click());
+
+            uploadZone.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                uploadZone.classList.add("dragover");
+            });
+
+            uploadZone.addEventListener("dragleave", () => {
+                uploadZone.classList.remove("dragover");
+            });
+
+            uploadZone.addEventListener("drop", (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove("dragover");
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleReceiptSelected(fileInput.files[0]);
+                }
+            });
+
+            fileInput.addEventListener("change", function () {
+                if (this.files && this.files.length > 0) {
+                    handleReceiptSelected(this.files[0]);
+                }
+            });
+
+            removeBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                fileInput.value = "";
+                previewContainer.classList.add("d-none");
+                uploadZone.classList.remove("d-none");
+            });
+        }
+
+        function handleReceiptSelected(file) {
+            if (!file) return;
+            fileNameSpan.textContent = file.name;
+            fileSizeSpan.textContent = (file.size / 1024).toFixed(1) + " KB";
+            previewContainer.classList.remove("d-none");
+        }
     </script>
 }
-

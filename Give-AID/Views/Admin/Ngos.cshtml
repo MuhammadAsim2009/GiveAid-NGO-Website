@@ -1,30 +1,42 @@
 @model IEnumerable<Give_AID.Models.Ngos>
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Manage NGOs";
+    ViewData["Title"] = "Partner NGOs";
 }
 
-<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h2 class="fw-bold text-dark mb-0">Verified NGOs</h2>
-        <p class="text-muted small mb-0">Manage accredited charity and welfare organizations</p>
+        <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Accredited NGOs</h2>
+        <p class="text-muted small mb-0">Partner welfare non-profit entities authorized to operate on GIVE-AID.</p>
     </div>
-    <a asp-action="CreateNgo" class="btn btn-primary-green btn-sm fw-semibold">
-        <i class="bi bi-plus-circle me-1"></i>Add New NGO
+    <a asp-action="CreateNgo" class="btn btn-saas-primary">
+        <i class="bi bi-plus-lg"></i>
+        <span>Add Partner NGO</span>
     </a>
 </div>
 
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-body p-0">
+<!-- SaaS Table Card -->
+<div class="saas-card">
+    <div class="saas-card-header">
+        <div class="saas-card-title">
+            <i class="bi bi-building-check text-success"></i>
+            <span>Verified Non-Governmental Organizations</span>
+        </div>
+        <div class="saas-table-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="ngoSearchInput" class="form-control form-control-sm" placeholder="Search NGOs..." onkeyup="filterNgoTable()" />
+        </div>
+    </div>
+    <div class="p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light small text-muted">
+            <table class="saas-table align-middle" id="ngoTable">
+                <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Organization Name</th>
-                        <th>Description</th>
-                        <th>Contact & Location</th>
-                        <th>Active Programmes</th>
+                        <th style="width: 60px;">ID</th>
+                        <th>Organization</th>
+                        <th>Contact / Location</th>
+                        <th>Associated Programmes</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -34,25 +46,42 @@
                         @foreach (var ngo in Model)
                         {
                             <tr>
-                                <td>@ngo.Id</td>
-                                <td class="fw-bold">@ngo.Name</td>
-                                <td class="small text-muted text-truncate" style="max-width: 280px;">@ngo.Description</td>
-                                <td class="small">@ngo.Contact</td>
                                 <td>
-                                    <span class="badge bg-primary-subtle text-primary">
-                                        @(ngo.Programmes?.Count ?? 0) programmes
+                                    <span class="font-mono text-muted small">#@ngo.Id</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-circle" style="background: linear-gradient(135deg, #6366F1, #4F46E5);">
+                                            @ngo.Name.Substring(0, 1).ToUpper()
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark" style="font-size: 0.95rem;">@ngo.Name</div>
+                                            <div class="text-muted small text-truncate" style="max-width: 380px;">@ngo.Description</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="small text-muted">
+                                        <i class="bi bi-geo-alt me-1 text-danger"></i>@ngo.Contact
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-primary border font-mono">
+                                        <i class="bi bi-calendar2-event me-1"></i>@(ngo.Programmes?.Count ?? 0) initiatives
                                     </span>
                                 </td>
                                 <td class="text-end">
-                                    <a asp-action="EditNgo" asp-route-id="@ngo.Id" class="btn btn-sm btn-outline-primary me-1">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form asp-action="DeleteNgo" asp-route-id="@ngo.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to remove this NGO?');">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-inline-flex gap-1">
+                                        <a asp-action="EditNgo" asp-route-id="@ngo.Id" class="btn-action-icon btn-action-icon-primary" title="Edit NGO">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="DeleteNgo" asp-route-id="@ngo.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to remove this NGO?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn-action-icon btn-action-icon-danger" title="Delete NGO">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -60,7 +89,10 @@
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">No NGOs registered yet.</td>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 text-muted d-block mb-2"></i>
+                                No NGOs registered in the registry.
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -69,3 +101,15 @@
     </div>
 </div>
 
+@section Scripts {
+<script>
+    function filterNgoTable() {
+        const input = document.getElementById("ngoSearchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#ngoTable tbody tr");
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+</script>
+}

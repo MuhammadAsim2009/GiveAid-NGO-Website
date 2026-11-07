@@ -1,28 +1,60 @@
 @model IEnumerable<Give_AID.Models.Donations>
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "All Donations";
+    ViewData["Title"] = "Donation Records";
 }
 
-<div class="pt-3 pb-2 mb-3 border-bottom">
-    <h2 class="fw-bold text-dark mb-0">Donation Transactions</h2>
-    <p class="text-muted small mb-0">Complete audit log of all financial contributions received</p>
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Donation Ledger</h2>
+        <p class="text-muted small mb-0">Immutable transaction log of all incoming financial contributions & payment receipts.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a asp-action="PaymentSettings" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-gear-fill me-1"></i>Configure Payment Channels
+        </a>
+        <span class="badge bg-white border text-dark px-3 py-2 fw-semibold">
+            <i class="bi bi-wallet2 text-success me-1"></i> Total Transactions: @(Model?.Count() ?? 0)
+        </span>
+    </div>
 </div>
 
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-body p-0">
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+        <div>@TempData["SuccessMessage"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- SaaS Table Card -->
+<div class="saas-card">
+    <div class="saas-card-header">
+        <div class="saas-card-title">
+            <i class="bi bi-receipt-cutoff text-success"></i>
+            <span>All Contributions & Verifications</span>
+        </div>
+        <div class="saas-table-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="donationSearchInput" class="form-control form-control-sm" placeholder="Filter by donor, cause, ref..." onkeyup="filterDonationTable()" />
+        </div>
+    </div>
+    <div class="p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light small text-muted">
+            <table class="saas-table align-middle" id="donationTable">
+                <thead>
                     <tr>
-                        <th>Receipt #</th>
+                        <th>Receipt ID</th>
                         <th>Donor Name</th>
-                        <th>Cause</th>
-                        <th>Directed NGO</th>
+                        <th>Designated Cause</th>
                         <th>Amount</th>
-                        <th>Card</th>
-                        <th>Transaction Date</th>
+                        <th>Payment Method</th>
+                        <th>Reference / Proof</th>
+                        <th>Date & Time</th>
                         <th>Status</th>
+                        <th class="text-end">Verification Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,15 +63,127 @@
                         @foreach (var don in Model)
                         {
                             <tr>
-                                <td class="font-monospace fw-semibold">#DON-@don.Id.ToString("D5")</td>
-                                <td class="fw-bold">@(don.User?.Name ?? "Anonymous")</td>
-                                <td>@(don.Cause?.Name ?? "General Relief")</td>
-                                <td class="small text-muted">@(don.Ngo?.Name ?? "Any Partner NGO")</td>
-                                <td class="fw-bold text-success">Rs. @don.Amount.ToString("N0")</td>
-                                <td class="small text-muted">•••• @don.CardLast4</td>
-                                <td class="small text-muted">@don.CreatedAt.ToString("MMM dd, yyyy HH:mm")</td>
                                 <td>
-                                    <span class="badge bg-success-subtle text-success">@don.Status</span>
+                                    <span class="font-mono fw-semibold text-secondary" style="font-size:0.8rem;">
+                                        #DON-@don.Id.ToString("D5")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-circle" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);">
+                                            @((don.User?.Name ?? "A").Substring(0, 1).ToUpper())
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">@(don.User?.Name ?? "Anonymous")</div>
+                                            <div class="small text-muted" style="font-size:0.75rem;">@(don.User?.Email ?? "No email")</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border px-2 py-1">
+                                        @(don.Cause?.Name ?? "General Relief")
+                                    </span>
+                                    @if (don.Ngo != null)
+                                    {
+                                        <div class="small text-muted" style="font-size:0.75rem;">via @don.Ngo.Name</div>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="font-mono fw-bold" style="color: #059669; font-size:0.95rem;">
+                                        Rs. @don.Amount.ToString("N0")
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (don.PaymentMethod == "Card")
+                                    {
+                                        <span class="badge bg-light text-muted border font-mono">
+                                            <i class="bi bi-credit-card me-1 text-primary"></i>Card •••• @don.CardLast4
+                                        </span>
+                                    }
+                                    else if (don.PaymentMethod == "EasyPaisa")
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="bi bi-phone me-1"></i>EasyPaisa
+                                        </span>
+                                    }
+                                    else if (don.PaymentMethod == "JazzCash")
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                            <i class="bi bi-wallet2 me-1"></i>JazzCash
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                                            <i class="bi bi-bank me-1"></i>Bank Wire
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(don.TransactionRef))
+                                    {
+                                        <div class="font-mono small text-dark fw-semibold" style="font-size:0.8rem;">
+                                            Ref: @don.TransactionRef
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(don.ReceiptPath))
+                                    {
+                                        <a href="@don.ReceiptPath" target="_blank" class="btn btn-xs btn-outline-secondary py-0 px-2 mt-1" style="font-size: 0.75rem;">
+                                            <i class="bi bi-image text-primary me-1"></i>View Receipt
+                                        </a>
+                                    }
+                                    else if (don.PaymentMethod == "Card")
+                                    {
+                                        <span class="text-muted small">Auto Authorized</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="text-muted small">
+                                        @don.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (don.Status == "Completed")
+                                    {
+                                        <span class="badge-status badge-status-success">Completed</span>
+                                    }
+                                    else if (don.Status == "Pending")
+                                    {
+                                        <span class="badge-status badge-status-warning">Pending Review</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-status badge-status-danger">@don.Status</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (don.Status == "Pending")
+                                    {
+                                        <div class="d-inline-flex gap-1">
+                                            <form asp-action="UpdateDonationStatus" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@don.Id" />
+                                                <input type="hidden" name="status" value="Completed" />
+                                                <button type="submit" class="btn btn-sm btn-outline-success py-1 px-2" title="Verify & Approve Contribution">
+                                                    <i class="bi bi-check-lg me-1"></i>Approve
+                                                </button>
+                                            </form>
+                                            <form asp-action="UpdateDonationStatus" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@don.Id" />
+                                                <input type="hidden" name="status" value="Rejected" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" title="Reject Contribution">
+                                                    <i class="bi bi-x-lg me-1"></i>Reject
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">
+                                            <i class="bi bi-check2-all text-success me-1"></i>Settled
+                                        </span>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -47,7 +191,10 @@
                     else
                     {
                         <tr>
-                            <td colspan="8" class="text-center py-4 text-muted">No donations recorded yet.</td>
+                            <td colspan="9" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 text-muted d-block mb-2"></i>
+                                No donations recorded in the ledger yet.
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -56,3 +203,15 @@
     </div>
 </div>
 
+@section Scripts {
+<script>
+    function filterDonationTable() {
+        const input = document.getElementById("donationSearchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#donationTable tbody tr");
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+</script>
+}

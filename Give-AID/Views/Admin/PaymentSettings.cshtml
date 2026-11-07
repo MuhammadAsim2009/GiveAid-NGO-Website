@@ -1,0 +1,190 @@
+@model Give_AID.Models.PaymentSettings
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Payment Channels";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Payment Channels & Bank Accounts</h2>
+        <p class="text-muted small mb-0">Configure EasyPaisa, JazzCash numbers and official bank account details presented to public donors.</p>
+    </div>
+    <div>
+        <span class="badge bg-white border text-dark px-3 py-2 fw-semibold">
+            <i class="bi bi-clock-history text-primary me-1"></i> Last Updated: @Model.UpdatedAt.ToString("MMM dd, yyyy HH:mm")
+        </span>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+        <div>@TempData["SuccessMessage"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<form asp-action="PaymentSettings" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <div class="row g-4">
+        <!-- Column 1: Mobile Wallets (EasyPaisa & JazzCash) -->
+        <div class="col-12 col-lg-6">
+            <div class="saas-card h-100">
+                <div class="saas-card-header">
+                    <div class="saas-card-title">
+                        <i class="bi bi-phone-fill text-success"></i>
+                        <span>Mobile Wallets Configuration</span>
+                    </div>
+                    <span class="badge bg-light text-dark border">P2P Accounts</span>
+                </div>
+                <div class="p-4">
+                    <!-- EasyPaisa Settings -->
+                    <div class="mb-4 pb-3 border-bottom">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                                <i class="bi bi-phone me-1"></i>EasyPaisa Channel
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="EasyPaisaNumber" class="form-label fw-semibold small text-dark">EasyPaisa Account Number <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-telephone"></i>
+                                </span>
+                                <input asp-for="EasyPaisaNumber" class="form-control font-mono border-start-0 ps-0" placeholder="0300-1234567" required />
+                            </div>
+                            <span asp-validation-for="EasyPaisaNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <label asp-for="EasyPaisaTitle" class="form-label fw-semibold small text-dark">EasyPaisa Account Title</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-person-badge"></i>
+                                </span>
+                                <input asp-for="EasyPaisaTitle" class="form-control border-start-0 ps-0" placeholder="e.g. GIVE-AID Foundation" />
+                            </div>
+                            <span asp-validation-for="EasyPaisaTitle" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- JazzCash Settings -->
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">
+                                <i class="bi bi-wallet2 me-1"></i>JazzCash Channel
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="JazzCashNumber" class="form-label fw-semibold small text-dark">JazzCash Account Number <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-telephone"></i>
+                                </span>
+                                <input asp-for="JazzCashNumber" class="form-control font-mono border-start-0 ps-0" placeholder="0301-7654321" required />
+                            </div>
+                            <span asp-validation-for="JazzCashNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <label asp-for="JazzCashTitle" class="form-label fw-semibold small text-dark">JazzCash Account Title</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-person-badge"></i>
+                                </span>
+                                <input asp-for="JazzCashTitle" class="form-control border-start-0 ps-0" placeholder="e.g. GIVE-AID Foundation" />
+                            </div>
+                            <span asp-validation-for="JazzCashTitle" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 2: Official Bank Transfer Settings -->
+        <div class="col-12 col-lg-6">
+            <div class="saas-card h-100">
+                <div class="saas-card-header">
+                    <div class="saas-card-title">
+                        <i class="bi bi-bank2 text-primary"></i>
+                        <span>Direct Bank Wire Details</span>
+                    </div>
+                    <span class="badge bg-light text-dark border">Scheduled Bank</span>
+                </div>
+                <div class="p-4">
+                    <div class="mb-3">
+                        <label asp-for="BankName" class="form-label fw-semibold small text-dark">Bank Name <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-bank"></i>
+                            </span>
+                            <input asp-for="BankName" class="form-control border-start-0 ps-0" placeholder="e.g. Meezan Bank Limited" required />
+                        </div>
+                        <span asp-validation-for="BankName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="BankAccountTitle" class="form-label fw-semibold small text-dark">Account Title <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-card-heading"></i>
+                            </span>
+                            <input asp-for="BankAccountTitle" class="form-control border-start-0 ps-0" placeholder="e.g. GIVE-AID Welfare Trust" required />
+                        </div>
+                        <span asp-validation-for="BankAccountTitle" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="BankAccountNumber" class="form-label fw-semibold small text-dark">Account Number <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-hash"></i>
+                            </span>
+                            <input asp-for="BankAccountNumber" class="form-control font-mono border-start-0 ps-0" placeholder="0102-0304050607" required />
+                        </div>
+                        <span asp-validation-for="BankAccountNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="BankIBAN" class="form-label fw-semibold small text-dark">IBAN (International Bank Account Number)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-globe2"></i>
+                            </span>
+                            <input asp-for="BankIBAN" class="form-control font-mono border-start-0 ps-0" placeholder="PK12MEZN0001020304050607" />
+                        </div>
+                        <span asp-validation-for="BankIBAN" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="BankBranch" class="form-label fw-semibold small text-dark">Branch Name / Code (Optional)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-geo-alt"></i>
+                            </span>
+                            <input asp-for="BankBranch" class="form-control border-start-0 ps-0" placeholder="e.g. Main Boulevard Branch, Lahore" />
+                        </div>
+                        <span asp-validation-for="BankBranch" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky / Bottom Action Bar -->
+    <div class="d-flex justify-content-end align-items-center gap-2 mt-4 p-3 bg-white border rounded-3 shadow-sm">
+        <a asp-action="Donations" class="btn btn-saas-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back to Ledger
+        </a>
+        <button type="submit" class="btn btn-saas-primary px-4">
+            <i class="bi bi-check2-circle me-1"></i>Save Payment Channels
+        </button>
+    </div>
+</form>
+

@@ -4,60 +4,317 @@
     ViewData["Title"] = "Register NGO";
 }
 
-<div class="pt-3 pb-2 mb-3 border-bottom">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb small mb-1">
-            <li class="breadcrumb-item"><a asp-action="Ngos" class="text-success text-decoration-none">NGOs</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Register</li>
-        </ol>
-    </nav>
-    <h2 class="fw-bold text-dark mb-0">Register Partner NGO</h2>
+<!-- Page Header & Breadcrumb -->
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+        <a asp-action="Ngos" class="text-decoration-none text-muted">NGO Partners</a>
+        <span>/</span>
+        <span class="text-dark fw-semibold">Onboard NGO</span>
+    </div>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Register Partner NGO</h2>
+            <p class="text-muted small mb-0">Onboard an accredited charity organization authorized to run relief operations.</p>
+        </div>
+        <a asp-action="Ngos" class="btn btn-sm btn-saas-secondary">
+            <i class="bi bi-arrow-left"></i> Back to NGOs
+        </a>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-6">
-        <div class="card border-0 shadow-sm rounded-3 p-4 bg-white">
-            <form asp-action="CreateNgo" method="post">
-                @Html.AntiForgeryToken()
-
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
-
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label fw-semibold small text-secondary">Organization Name *</label>
-                    <input asp-for="Name" class="form-control" placeholder="e.g. Edhi Foundation, Saylani Welfare" autofocus />
-                    <span asp-validation-for="Name" class="text-danger small"></span>
+<div class="row g-4">
+    <!-- Left Column: NGO Profile Form -->
+    <div class="col-12 col-lg-7">
+        <div class="saas-card">
+            <div class="saas-card-header">
+                <div class="saas-card-title">
+                    <i class="bi bi-building-add text-success"></i>
+                    <span>Organization Credentials</span>
                 </div>
+                <span class="badge bg-light text-muted border small font-mono">Accreditation</span>
+            </div>
+            <div class="saas-card-body">
+                <form asp-action="CreateNgo" method="post" enctype="multipart/form-data" id="createNgoForm">
+                    @Html.AntiForgeryToken()
 
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label fw-semibold small text-secondary">Overview & Mission *</label>
-                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe the mission, field capabilities, and focus areas..."></textarea>
-                    <span asp-validation-for="Description" class="text-danger small"></span>
-                </div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
 
-                <div class="mb-3">
-                    <label asp-for="Contact" class="form-label fw-semibold small text-secondary">Contact Details & City *</label>
-                    <input asp-for="Contact" class="form-control" placeholder="e.g. Karachi, Pakistan - info@ngo.org - 021-30000000" />
-                    <span asp-validation-for="Contact" class="text-danger small"></span>
-                </div>
+                    <!-- Legal Name -->
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Legal Organization Name <span class="text-danger">*</span></span>
+                            <span class="text-muted fw-normal small">Registered Entity</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-building"></i>
+                            </span>
+                            <input asp-for="Name" id="ngoNameInput" class="form-control border-start-0 ps-0" placeholder="e.g. Edhi Welfare Foundation" autofocus maxlength="150" />
+                        </div>
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
 
-                <div class="mb-4">
-                    <label asp-for="Logo" class="form-label fw-semibold small text-secondary">Logo Filename / URL</label>
-                    <input asp-for="Logo" class="form-control" placeholder="/images/logos/ngo-logo.png" />
-                    <span asp-validation-for="Logo" class="text-danger small"></span>
-                </div>
+                    <!-- Mission & Overview -->
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Field Mission & Core Competencies <span class="text-danger">*</span></span>
+                            <span class="text-muted fw-normal small">Field overview</span>
+                        </label>
+                        <textarea asp-for="Description" id="ngoDescInput" class="form-control" rows="4" placeholder="Detail emergency ambulance logistics, orphanages, free dispensaries, and verified track record..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary-green px-4 fw-semibold">
-                        <i class="bi bi-check-lg me-1"></i>Register NGO
-                    </button>
-                    <a asp-action="Ngos" class="btn btn-outline-secondary px-3">Cancel</a>
+                    <!-- Official Contact & City -->
+                    <div class="mb-3">
+                        <label asp-for="Contact" class="form-label fw-semibold small text-dark">
+                            Official Contact & Location <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-geo-alt-fill text-danger"></i>
+                            </span>
+                            <input asp-for="Contact" id="ngoContactInput" class="form-control border-start-0 ps-0" placeholder="e.g. Karachi, Pakistan • info@edhi.org • +92-21-32413232" maxlength="200" />
+                        </div>
+                        <span asp-validation-for="Contact" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Logo File Browse Zone with Live Thumbnail -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Brand Logo Asset</span>
+                            <span class="text-muted small">Browse file or supply URL</span>
+                        </label>
+
+                        <!-- Hidden Native File Input -->
+                        <input type="file" id="ngoFileInput" name="logoFile" class="d-none" accept="image/*" />
+
+                        <!-- Interactive Browse Upload Box -->
+                        <div class="saas-image-upload-zone" id="ngoDropZone" onclick="document.getElementById('ngoFileInput').click();">
+                            <!-- Selected Image Preview Container -->
+                            <div id="ngoPreviewBox" class="d-none mb-2">
+                                <div class="saas-image-preview-card" onclick="event.stopPropagation();">
+                                    <img id="ngoPreviewImg" src="#" alt="Logo Preview" />
+                                    <button type="button" class="saas-preview-remove-btn" id="removeNgoImgBtn" title="Remove image">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </div>
+                                <div id="ngoFileMeta" class="small text-muted mt-2 font-mono"></div>
+                            </div>
+
+                            <!-- Upload Prompt -->
+                            <div id="ngoUploadPrompt">
+                                <div class="saas-upload-icon">
+                                    <i class="bi bi-cloud-arrow-up"></i>
+                                </div>
+                                <div class="fw-semibold text-dark small mb-1">Click to browse or drop brand logo here</div>
+                                <p class="text-muted small mb-0">PNG, SVG, JPG, WebP supported</p>
+                            </div>
+                        </div>
+
+                        <!-- Fallback URL input -->
+                        <div class="mt-2">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light text-muted"><i class="bi bi-link-45deg"></i></span>
+                                <input asp-for="Logo" id="ngoLogoUrlInput" class="form-control" placeholder="Or enter direct image path / URL (e.g. /images/logos/ngo.png)" />
+                            </div>
+                            <span asp-validation-for="Logo" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Form Action Bar -->
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <a asp-action="Ngos" class="btn btn-saas-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-saas-primary px-4">
+                            <i class="bi bi-shield-check"></i> Complete Registration
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Live Directory Preview & Vetting Notes -->
+    <div class="col-12 col-lg-5">
+        <!-- Live Preview Card -->
+        <div class="saas-card mb-4">
+            <div class="saas-card-header bg-light">
+                <div class="saas-card-title small text-uppercase" style="font-size: 0.78rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-eye-fill text-primary"></i>
+                    <span>Public Directory Card Preview</span>
                 </div>
-            </form>
+                <span class="badge-status badge-status-success">Verified NGO</span>
+            </div>
+            <div class="saas-card-body p-4">
+                <div class="giveaid-card p-4 border bg-white shadow-sm" style="border-radius: 12px;">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div id="previewNgoLogoWrap" class="avatar-circle" style="width: 44px; height: 44px; font-size: 1.1rem; background: linear-gradient(135deg, #6366F1, #4F46E5); overflow:hidden;">
+                            <span id="previewNgoAvatar">E</span>
+                        </div>
+                        <div>
+                            <h5 id="previewNgoName" class="fw-bold text-dark mb-0" style="font-size: 1.05rem;">
+                                Edhi Welfare Foundation
+                            </h5>
+                            <span class="badge bg-light text-primary border small font-mono">
+                                0 Active Programmes
+                            </span>
+                        </div>
+                    </div>
+
+                    <p id="previewNgoDesc" class="text-muted small mb-3" style="min-height: 48px; line-height: 1.5;">
+                        Emergency relief services, free medical dispensaries, orphanages, and humanitarian aid network.
+                    </p>
+
+                    <div class="pt-3 border-top d-flex align-items-center gap-1 text-muted small" id="previewNgoContact">
+                        <i class="bi bi-geo-alt text-danger"></i>
+                        <span>Karachi, Pakistan &bull; info@edhi.org</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vetting Checklist -->
+        <div class="saas-card p-4" style="background: #F8FAFC;">
+            <h6 class="fw-bold text-dark mb-3 small text-uppercase" style="letter-spacing: 0.5px;">
+                <i class="bi bi-patch-check-fill text-success me-1"></i> NGO Accreditation Standards
+            </h6>
+            <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-2">
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2-circle text-success fs-6 flex-shrink-0 mt-0"></i>
+                    <span><strong>Legal Registration:</strong> Must possess valid registration under the Societies / Trusts Act.</span>
+                </li>
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2-circle text-success fs-6 flex-shrink-0 mt-0"></i>
+                    <span><strong>Fund Disbursal:</strong> Donors can optionally direct contributions directly to this NGO.</span>
+                </li>
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2-circle text-success fs-6 flex-shrink-0 mt-0"></i>
+                    <span><strong>Auditing:</strong> Field expenditure and participant rosters must be kept up to date.</span>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+    <script>
+        // Form & Text Binding
+        const nameInput = document.getElementById("ngoNameInput");
+        const descInput = document.getElementById("ngoDescInput");
+        const contactInput = document.getElementById("ngoContactInput");
 
+        const previewName = document.getElementById("previewNgoName");
+        const previewAvatar = document.getElementById("previewNgoAvatar");
+        const previewDesc = document.getElementById("previewNgoDesc");
+        const previewContact = document.getElementById("previewNgoContact");
+        const previewLogoWrap = document.getElementById("previewNgoLogoWrap");
+
+        if (nameInput) {
+            nameInput.addEventListener("input", function() {
+                const val = this.value.trim() || "Edhi Welfare Foundation";
+                previewName.innerText = val;
+                if (!previewLogoWrap.querySelector("img")) {
+                    previewAvatar.innerText = val.charAt(0).toUpperCase();
+                }
+            });
+        }
+
+        if (descInput) {
+            descInput.addEventListener("input", function() {
+                previewDesc.innerText = this.value.trim() || "Emergency relief services, free medical dispensaries, orphanages, and humanitarian aid network.";
+            });
+        }
+
+        if (contactInput) {
+            contactInput.addEventListener("input", function() {
+                const val = this.value.trim() || "Karachi, Pakistan • info@edhi.org";
+                previewContact.innerHTML = `<i class="bi bi-geo-alt text-danger me-1"></i><span>${val}</span>`;
+            });
+        }
+
+        // Image Browse Window & Live Preview Logic
+        const fileInput = document.getElementById("ngoFileInput");
+        const dropZone = document.getElementById("ngoDropZone");
+        const previewBox = document.getElementById("ngoPreviewBox");
+        const previewImg = document.getElementById("ngoPreviewImg");
+        const uploadPrompt = document.getElementById("ngoUploadPrompt");
+        const fileMeta = document.getElementById("ngoFileMeta");
+        const removeBtn = document.getElementById("removeNgoImgBtn");
+        const urlInput = document.getElementById("ngoLogoUrlInput");
+
+        function handleImageSelection(file) {
+            if (!file || !file.type.startsWith("image/")) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewBox.classList.remove("d-none");
+                uploadPrompt.classList.add("d-none");
+                fileMeta.innerText = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+
+                // Update right card preview avatar with selected image
+                previewLogoWrap.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;" />`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        if (fileInput) {
+            fileInput.addEventListener("change", function() {
+                if (this.files && this.files[0]) {
+                    handleImageSelection(this.files[0]);
+                }
+            });
+        }
+
+        // Drag and drop events
+        if (dropZone) {
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.remove('dragover');
+                }, false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files[0]) {
+                    fileInput.files = files;
+                    handleImageSelection(files[0]);
+                }
+            }, false);
+        }
+
+        if (removeBtn) {
+            removeBtn.addEventListener("click", function(e) {
+                e.stopPropagation();
+                fileInput.value = "";
+                previewImg.src = "#";
+                previewBox.classList.add("d-none");
+                uploadPrompt.classList.remove("d-none");
+                const initial = (nameInput.value.trim() || "E").charAt(0).toUpperCase();
+                previewLogoWrap.innerHTML = `<span id="previewNgoAvatar">${initial}</span>`;
+            });
+        }
+
+        if (urlInput) {
+            urlInput.addEventListener("input", function() {
+                const val = this.value.trim();
+                if (val && !fileInput.files.length) {
+                    previewLogoWrap.innerHTML = `<img src="${val}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span>E</span>'" />`;
+                }
+            });
+        }
+    </script>
+}

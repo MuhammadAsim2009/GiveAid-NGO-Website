@@ -1,29 +1,42 @@
 @model IEnumerable<Give_AID.Models.Partners>
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Manage Partners";
+    ViewData["Title"] = "Corporate Partners";
 }
 
-<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h2 class="fw-bold text-dark mb-0">Corporate Partners</h2>
-        <p class="text-muted small mb-0">Manage sponsors, CSR contributors, and strategic allies</p>
+        <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Corporate Partners & Sponsors</h2>
+        <p class="text-muted small mb-0">Manage corporate allies, CSR donors, and institutional welfare partners.</p>
     </div>
-    <a asp-action="CreatePartner" class="btn btn-primary-green btn-sm fw-semibold">
-        <i class="bi bi-plus-circle me-1"></i>Add New Partner
+    <a asp-action="CreatePartner" class="btn btn-saas-primary">
+        <i class="bi bi-plus-lg"></i>
+        <span>Add Partner</span>
     </a>
 </div>
 
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-body p-0">
+<!-- SaaS Table Card -->
+<div class="saas-card">
+    <div class="saas-card-header">
+        <div class="saas-card-title">
+            <i class="bi bi-award-fill text-success"></i>
+            <span>Active Strategic Sponsors</span>
+        </div>
+        <div class="saas-table-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="partnerSearchInput" class="form-control form-control-sm" placeholder="Search partners..." onkeyup="filterPartnerTable()" />
+        </div>
+    </div>
+    <div class="p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light small text-muted">
+            <table class="saas-table align-middle" id="partnerTable">
+                <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Partner Name</th>
-                        <th>Logo Path</th>
-                        <th>Website Link</th>
+                        <th style="width: 60px;">ID</th>
+                        <th>Corporate Entity</th>
+                        <th>Asset Logo Location</th>
+                        <th>Verified Website</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -33,31 +46,46 @@
                         @foreach (var partner in Model)
                         {
                             <tr>
-                                <td>@partner.Id</td>
-                                <td class="fw-bold">@partner.Name</td>
-                                <td class="small text-muted font-monospace">@partner.LogoPath</td>
+                                <td>
+                                    <span class="font-mono text-muted small">#@partner.Id</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-circle" style="background: linear-gradient(135deg, #10B981, #047857);">
+                                            @partner.Name.Substring(0, 1).ToUpper()
+                                        </div>
+                                        <div class="fw-bold text-dark" style="font-size: 0.95rem;">@partner.Name</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-muted border font-mono">
+                                        @(string.IsNullOrEmpty(partner.LogoPath) ? "Default Asset" : partner.LogoPath)
+                                    </span>
+                                </td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(partner.Website))
                                     {
-                                        <a href="@partner.Website" target="_blank" class="small text-decoration-none">
+                                        <a href="@partner.Website" target="_blank" class="fw-semibold text-decoration-none" style="color: #2563EB;">
                                             @partner.Website <i class="bi bi-box-arrow-up-right small"></i>
                                         </a>
                                     }
                                     else
                                     {
-                                        <span class="text-muted small">N/A</span>
+                                        <span class="text-muted small">Not provided</span>
                                     }
                                 </td>
                                 <td class="text-end">
-                                    <a asp-action="EditPartner" asp-route-id="@partner.Id" class="btn btn-sm btn-outline-primary me-1">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form asp-action="DeletePartner" asp-route-id="@partner.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this partner?');">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-inline-flex gap-1">
+                                        <a asp-action="EditPartner" asp-route-id="@partner.Id" class="btn-action-icon btn-action-icon-primary" title="Edit Partner">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="DeletePartner" asp-route-id="@partner.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this partner?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn-action-icon btn-action-icon-danger" title="Delete Partner">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -65,7 +93,10 @@
                     else
                     {
                         <tr>
-                            <td colspan="5" class="text-center py-4 text-muted">No partners registered yet.</td>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 text-muted d-block mb-2"></i>
+                                No corporate sponsors registered yet.
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -74,3 +105,15 @@
     </div>
 </div>
 
+@section Scripts {
+<script>
+    function filterPartnerTable() {
+        const input = document.getElementById("partnerSearchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#partnerTable tbody tr");
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+</script>
+}

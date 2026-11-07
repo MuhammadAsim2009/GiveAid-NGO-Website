@@ -9,11 +9,37 @@ namespace Give_AID.Controllers
     public class AdminController : Controller
     {
         private readonly Give_AIDContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        // Constructor injecting the database context
-        public AdminController(Give_AIDContext context)
+        // Constructor injecting the database context and hosting environment for asset uploads
+        public AdminController(Give_AIDContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
+        }
+
+        // Helper method to safely store uploaded files and return their public web path
+        private async Task<string?> SaveUploadedFileAsync(IFormFile? file, string subFolder = "uploads")
+        {
+            if (file == null || file.Length == 0) return null;
+
+            string webRoot = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            string targetFolder = Path.Combine(webRoot, subFolder);
+            if (!Directory.Exists(targetFolder))
+            {
+                Directory.CreateDirectory(targetFolder);
+            }
+
+            string extension = Path.GetExtension(file.FileName);
+            string uniqueFileName = $"{Guid.NewGuid():N}{extension}";
+            string destinationPath = Path.Combine(targetFolder, uniqueFileName);
+
+            using (var stream = new FileStream(destinationPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return $"/{subFolder}/{uniqueFileName}";
         }
 
         // Helper method to verify that an administrator session is active
@@ -192,9 +218,14 @@ namespace Give_AID.Controllers
         // POST: /Admin/CreateNgo
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateNgo(Ngos ngo)
+        public async Task<IActionResult> CreateNgo(Ngos ngo, IFormFile? logoFile)
         {
             if (!IsAdminLoggedIn()) return RedirectToAction("Login", "Auth");
+
+            if (logoFile != null && logoFile.Length > 0)
+            {
+                ngo.Logo = await SaveUploadedFileAsync(logoFile, "uploads/logos");
+            }
 
             if (ModelState.IsValid)
             {
@@ -220,10 +251,15 @@ namespace Give_AID.Controllers
         // POST: /Admin/EditNgo/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditNgo(int id, Ngos ngo)
+        public async Task<IActionResult> EditNgo(int id, Ngos ngo, IFormFile? logoFile)
         {
             if (!IsAdminLoggedIn()) return RedirectToAction("Login", "Auth");
             if (id != ngo.Id) return NotFound();
+
+            if (logoFile != null && logoFile.Length > 0)
+            {
+                ngo.Logo = await SaveUploadedFileAsync(logoFile, "uploads/logos");
+            }
 
             if (ModelState.IsValid)
             {
@@ -280,9 +316,14 @@ namespace Give_AID.Controllers
         // POST: /Admin/CreatePartner
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreatePartner(Partners partner)
+        public async Task<IActionResult> CreatePartner(Partners partner, IFormFile? logoFile)
         {
             if (!IsAdminLoggedIn()) return RedirectToAction("Login", "Auth");
+
+            if (logoFile != null && logoFile.Length > 0)
+            {
+                partner.LogoPath = await SaveUploadedFileAsync(logoFile, "uploads/partners");
+            }
 
             if (ModelState.IsValid)
             {
@@ -308,10 +349,15 @@ namespace Give_AID.Controllers
         // POST: /Admin/EditPartner/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPartner(int id, Partners partner)
+        public async Task<IActionResult> EditPartner(int id, Partners partner, IFormFile? logoFile)
         {
             if (!IsAdminLoggedIn()) return RedirectToAction("Login", "Auth");
             if (id != partner.Id) return NotFound();
+
+            if (logoFile != null && logoFile.Length > 0)
+            {
+                partner.LogoPath = await SaveUploadedFileAsync(logoFile, "uploads/partners");
+            }
 
             if (ModelState.IsValid)
             {
@@ -448,9 +494,14 @@ namespace Give_AID.Controllers
         // POST: /Admin/CreateGalleryImage
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateGalleryImage(GalleryImages image)
+        public async Task<IActionResult> CreateGalleryImage(GalleryImages image, IFormFile? imageFile)
         {
             if (!IsAdminLoggedIn()) return RedirectToAction("Login", "Auth");
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                image.ImagePath = await SaveUploadedFileAsync(imageFile, "uploads/gallery");
+            }
 
             if (ModelState.IsValid)
             {
@@ -460,7 +511,7 @@ namespace Give_AID.Controllers
             }
             else
             {
-                TempData["ErrorMessage"] = "Failed to add image. Please ensure title and image path are provided.";
+                TempData["ErrorMessage"] = "Failed to add image. Please ensure title and image are provided.";
             }
 
             return RedirectToAction(nameof(Gallery));
@@ -602,6 +653,85 @@ namespace Give_AID.Controllers
             }
 
             return RedirectToAction(nameof(Queries));
+        }
+
+        // ==========================================
+        // PAYMENT CHANNELS & SETTINGS CONFIGURATION
+        // ==========================================
+
+        // GET: /Admin/PaymentSettings
+        public async Task<IActionResult> PaymentSettings()
+        {
+            if (!IsAdminLoggedIn()) return RedirectToAction("Login", "Auth");
+
+            var settings = await _context.PaymentSettings.FirstOrDefaultAsync();
+            if (settings == null)
+            {
+                settings = new PaymentSettings();
+                _context.PaymentSettings.Add(settings);
+                await _context.SaveChangesAsync();
+            }
+
+            return View(settings);
+        }
+
+        // POST: /Admin/PaymentSettings
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PaymentSettings(PaymentSettings model)
+        {
+            if (!IsAdminLoggedIn()) return RedirectToAction("Login", "Auth");
+
+            if (ModelState.IsValid)
+            {
+                var existing = await _context.PaymentSettings.FirstOrDefaultAsync(s => s.Id == model.Id);
+                if (existing != null)
+                {
+                    existing.EasyPaisaNumber = model.EasyPaisaNumber?.Trim() ?? "";
+                    existing.EasyPaisaTitle = model.EasyPaisaTitle?.Trim() ?? "";
+                    existing.JazzCashNumber = model.JazzCashNumber?.Trim() ?? "";
+                    existing.JazzCashTitle = model.JazzCashTitle?.Trim() ?? "";
+                    existing.BankName = model.BankName?.Trim() ?? "";
+                    existing.BankAccountTitle = model.BankAccountTitle?.Trim() ?? "";
+                    existing.BankAccountNumber = model.BankAccountNumber?.Trim() ?? "";
+                    existing.BankIBAN = model.BankIBAN?.Trim() ?? "";
+                    existing.BankBranch = model.BankBranch?.Trim();
+                    existing.UpdatedAt = DateTime.UtcNow;
+
+                    _context.Update(existing);
+                }
+                else
+                {
+                    model.UpdatedAt = DateTime.UtcNow;
+                    _context.PaymentSettings.Add(model);
+                }
+
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Payment channel numbers and bank accounts updated successfully!";
+                return RedirectToAction(nameof(PaymentSettings));
+            }
+
+            return View(model);
+        }
+
+        // POST: /Admin/UpdateDonationStatus
+        // Approves or rejects a manual payment receipt submission
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateDonationStatus(int id, string status)
+        {
+            if (!IsAdminLoggedIn()) return RedirectToAction("Login", "Auth");
+
+            var donation = await _context.Donations.FindAsync(id);
+            if (donation != null)
+            {
+                donation.Status = status;
+                _context.Update(donation);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Donation #DON-{donation.Id:D5} status updated to {status}.";
+            }
+
+            return RedirectToAction(nameof(Donations));
         }
     }
 }

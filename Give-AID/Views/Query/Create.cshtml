@@ -1,79 +1,96 @@
-@* Query/Create — form to submit a new support query *@
 @{
-    ViewData["Title"] = "Submit a Query";
+    ViewData["Title"] = "Submit Support Ticket";
 }
 
 <div class="container py-5">
+    <!-- Breadcrumb & Header -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-lg-8">
+            <div class="d-flex align-items-center gap-2 text-muted small mb-2">
+                <a href="/Query/Index" class="text-decoration-none text-muted">My Inquiries</a>
+                <span>/</span>
+                <span class="text-dark fw-semibold">New Ticket</span>
+            </div>
+            <h2 class="fw-bold mb-1" style="color: var(--primary-green); font-size: 1.6rem;">How Can We Help You?</h2>
+            <p class="text-muted small mb-0">Submit your inquiry directly to our welfare coordinators. We respond within 24 business hours.</p>
+        </div>
+    </div>
+
     <div class="row justify-content-center">
-        <div class="col-lg-7">
-
-            @* ── Card wrapper ────────────────────────────────────── *@
-            <div class="giveaid-card p-4 p-md-5">
-
-                @* ── Form heading ────────────────────────────────── *@
-                <div class="text-center mb-4">
-                    <i class="bi bi-chat-dots" style="font-size:2.5rem; color:#1E8E5A;"></i>
-                    <h3 class="fw-bold mt-2" style="color:#1E8E5A;">Submit a Query</h3>
-                    <p class="text-muted">Our support team usually replies within 24 hours.</p>
-                </div>
-
-                @* ── Error message ───────────────────────────────── *@
+        <div class="col-12 col-lg-8">
+            <div class="giveaid-card p-4 p-md-5 bg-white border">
                 @if (TempData["Error"] != null)
                 {
-                    <div class="alert alert-danger alert-dismissible fade show">
-                        <i class="bi bi-exclamation-circle me-2"></i>@TempData["Error"]
+                    <div class="alert alert-danger alert-dismissible fade show rounded-3 small mb-4" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 }
 
-                @* ── Query form ──────────────────────────────────── *@
-                @* Action posts to QueryController.Create — antiforgery token is required *@
                 <form method="post" action="/Query/Create">
                     @Html.AntiForgeryToken()
 
-                    @* Subject field *@
-                    <div class="mb-3">
-                        <label for="subject" class="form-label fw-semibold">
-                            Subject <span class="text-danger">*</span>
+                    <!-- Subject Field with Icon -->
+                    <div class="mb-4">
+                        <label for="subject" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Subject / Inquiry Topic <span class="text-danger">*</span></span>
+                            <span class="text-muted fw-normal small">Concise summary</span>
                         </label>
-                        <input type="text"
-                               id="subject"
-                               name="subject"
-                               class="form-control"
-                               placeholder="e.g. Question about my donation"
-                               maxlength="200"
-                               required />
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-chat-left-dots-fill"></i>
+                            </span>
+                            <input type="text"
+                                   id="subject"
+                                   name="subject"
+                                   class="form-control border-start-0 ps-0"
+                                   placeholder="e.g. Inquiring regarding my recent donation tax receipt"
+                                   maxlength="200"
+                                   required
+                                   autofocus />
+                        </div>
                     </div>
 
-                    @* Message field *@
+                    <!-- Message Body Field -->
                     <div class="mb-4">
-                        <label for="message" class="form-label fw-semibold">
-                            Message <span class="text-danger">*</span>
+                        <label for="message" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Detailed Description <span class="text-danger">*</span></span>
+                            <span class="text-muted fw-normal small">Max 2,000 chars</span>
                         </label>
                         <textarea id="message"
                                   name="message"
                                   class="form-control"
                                   rows="6"
-                                  placeholder="Describe your question or issue in detail…"
+                                  placeholder="Please provide full details, transaction IDs (if applicable), and any specific questions so our team can resolve it promptly..."
                                   maxlength="2000"
                                   required></textarea>
-                        <div class="form-text">Maximum 2000 characters.</div>
+                        <div class="form-text small text-muted">
+                            <i class="bi bi-shield-lock me-1 text-success"></i> Your inquiry is confidential and accessible only to authorized administrators.
+                        </div>
                     </div>
 
-                    @* Submit + back buttons *@
-                    <div class="d-flex gap-3">
-                        <button type="submit" class="btn btn-primary-green flex-fill">
-                            <i class="bi bi-send me-2"></i>Submit Query
+                    <!-- Quick Guarantee Notice -->
+                    <div class="p-3 rounded-3 mb-4 border d-flex align-items-center gap-3" style="background: #F8FAFC; border-color: #E2E8F0 !important;">
+                        <div class="saas-stat-icon stat-icon-emerald" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div class="small text-muted">
+                            <strong class="text-dark d-block">Guaranteed Response Window</strong>
+                            Our support staff monitors tickets Monday through Saturday. You can check administrator replies anytime under <strong>My Queries</strong>.
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex align-items-center gap-3 pt-3 border-top">
+                        <button type="submit" class="btn btn-primary-green px-4">
+                            <i class="bi bi-send-fill me-1"></i> Submit Support Ticket
                         </button>
-                        <a href="/Query/Index" class="btn btn-outline-secondary flex-fill">
-                            <i class="bi bi-arrow-left me-2"></i>Cancel
+                        <a href="/Query/Index" class="btn btn-outline-secondary">
+                            Cancel
                         </a>
                     </div>
-
                 </form>
-
             </div>
         </div>
     </div>
 </div>
-

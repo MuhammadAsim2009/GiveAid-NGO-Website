@@ -4,27 +4,39 @@
     ViewData["Title"] = "Manage Causes";
 }
 
-<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h2 class="fw-bold text-dark mb-0">Charitable Causes</h2>
-        <p class="text-muted small mb-0">Define welfare sectors that donors can contribute towards</p>
+        <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Charitable Causes</h2>
+        <p class="text-muted small mb-0">Manage philanthropic programs and causes donors can directly fund.</p>
     </div>
-    <a asp-action="CreateCause" class="btn btn-primary-green btn-sm fw-semibold">
-        <i class="bi bi-plus-circle me-1"></i>Add New Cause
+    <a asp-action="CreateCause" class="btn btn-saas-primary">
+        <i class="bi bi-plus-lg"></i>
+        <span>Add New Cause</span>
     </a>
 </div>
 
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-body p-0">
+<!-- SaaS Table Card -->
+<div class="saas-card">
+    <div class="saas-card-header">
+        <div class="saas-card-title">
+            <i class="bi bi-bookmark-heart text-success"></i>
+            <span>Active Welfare Portfolios</span>
+        </div>
+        <div class="saas-table-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="causeSearchInput" class="form-control form-control-sm" placeholder="Search causes..." onkeyup="filterCauseTable()" />
+        </div>
+    </div>
+    <div class="p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light small text-muted">
+            <table class="saas-table align-middle" id="causeTable">
+                <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Cause Name</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>Total Donations</th>
+                        <th style="width: 60px;">ID</th>
+                        <th>Cause Details</th>
+                        <th>Operational Status</th>
+                        <th>Donations Received</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -34,34 +46,40 @@
                         @foreach (var cause in Model)
                         {
                             <tr>
-                                <td>@cause.Id</td>
-                                <td class="fw-bold">@cause.Name</td>
-                                <td class="small text-muted text-truncate" style="max-width: 300px;">@cause.Description</td>
+                                <td>
+                                    <span class="font-mono text-muted small">#@cause.Id</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark" style="font-size: 0.95rem;">@cause.Name</div>
+                                    <div class="text-muted small text-truncate" style="max-width: 420px;">@cause.Description</div>
+                                </td>
                                 <td>
                                     @if (cause.IsActive)
                                     {
-                                        <span class="badge bg-success-subtle text-success">Active</span>
+                                        <span class="badge-status badge-status-success">Active & Funding</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary-subtle text-secondary">Inactive</span>
+                                        <span class="badge-status badge-status-neutral">Paused</span>
                                     }
                                 </td>
                                 <td>
-                                    <span class="badge bg-light text-dark border">
-                                        @(cause.Donations?.Count ?? 0) donations
+                                    <span class="badge bg-light text-dark border px-2 py-1 font-mono">
+                                        <i class="bi bi-cash me-1 text-success"></i>@(cause.Donations?.Count ?? 0) donations
                                     </span>
                                 </td>
                                 <td class="text-end">
-                                    <a asp-action="EditCause" asp-route-id="@cause.Id" class="btn btn-sm btn-outline-primary me-1">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form asp-action="DeleteCause" asp-route-id="@cause.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete or deactivate this cause?');">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-inline-flex gap-1">
+                                        <a asp-action="EditCause" asp-route-id="@cause.Id" class="btn-action-icon btn-action-icon-primary" title="Edit Cause">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="DeleteCause" asp-route-id="@cause.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to deactivate or remove this cause?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn-action-icon btn-action-icon-danger" title="Delete Cause">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -69,7 +87,10 @@
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">No causes registered yet.</td>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 text-muted d-block mb-2"></i>
+                                No charitable causes registered yet.
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -78,3 +99,15 @@
     </div>
 </div>
 
+@section Scripts {
+<script>
+    function filterCauseTable() {
+        const input = document.getElementById("causeSearchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#causeTable tbody tr");
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+</script>
+}

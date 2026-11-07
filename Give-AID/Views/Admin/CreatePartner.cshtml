@@ -4,54 +4,285 @@
     ViewData["Title"] = "Add Corporate Partner";
 }
 
-<div class="pt-3 pb-2 mb-3 border-bottom">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb small mb-1">
-            <li class="breadcrumb-item"><a asp-action="Partners" class="text-success text-decoration-none">Partners</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Add</li>
-        </ol>
-    </nav>
-    <h2 class="fw-bold text-dark mb-0">Add Corporate Partner</h2>
+<!-- Page Header & Breadcrumb -->
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+        <a asp-action="Partners" class="text-decoration-none text-muted">Corporate Sponsors</a>
+        <span>/</span>
+        <span class="text-dark fw-semibold">Add Partner</span>
+    </div>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Register Corporate Sponsor</h2>
+            <p class="text-muted small mb-0">Feature strategic sponsors, CSR donors, and enterprise philanthropy partners.</p>
+        </div>
+        <a asp-action="Partners" class="btn btn-sm btn-saas-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Sponsors
+        </a>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-6">
-        <div class="card border-0 shadow-sm rounded-3 p-4 bg-white">
-            <form asp-action="CreatePartner" method="post">
-                @Html.AntiForgeryToken()
-
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
-
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label fw-semibold small text-secondary">Partner Organization Name *</label>
-                    <input asp-for="Name" class="form-control" placeholder="e.g. Apex Pharma, Global Care" autofocus />
-                    <span asp-validation-for="Name" class="text-danger small"></span>
+<div class="row g-4">
+    <!-- Left Column: Partner Form -->
+    <div class="col-12 col-lg-7">
+        <div class="saas-card">
+            <div class="saas-card-header">
+                <div class="saas-card-title">
+                    <i class="bi bi-award-fill text-success"></i>
+                    <span>Sponsorship Information</span>
                 </div>
+                <span class="badge bg-light text-muted border small font-mono">Corporate CSR</span>
+            </div>
+            <div class="saas-card-body">
+                <form asp-action="CreatePartner" method="post" enctype="multipart/form-data" id="createPartnerForm">
+                    @Html.AntiForgeryToken()
 
-                <div class="mb-3">
-                    <label asp-for="LogoPath" class="form-label fw-semibold small text-secondary">Logo Image Path *</label>
-                    <input asp-for="LogoPath" class="form-control" placeholder="/images/logos/partner-logo.png" />
-                    <span asp-validation-for="LogoPath" class="text-danger small"></span>
-                </div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
 
-                <div class="mb-4">
-                    <label asp-for="Website" class="form-label fw-semibold small text-secondary">Website URL</label>
-                    <input asp-for="Website" class="form-control" placeholder="https://example.com" />
-                    <span asp-validation-for="Website" class="text-danger small"></span>
-                </div>
+                    <!-- Company / Brand Name -->
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Enterprise / Brand Name <span class="text-danger">*</span></span>
+                            <span class="text-muted fw-normal small">Public Name</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-briefcase-fill"></i>
+                            </span>
+                            <input asp-for="Name" id="partnerNameInput" class="form-control border-start-0 ps-0" placeholder="e.g. Acme Corporation, Microsoft Philanthropies" autofocus maxlength="150" />
+                        </div>
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary-green px-4 fw-semibold">
-                        <i class="bi bi-check-lg me-1"></i>Save Partner
-                    </button>
-                    <a asp-action="Partners" class="btn btn-outline-secondary px-3">Cancel</a>
+                    <!-- Logo Asset Browse Window -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Brand Logo Asset <span class="text-danger">*</span></span>
+                            <span class="text-muted small">Browse file or supply URL</span>
+                        </label>
+
+                        <!-- Hidden Native File Input -->
+                        <input type="file" id="partnerFileInput" name="logoFile" class="d-none" accept="image/*" />
+
+                        <!-- Interactive Browse Upload Box -->
+                        <div class="saas-image-upload-zone" id="partnerDropZone" onclick="document.getElementById('partnerFileInput').click();">
+                            <!-- Selected Image Preview Container -->
+                            <div id="partnerPreviewBox" class="d-none mb-2">
+                                <div class="saas-image-preview-card" onclick="event.stopPropagation();">
+                                    <img id="partnerPreviewImg" src="#" alt="Logo Preview" />
+                                    <button type="button" class="saas-preview-remove-btn" id="removePartnerImgBtn" title="Remove logo">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </div>
+                                <div id="partnerFileMeta" class="small text-muted mt-2 font-mono"></div>
+                            </div>
+
+                            <!-- Upload Prompt -->
+                            <div id="partnerUploadPrompt">
+                                <div class="saas-upload-icon">
+                                    <i class="bi bi-cloud-arrow-up"></i>
+                                </div>
+                                <div class="fw-semibold text-dark small mb-1">Click to browse or drop corporate logo here</div>
+                                <p class="text-muted small mb-0">PNG, SVG, JPG, WebP supported</p>
+                            </div>
+                        </div>
+
+                        <!-- Fallback URL input -->
+                        <div class="mt-2">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light text-muted"><i class="bi bi-link-45deg"></i></span>
+                                <input asp-for="LogoPath" id="partnerLogoInput" class="form-control" placeholder="Or enter direct image path / URL (e.g. /images/partners/acme.png)" />
+                            </div>
+                            <span asp-validation-for="LogoPath" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Verified Website Link -->
+                    <div class="mb-4">
+                        <label asp-for="Website" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Corporate Website URL</span>
+                            <span class="text-muted fw-normal small">https://...</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-globe"></i>
+                            </span>
+                            <input asp-for="Website" id="partnerWebInput" class="form-control border-start-0 ps-0" placeholder="https://www.acme.org" maxlength="200" />
+                        </div>
+                        <span asp-validation-for="Website" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Form Action Bar -->
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <a asp-action="Partners" class="btn btn-saas-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-saas-primary px-4">
+                            <i class="bi bi-award-fill"></i> Add Corporate Sponsor
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Live Sponsor Card Preview -->
+    <div class="col-12 col-lg-5">
+        <!-- Live Preview Card -->
+        <div class="saas-card mb-4">
+            <div class="saas-card-header bg-light">
+                <div class="saas-card-title small text-uppercase" style="font-size: 0.78rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-eye-fill text-primary"></i>
+                    <span>Portal Strip Preview</span>
                 </div>
-            </form>
+                <span class="badge-status badge-status-success">Corporate Partner</span>
+            </div>
+            <div class="saas-card-body p-4 text-center">
+                <div class="giveaid-card p-4 border bg-white shadow-sm" style="border-radius: 12px;">
+                    <div class="avatar-circle mx-auto mb-3" id="previewPartnerAvatarWrap" style="width: 56px; height: 56px; font-size: 1.4rem; background: linear-gradient(135deg, #10B981, #047857); overflow:hidden;">
+                        <span id="previewPartnerAvatar">A</span>
+                    </div>
+                    <h5 id="previewPartnerName" class="fw-bold text-dark mb-1" style="font-size: 1.1rem;">
+                        Acme Corporation
+                    </h5>
+                    <div class="text-muted small mb-3">Verified CSR Donor & Sponsor</div>
+                    <div class="pt-3 border-top">
+                        <a id="previewPartnerLink" href="#" class="btn btn-sm btn-outline-success px-3 disabled" style="font-size: 0.8rem;">
+                            Visit Website <i class="bi bi-box-arrow-up-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Partnership Tier Benefits -->
+        <div class="saas-card p-4" style="background: #F8FAFC;">
+            <h6 class="fw-bold text-dark mb-3 small text-uppercase" style="letter-spacing: 0.5px;">
+                <i class="bi bi-gem text-primary me-1"></i> Sponsor Integration Notes
+            </h6>
+            <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-2">
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2-circle text-success fs-6 flex-shrink-0 mt-0"></i>
+                    <span><strong>Home Strip Display:</strong> Active sponsors are featured prominently in the public landing page slider.</span>
+                </li>
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2-circle text-success fs-6 flex-shrink-0 mt-0"></i>
+                    <span><strong>Transparent Links:</strong> Partner links open in a new tab with secure `target="_blank"` rel settings.</span>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+    <script>
+        // Form & Text Binding
+        const nameInput = document.getElementById("partnerNameInput");
+        const webInput = document.getElementById("partnerWebInput");
 
+        const previewName = document.getElementById("previewPartnerName");
+        const previewAvatar = document.getElementById("previewPartnerAvatar");
+        const previewAvatarWrap = document.getElementById("previewPartnerAvatarWrap");
+        const previewLink = document.getElementById("previewPartnerLink");
+
+        if (nameInput) {
+            nameInput.addEventListener("input", function() {
+                const val = this.value.trim() || "Acme Corporation";
+                previewName.innerText = val;
+                if (!previewAvatarWrap.querySelector("img")) {
+                    previewAvatar.innerText = val.charAt(0).toUpperCase();
+                }
+            });
+        }
+
+        if (webInput) {
+            webInput.addEventListener("input", function() {
+                const val = this.value.trim() || "#";
+                previewLink.href = val;
+            });
+        }
+
+        // Image Browse Window & Live Preview Logic
+        const fileInput = document.getElementById("partnerFileInput");
+        const dropZone = document.getElementById("partnerDropZone");
+        const previewBox = document.getElementById("partnerPreviewBox");
+        const previewImg = document.getElementById("partnerPreviewImg");
+        const uploadPrompt = document.getElementById("partnerUploadPrompt");
+        const fileMeta = document.getElementById("partnerFileMeta");
+        const removeBtn = document.getElementById("removePartnerImgBtn");
+        const urlInput = document.getElementById("partnerLogoInput");
+
+        function handlePartnerImage(file) {
+            if (!file || !file.type.startsWith("image/")) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewBox.classList.remove("d-none");
+                uploadPrompt.classList.add("d-none");
+                fileMeta.innerText = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+
+                // Update right preview avatar
+                previewAvatarWrap.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;" />`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        if (fileInput) {
+            fileInput.addEventListener("change", function() {
+                if (this.files && this.files[0]) {
+                    handlePartnerImage(this.files[0]);
+                }
+            });
+        }
+
+        if (dropZone) {
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.remove('dragover');
+                }, false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files[0]) {
+                    fileInput.files = files;
+                    handlePartnerImage(files[0]);
+                }
+            }, false);
+        }
+
+        if (removeBtn) {
+            removeBtn.addEventListener("click", function(e) {
+                e.stopPropagation();
+                fileInput.value = "";
+                previewImg.src = "#";
+                previewBox.classList.add("d-none");
+                uploadPrompt.classList.remove("d-none");
+                const initial = (nameInput.value.trim() || "A").charAt(0).toUpperCase();
+                previewAvatarWrap.innerHTML = `<span id="previewPartnerAvatar">${initial}</span>`;
+            });
+        }
+
+        if (urlInput) {
+            urlInput.addEventListener("input", function() {
+                const val = this.value.trim();
+                if (val && !fileInput.files.length) {
+                    previewAvatarWrap.innerHTML = `<img src="${val}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span>A</span>'" />`;
+                }
+            });
+        }
+    </script>
+}

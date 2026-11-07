@@ -23,6 +23,7 @@ namespace Give_AID
         public DbSet<PageContents> PageContents { get; set; } = default!;
         public DbSet<Queries> Queries { get; set; } = default!;
         public DbSet<Invites> Invites { get; set; } = default!;
+        public DbSet<PaymentSettings> PaymentSettings { get; set; } = default!;
 
         // Configure table mappings, constraints, and relationships
         protected override void OnModelCreating(ModelBuilder modelBuilder)

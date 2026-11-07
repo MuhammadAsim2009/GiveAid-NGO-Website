@@ -1,31 +1,44 @@
 @model IEnumerable<Give_AID.Models.Programmes>
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Manage Programmes";
+    ViewData["Title"] = "Welfare Programmes";
 }
 
-<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h2 class="fw-bold text-dark mb-0">Welfare Programmes</h2>
-        <p class="text-muted small mb-0">Manage charitable drives, medical camps, and education initiatives</p>
+        <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Welfare Programmes & Drives</h2>
+        <p class="text-muted small mb-0">Organize and schedule field initiatives across healthcare, education, and disaster relief.</p>
     </div>
-    <a asp-action="CreateProgramme" class="btn btn-primary-green btn-sm fw-semibold">
-        <i class="bi bi-plus-circle me-1"></i>Add New Programme
+    <a asp-action="CreateProgramme" class="btn btn-saas-primary">
+        <i class="bi bi-plus-lg"></i>
+        <span>Create Programme</span>
     </a>
 </div>
 
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-body p-0">
+<!-- SaaS Table Card -->
+<div class="saas-card">
+    <div class="saas-card-header">
+        <div class="saas-card-title">
+            <i class="bi bi-calendar-event text-success"></i>
+            <span>Active & Upcoming Initiatives</span>
+        </div>
+        <div class="saas-table-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="progSearchInput" class="form-control form-control-sm" placeholder="Search programmes..." onkeyup="filterProgTable()" />
+        </div>
+    </div>
+    <div class="p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light small text-muted">
+            <table class="saas-table align-middle" id="progTable">
+                <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Title</th>
+                        <th style="width: 60px;">ID</th>
+                        <th>Programme Title</th>
                         <th>Category</th>
-                        <th>Host NGO</th>
-                        <th>Event Date</th>
-                        <th>Volunteer Interests</th>
+                        <th>Organizing NGO</th>
+                        <th>Scheduled Date</th>
+                        <th>Community Interests</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -35,28 +48,46 @@
                         @foreach (var prog in Model)
                         {
                             <tr>
-                                <td>@prog.Id</td>
-                                <td class="fw-bold">@prog.Title</td>
                                 <td>
-                                    <span class="badge bg-primary-subtle text-primary">@prog.Category</span>
+                                    <span class="font-mono text-muted small">#@prog.Id</span>
                                 </td>
-                                <td>@(prog.Ngo?.Name ?? "Unassigned")</td>
-                                <td class="small text-muted">@prog.EventDate.ToString("MMM dd, yyyy")</td>
                                 <td>
-                                    <span class="badge bg-light text-dark border">
-                                        @(prog.ProgrammeInterests?.Count ?? 0) volunteers
+                                    <div class="fw-bold text-dark" style="font-size: 0.95rem;">@prog.Title</div>
+                                    <div class="text-muted small text-truncate" style="max-width: 320px;">@prog.Description</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-primary border font-mono">
+                                        @prog.Category
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1 text-dark small fw-semibold">
+                                        <i class="bi bi-building text-muted"></i>
+                                        @(prog.Ngo?.Name ?? "Unassigned")
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="text-muted small">
+                                        <i class="bi bi-calendar3 me-1 text-success"></i>@prog.EventDate.ToString("MMM dd, yyyy")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge-status badge-status-info">
+                                        @(prog.ProgrammeInterests?.Count ?? 0) registrations
                                     </span>
                                 </td>
                                 <td class="text-end">
-                                    <a asp-action="EditProgramme" asp-route-id="@prog.Id" class="btn btn-sm btn-outline-primary me-1">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form asp-action="DeleteProgramme" asp-route-id="@prog.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this programme?');">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-inline-flex gap-1">
+                                        <a asp-action="EditProgramme" asp-route-id="@prog.Id" class="btn-action-icon btn-action-icon-primary" title="Edit Programme">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="DeleteProgramme" asp-route-id="@prog.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this programme?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn-action-icon btn-action-icon-danger" title="Delete Programme">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -64,7 +95,10 @@
                     else
                     {
                         <tr>
-                            <td colspan="7" class="text-center py-4 text-muted">No welfare programmes registered yet.</td>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 text-muted d-block mb-2"></i>
+                                No welfare programmes listed yet.
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -73,3 +107,15 @@
     </div>
 </div>
 
+@section Scripts {
+<script>
+    function filterProgTable() {
+        const input = document.getElementById("progSearchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#progTable tbody tr");
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+</script>
+}

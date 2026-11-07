@@ -26,12 +26,24 @@ namespace Give_AID.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
 
-        // Last 4 digits of the payment card (full card numbers are never stored)
+        // Payment Method: Card, EasyPaisa, JazzCash, BankTransfer
         [Required]
-        [StringLength(4, MinimumLength = 4, ErrorMessage = "CardLast4 must be 4 digits.")]
-        public string CardLast4 { get; set; } = string.Empty;
+        [StringLength(50)]
+        public string PaymentMethod { get; set; } = "Card";
 
-        // Status of the payment (e.g., Completed, Pending, Failed)
+        // Last 4 digits of the payment card (when paying with card)
+        [StringLength(4)]
+        public string? CardLast4 { get; set; }
+
+        // Transaction ID / Reference for manual transfers (EasyPaisa/JazzCash/Bank)
+        [StringLength(100)]
+        public string? TransactionRef { get; set; }
+
+        // Uploaded payment receipt image path (for EasyPaisa/JazzCash/Bank)
+        [StringLength(500)]
+        public string? ReceiptPath { get; set; }
+
+        // Status of the payment (Completed, Pending, Rejected)
         [Required]
         [StringLength(50)]
         public string Status { get; set; } = "Completed";
@@ -49,4 +61,3 @@ namespace Give_AID.Models
         public Ngos? Ngo { get; set; }
     }
 }
-

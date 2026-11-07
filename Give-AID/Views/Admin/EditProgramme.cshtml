@@ -1,79 +1,259 @@
 @model Give_AID.Models.Programmes
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Edit Programme";
+    ViewData["Title"] = $"Edit Programme: {Model.Title}";
 }
 
-<div class="pt-3 pb-2 mb-3 border-bottom">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb small mb-1">
-            <li class="breadcrumb-item"><a asp-action="Programmes" class="text-success text-decoration-none">Programmes</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Edit</li>
-        </ol>
-    </nav>
-    <h2 class="fw-bold text-dark mb-0">Edit Programme</h2>
+<!-- Page Header & Breadcrumb -->
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+        <a asp-action="Programmes" class="text-decoration-none text-muted">Programmes</a>
+        <span>/</span>
+        <span class="text-dark fw-semibold">Edit #@Model.Id</span>
+    </div>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Edit Welfare Programme</h2>
+            <p class="text-muted small mb-0">Update schedule, sector category, hosting partner NGO, or campaign description.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Programmes" class="btn btn-sm btn-saas-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Programmes
+            </a>
+            <a asp-controller="Programme" asp-action="Details" asp-route-id="@Model.Id" target="_blank" class="btn btn-sm btn-outline-success">
+                <i class="bi bi-box-arrow-up-right me-1"></i> Public Event Page
+            </a>
+        </div>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-7">
-        <div class="card border-0 shadow-sm rounded-3 p-4 bg-white">
-            <form asp-action="EditProgramme" asp-route-id="@Model.Id" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" asp-for="Id" />
-
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
-
-                <div class="mb-3">
-                    <label asp-for="Title" class="form-label fw-semibold small text-secondary">Programme Title *</label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger small"></span>
+<div class="row g-4">
+    <!-- Left Column: Programme Form -->
+    <div class="col-12 col-lg-7">
+        <div class="saas-card">
+            <div class="saas-card-header">
+                <div class="saas-card-title">
+                    <i class="bi bi-pencil-square text-success"></i>
+                    <span>Modify Campaign Profile</span>
                 </div>
+                <span class="badge bg-light text-muted border font-mono">ID: #@Model.Id</span>
+            </div>
+            <div class="saas-card-body">
+                <form asp-action="EditProgramme" asp-route-id="@Model.Id" method="post" id="editProgForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label asp-for="Category" class="form-label fw-semibold small text-secondary">Category *</label>
-                        <select asp-for="Category" class="form-select">
-                            <option value="Education">Education</option>
-                            <option value="Health Care">Health Care</option>
-                            <option value="Specially Challenged Children">Specially Challenged Children</option>
-                            <option value="Community Relief">Community Relief</option>
-                            <option value="Women Empowerment">Women Empowerment</option>
-                            <option value="Elderly Care">Elderly Care</option>
-                        </select>
-                        <span asp-validation-for="Category" class="text-danger small"></span>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                    <!-- Title -->
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Programme Title <span class="text-danger">*</span></span>
+                            <span class="text-muted fw-normal small">Max 200 characters</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-flag-fill text-success"></i>
+                            </span>
+                            <input asp-for="Title" id="progTitleInput" class="form-control border-start-0 ps-0" placeholder="e.g. Free Cataract Surgery & Eye Screening Camp" autofocus maxlength="200" />
+                        </div>
+                        <span asp-validation-for="Title" class="text-danger small"></span>
                     </div>
 
-                    <div class="col-md-6">
-                        <label asp-for="NgoId" class="form-label fw-semibold small text-secondary">Host NGO *</label>
-                        <select asp-for="NgoId" class="form-select" asp-items="ViewBag.Ngos"></select>
-                        <span asp-validation-for="NgoId" class="text-danger small"></span>
+                    <!-- Category & Host NGO Dual Selectors -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Category" class="form-label fw-semibold small text-dark">
+                                Sector Category <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-grid-fill"></i>
+                                </span>
+                                <select asp-for="Category" id="progCategorySelect" class="form-select border-start-0 ps-0">
+                                    <option value="Education">Education</option>
+                                    <option value="Health Care">Health Care</option>
+                                    <option value="Specially Challenged Children">Specially Challenged Children</option>
+                                    <option value="Community Relief">Community Relief</option>
+                                    <option value="Women Empowerment">Women Empowerment</option>
+                                    <option value="Elderly Care">Elderly Care</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Category" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NgoId" class="form-label fw-semibold small text-dark">
+                                Host Partner NGO <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-building"></i>
+                                </span>
+                                <select asp-for="NgoId" id="progNgoSelect" class="form-select border-start-0 ps-0" asp-items="ViewBag.Ngos">
+                                    <option value="">-- Select Partner NGO --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="NgoId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Scheduled Event Date -->
+                    <div class="mb-3">
+                        <label asp-for="EventDate" class="form-label fw-semibold small text-dark">
+                            Scheduled Date <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-calendar-event-fill text-primary"></i>
+                            </span>
+                            <input asp-for="EventDate" id="progDateInput" class="form-control border-start-0 ps-0" type="date" value="@Model.EventDate.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <span asp-validation-for="EventDate" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Description Textarea -->
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Field Description & Objectives <span class="text-danger">*</span></span>
+                            <span class="text-muted fw-normal small">Public campaign overview</span>
+                        </label>
+                        <textarea asp-for="Description" id="progDescInput" class="form-control" rows="5" placeholder="Detail the targeted area, registration protocol, volunteer duties, and expected outcomes..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Form Action Bar -->
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <a asp-action="Programmes" class="btn btn-saas-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-saas-primary px-4">
+                            <i class="bi bi-check-circle-fill me-1"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Live Interactive Card Preview -->
+    <div class="col-12 col-lg-5">
+        <!-- Live Public Card Preview -->
+        <div class="saas-card mb-4">
+            <div class="saas-card-header">
+                <div class="saas-card-title">
+                    <i class="bi bi-eye text-primary"></i>
+                    <span>Live Public Card Preview</span>
+                </div>
+                <span class="badge bg-light text-muted border small">Real-time</span>
+            </div>
+            <div class="saas-card-body">
+                <div class="giveaid-card p-4 border shadow-none" style="background: #FAFAFA;">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle font-mono small" id="cardCategoryBadge">
+                            @Model.Category
+                        </span>
+                        <span class="text-muted small font-mono" id="cardDateText">
+                            <i class="bi bi-calendar3 me-1"></i>@Model.EventDate.ToString("MMM dd, yyyy")
+                        </span>
+                    </div>
+
+                    <h5 class="fw-bold text-dark mb-2" id="cardTitleText">
+                        @(string.IsNullOrWhiteSpace(Model.Title) ? "Campaign Title Preview" : Model.Title)
+                    </h5>
+
+                    <div class="small text-muted mb-2 d-flex align-items-center gap-1">
+                        <i class="bi bi-building text-secondary"></i>
+                        <span id="cardNgoText">Host NGO Selected</span>
+                    </div>
+
+                    <p class="text-muted small mb-3" style="line-height: 1.6;" id="cardDescText">
+                        @(string.IsNullOrWhiteSpace(Model.Description) ? "Field details and volunteer expectations will render here..." : Model.Description)
+                    </p>
+
+                    <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-mono small">
+                            <i class="bi bi-people me-1"></i>Volunteers Welcome
+                        </span>
+                        <button type="button" class="btn btn-sm btn-outline-success px-3 py-1 fw-bold" disabled>
+                            Details
+                        </button>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div class="mb-3">
-                    <label asp-for="EventDate" class="form-label fw-semibold small text-secondary">Event Date *</label>
-                    <input asp-for="EventDate" class="form-control" type="date" value="@Model.EventDate.ToString("yyyy-MM-dd")" />
-                    <span asp-validation-for="EventDate" class="text-danger small"></span>
+        <!-- Campaign Guidelines Card -->
+        <div class="saas-card">
+            <div class="saas-card-header">
+                <div class="saas-card-title">
+                    <i class="bi bi-clipboard-check text-success"></i>
+                    <span>Campaign Planning Tips</span>
                 </div>
-
-                <div class="mb-4">
-                    <label asp-for="Description" class="form-label fw-semibold small text-secondary">Description *</label>
-                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                    <span asp-validation-for="Description" class="text-danger small"></span>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary-green px-4 fw-semibold">
-                        <i class="bi bi-check-lg me-1"></i>Update Programme
-                    </button>
-                    <a asp-action="Programmes" class="btn btn-outline-secondary px-3">Cancel</a>
-                </div>
-            </form>
+            </div>
+            <div class="saas-card-body">
+                <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-2">
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check2 text-success fs-6 mt-0"></i>
+                        <span>Title should mention service and geographic region if applicable.</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check2 text-success fs-6 mt-0"></i>
+                        <span>Event date controls chronological sorting across the public directory.</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check2 text-success fs-6 mt-0"></i>
+                        <span>Photos can be appended to this programme via the Gallery manager.</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+    <script>
+        const titleInput = document.getElementById("progTitleInput");
+        const categorySelect = document.getElementById("progCategorySelect");
+        const ngoSelect = document.getElementById("progNgoSelect");
+        const dateInput = document.getElementById("progDateInput");
+        const descInput = document.getElementById("progDescInput");
 
+        const cardTitle = document.getElementById("cardTitleText");
+        const cardCategory = document.getElementById("cardCategoryBadge");
+        const cardNgo = document.getElementById("cardNgoText");
+        const cardDate = document.getElementById("cardDateText");
+        const cardDesc = document.getElementById("cardDescText");
+
+        function updateNgoText() {
+            if (ngoSelect.selectedIndex >= 0 && ngoSelect.value) {
+                cardNgo.textContent = ngoSelect.options[ngoSelect.selectedIndex].text;
+            } else {
+                cardNgo.textContent = "General Humanitarian Network";
+            }
+        }
+        updateNgoText();
+
+        titleInput.addEventListener("input", function() {
+            cardTitle.textContent = this.value.trim() || "Campaign Title Preview";
+        });
+
+        categorySelect.addEventListener("change", function() {
+            cardCategory.textContent = this.value;
+        });
+
+        ngoSelect.addEventListener("change", updateNgoText);
+
+        dateInput.addEventListener("input", function() {
+            if (this.value) {
+                const d = new Date(this.value);
+                cardDate.innerHTML = `<i class="bi bi-calendar3 me-1"></i>${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            }
+        });
+
+        descInput.addEventListener("input", function() {
+            cardDesc.textContent = this.value.trim() || "Field details and volunteer expectations will render here...";
+        });
+    </script>
+}

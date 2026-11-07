@@ -2,119 +2,153 @@
 @model IEnumerable<Give_AID.Models.Invites>
 
 @{
-    ViewData["Title"] = "Invite a Friend";
+    ViewData["Title"] = "Invite Friends - GIVE-AID";
 }
 
 <div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold mb-1" style="color: var(--primary-green); font-size: 1.6rem;">
+                <i class="bi bi-people-fill me-2 text-primary"></i>Invite Friends & Multiply Impact
+            </h2>
+            <p class="text-muted small mb-0">Help grow our welfare community. Send personal invitations directly to colleagues and friends.</p>
+        </div>
+    </div>
+
+    <!-- Alert Notifications -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 small mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2 fs-5 align-middle"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3 small mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-5 align-middle"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Warning"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show rounded-3 small mb-4" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2 fs-5 align-middle"></i>@TempData["Warning"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
     <div class="row g-4">
-
-        @* ── LEFT: invite form ───────────────────────────────────── *@
-        <div class="col-lg-5">
-            <div class="giveaid-card p-4 p-md-5">
-
-                @* Heading *@
-                <div class="text-center mb-4">
-                    <i class="bi bi-envelope-heart" style="font-size:3rem; color:#1E8E5A;"></i>
-                    <h4 class="fw-bold mt-2" style="color:#1E8E5A;">Invite a Friend</h4>
-                    <p class="text-muted">
-                        Spread the word! Invite your friends to join GIVE-AID and make a difference together.
-                    </p>
+        <!-- LEFT: Dispatch Form -->
+        <div class="col-12 col-lg-5">
+            <div class="giveaid-card p-4 p-md-5 bg-white border">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="saas-stat-icon stat-icon-emerald" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                        <i class="bi bi-send-check"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">Send Invitation</h5>
+                        <span class="small text-muted">Direct email delivery</span>
+                    </div>
                 </div>
 
-                @* TempData messages *@
-                @if (TempData["Success"] != null)
-                {
-                    <div class="alert alert-success alert-dismissible fade show">
-                        <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                }
-                @if (TempData["Error"] != null)
-                {
-                    <div class="alert alert-danger alert-dismissible fade show">
-                        <i class="bi bi-exclamation-circle me-2"></i>@TempData["Error"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                }
-                @if (TempData["Warning"] != null)
-                {
-                    <div class="alert alert-warning alert-dismissible fade show">
-                        <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Warning"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                }
-
-                @* Invite form — posts to InviteController.Send *@
                 <form method="post" action="/Invite/Send">
                     @Html.AntiForgeryToken()
 
-                    <div class="mb-3">
-                        <label for="friendEmail" class="form-label fw-semibold">
-                            Friend's Email Address <span class="text-danger">*</span>
+                    <div class="mb-4">
+                        <label for="friendEmail" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Recipient's Email Address <span class="text-danger">*</span></span>
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="bi bi-envelope"></i>
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-envelope-fill"></i>
                             </span>
                             <input type="email"
                                    id="friendEmail"
                                    name="friendEmail"
-                                   class="form-control"
+                                   class="form-control border-start-0 ps-0"
                                    placeholder="friend@example.com"
-                                   required />
+                                   required
+                                   autofocus />
+                        </div>
+                        <div class="form-text small text-muted">
+                            We'll send an exclusive registration invitation link on your behalf.
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary-green w-100">
-                        <i class="bi bi-send me-2"></i>Send Invitation
+                    <button type="submit" class="btn btn-primary-green w-100 py-2 fw-semibold">
+                        <i class="bi bi-send-fill me-2"></i>Dispatch Invitation
                     </button>
                 </form>
 
+                <div class="p-3 mt-4 rounded-3 border" style="background: #F8FAFC;">
+                    <div class="d-flex align-items-center gap-2 text-dark small fw-semibold mb-1">
+                        <i class="bi bi-shield-check text-success"></i> Spam Protection Guarantee
+                    </div>
+                    <p class="small text-muted mb-0" style="line-height: 1.4;">
+                        Your recipient will receive a one-time invitation. Their email address will never be shared or used for spam.
+                    </p>
+                </div>
             </div>
         </div>
 
-        @* ── RIGHT: table of past invites ────────────────────────── *@
-        <div class="col-lg-7">
-
-            <h5 class="fw-bold mb-3" style="color:#1E8E5A;">
-                <i class="bi bi-clock-history me-2"></i>Invitations Sent
-            </h5>
-
-            @if (!Model.Any())
-            {
-                @* No invites sent yet *@
-                <div class="giveaid-card p-5 text-center text-muted">
-                    <i class="bi bi-people" style="font-size:3rem; color:#1E8E5A;"></i>
-                    <p class="mt-3 mb-0">You have not sent any invitations yet. Use the form to invite your first friend!</p>
+        <!-- RIGHT: History Ledger -->
+        <div class="col-12 col-lg-7">
+            <div class="giveaid-card bg-white border overflow-hidden">
+                <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-clock-history me-1 text-primary"></i> Sent Invitations History
+                    </h6>
+                    <span class="badge bg-white border text-dark font-mono">
+                        @(Model?.Count() ?? 0) sent
+                    </span>
                 </div>
-            }
-            else
-            {
-                @* Table of sent invites *@
-                <div class="giveaid-card p-0 overflow-hidden">
+
+                @if (!Model.Any())
+                {
+                    <div class="p-5 text-center text-muted">
+                        <i class="bi bi-people fs-1 text-muted d-block mb-2"></i>
+                        <p class="mb-0 fw-semibold">No invitations sent yet.</p>
+                        <span class="small text-muted">Use the form on the left to invite your first friend!</span>
+                    </div>
+                }
+                else
+                {
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead style="background:#1E8E5A; color:#fff;">
+                        <table class="saas-table align-middle">
+                            <thead>
                                 <tr>
-                                    <th class="px-4 py-3">#</th>
-                                    <th class="px-4 py-3">Friend's Email</th>
-                                    <th class="px-4 py-3">Date Sent</th>
+                                    <th style="width: 50px;">#</th>
+                                    <th>Recipient Email</th>
+                                    <th>Dispatched Date</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @{
-                                    int row = 1;
-                                }
+                                @{ int row = 1; }
                                 @foreach (var invite in Model)
                                 {
                                     <tr>
-                                        <td class="px-4 py-3 text-muted">@row</td>
-                                        <td class="px-4 py-3">
-                                            <i class="bi bi-envelope me-2 text-muted"></i>@invite.FriendEmail
+                                        <td>
+                                            <span class="font-mono text-muted small">@row</span>
                                         </td>
-                                        <td class="px-4 py-3 text-muted">
-                                            @invite.SentAt.ToString("dd MMM yyyy")
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="avatar-circle" style="width: 28px; height: 28px; font-size: 0.75rem; background: linear-gradient(135deg, #3B82F6, #1D4ED8);">
+                                                    @invite.FriendEmail.Substring(0, 1).ToUpper()
+                                                </div>
+                                                <span class="fw-semibold text-dark">@invite.FriendEmail</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted small">
+                                                @invite.SentAt.ToString("MMM dd, yyyy")
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge-status badge-status-success">
+                                                Sent
+                                            </span>
                                         </td>
                                     </tr>
                                     row++;
@@ -122,11 +156,8 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            }
-
+                }
+            </div>
         </div>
-
     </div>
 </div>
-

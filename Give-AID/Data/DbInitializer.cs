@@ -110,6 +110,25 @@ namespace Give_AID.Data
                     context.PageContents.AddRange(initialPages);
                     context.SaveChanges();
                 }
+
+                // Seed initial payment channel settings if none exist
+                if (!context.PaymentSettings.Any())
+                {
+                    context.PaymentSettings.Add(new PaymentSettings
+                    {
+                        EasyPaisaNumber = "0300-1234567",
+                        EasyPaisaTitle = "GIVE-AID Welfare Trust",
+                        JazzCashNumber = "0301-7654321",
+                        JazzCashTitle = "GIVE-AID Welfare Trust",
+                        BankName = "Meezan Bank Limited",
+                        BankAccountTitle = "GIVE-AID Foundation",
+                        BankAccountNumber = "0102-0304050607",
+                        BankIBAN = "PK12MEZN0001020304050607",
+                        BankBranch = "Main Boulevard Branch, Lahore",
+                        UpdatedAt = DateTime.UtcNow
+                    });
+                    context.SaveChanges();
+                }
             }
             catch
             {

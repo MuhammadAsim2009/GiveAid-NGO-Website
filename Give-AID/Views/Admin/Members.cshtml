@@ -4,24 +4,42 @@
     ViewData["Title"] = "Registered Members";
 }
 
-<div class="pt-3 pb-2 mb-3 border-bottom">
-    <h2 class="fw-bold text-dark mb-0">Registered Donors & Members</h2>
-    <p class="text-muted small mb-0">View registered donor profiles, professional details, and roles</p>
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Donor & Member Roster</h2>
+        <p class="text-muted small mb-0">Directory of registered philanthropists, volunteers, and portal administrators.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-white border text-dark px-3 py-2 fw-semibold">
+            <i class="bi bi-people-fill text-primary me-1"></i> Total Users: @(Model?.Count() ?? 0)
+        </span>
+    </div>
 </div>
 
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-body p-0">
+<!-- SaaS Table Card -->
+<div class="saas-card">
+    <div class="saas-card-header">
+        <div class="saas-card-title">
+            <i class="bi bi-person-lines-fill text-primary"></i>
+            <span>Verified User Directory</span>
+        </div>
+        <div class="saas-table-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="memberSearchInput" class="form-control form-control-sm" placeholder="Search members..." onkeyup="filterMemberTable()" />
+        </div>
+    </div>
+    <div class="p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light small text-muted">
+            <table class="saas-table align-middle" id="memberTable">
+                <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Donor Name</th>
-                        <th>Email</th>
+                        <th style="width: 60px;">ID</th>
+                        <th>Member Details</th>
                         <th>Phone</th>
-                        <th>Profession / Organization</th>
-                        <th>Total Contributions</th>
-                        <th>Role</th>
+                        <th>Occupation / Organization</th>
+                        <th>Donations Logged</th>
+                        <th>Access Role</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,26 +48,46 @@
                         @foreach (var user in Model)
                         {
                             <tr>
-                                <td>@user.Id</td>
-                                <td class="fw-bold">@user.Name</td>
-                                <td class="small">@user.Email</td>
-                                <td class="small text-muted">@(user.Phone ?? "-")</td>
-                                <td class="small">
-                                    @(user.Occupation ?? "-")
+                                <td>
+                                    <span class="font-mono text-muted small">#@user.Id</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-circle" style="background: @(user.Role == "Admin" ? "linear-gradient(135deg, #F59E0B, #D97706)" : "linear-gradient(135deg, #3B82F6, #1D4ED8)");">
+                                            @user.Name.Substring(0, 1).ToUpper()
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark" style="font-size: 0.95rem;">@user.Name</div>
+                                            <div class="text-muted small">@user.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="small text-muted font-mono">
+                                        @(string.IsNullOrEmpty(user.Phone) ? "—" : user.Phone)
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="text-dark small fw-semibold">@(user.Occupation ?? "Community Donor")</div>
                                     @if (!string.IsNullOrEmpty(user.Organization))
                                     {
-                                        <span class="text-muted">(@user.Organization)</span>
+                                        <div class="text-muted small" style="font-size: 0.75rem;">@user.Organization</div>
                                     }
                                 </td>
                                 <td>
-                                    <span class="badge bg-success-subtle text-success">
-                                        @(user.Donations?.Count ?? 0) donations
+                                    <span class="badge bg-light text-success border font-mono">
+                                        <i class="bi bi-heart-fill me-1 text-danger"></i>@(user.Donations?.Count ?? 0) contributions
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="badge @(user.Role == "Admin" ? "bg-warning text-dark" : "bg-primary-subtle text-primary")">
-                                        @user.Role
-                                    </span>
+                                    @if (user.Role == "Admin")
+                                    {
+                                        <span class="badge-status badge-status-warning">Super Admin</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-status badge-status-info">Member</span>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -57,7 +95,10 @@
                     else
                     {
                         <tr>
-                            <td colspan="7" class="text-center py-4 text-muted">No members found.</td>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 text-muted d-block mb-2"></i>
+                                No registered users found.
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -66,3 +107,15 @@
     </div>
 </div>
 
+@section Scripts {
+<script>
+    function filterMemberTable() {
+        const input = document.getElementById("memberSearchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#memberTable tbody tr");
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+</script>
+}

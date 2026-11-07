@@ -9,12 +9,12 @@
 
     @* ── Page heading ───────────────────────────────────────────── *@
     <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
+        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div>
                 <h2 class="fw-bold" style="color:#1E8E5A;">
                     <i class="bi bi-clock-history me-2"></i>My Donation History
                 </h2>
-                <p class="text-muted mb-0">Every donation you have made through GIVE-AID.</p>
+                <p class="text-muted mb-0">Every donation and contribution proof you have submitted through GIVE-AID.</p>
             </div>
             <a href="/Donation/Create" class="btn btn-donate-amber">
                 <i class="bi bi-heart-fill me-1"></i> Make a Donation
@@ -23,7 +23,7 @@
     </div>
 
     @* ── Show a friendly message if there are no donations yet ──── *@
-    @if (!Model.Any())
+    @if (Model == null || !Model.Any())
     {
         <div class="text-center py-5">
             <i class="bi bi-emoji-smile" style="font-size:4rem; color:#1E8E5A;"></i>
@@ -36,30 +36,30 @@
     }
     else
     {
-        @* ── Summary strip — total donated ──────────────────────── *@
+        @* ── Summary strip ────────────────────────────────────────── *@
         <div class="row g-3 mb-4">
             <div class="col-md-4">
                 <div class="giveaid-card text-center p-4">
                     <div class="stat-number" style="color:#1E8E5A; font-size:2rem; font-weight:700;">
                         @Model.Count()
                     </div>
-                    <div class="text-muted small">Total Donations</div>
+                    <div class="text-muted small">Total Contributions</div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="giveaid-card text-center p-4">
                     <div class="stat-number" style="color:#1E8E5A; font-size:2rem; font-weight:700;">
-                        $@Model.Sum(d => d.Amount).ToString("N2")
+                        Rs. @Model.Where(d => d.Status == "Completed").Sum(d => d.Amount).ToString("N0")
                     </div>
-                    <div class="text-muted small">Total Contributed</div>
+                    <div class="text-muted small">Completed Impact (PKR)</div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="giveaid-card text-center p-4">
                     <div class="stat-number" style="color:#F59E0B; font-size:2rem; font-weight:700;">
-                        @Model.Count(d => d.Status == "Completed")
+                        @Model.Count(d => d.Status == "Pending")
                     </div>
-                    <div class="text-muted small">Completed Donations</div>
+                    <div class="text-muted small">Under Verification</div>
                 </div>
             </div>
         </div>
@@ -67,64 +67,111 @@
         @* ── Donations table ─────────────────────────────────────── *@
         <div class="giveaid-card p-0 overflow-hidden">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <table class="table table-hover mb-0 align-middle">
                     <thead style="background:#1E8E5A; color:#fff;">
                         <tr>
-                            <th class="px-4 py-3">#</th>
-                            <th class="px-4 py-3">Cause</th>
+                            <th class="px-4 py-3">Receipt #</th>
+                            <th class="px-4 py-3">Cause / NGO</th>
                             <th class="px-4 py-3">Amount</th>
-                            <th class="px-4 py-3">Card (Last 4)</th>
+                            <th class="px-4 py-3">Payment Channel</th>
                             <th class="px-4 py-3">Date</th>
                             <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3 text-center">Receipt</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @{
-                            int rowNum = 1; // row counter for display
-                        }
                         @foreach (var donation in Model)
                         {
                             <tr>
-                                <td class="px-4 py-3 text-muted">@rowNum</td>
-
-                                @* Cause name from navigation property *@
-                                <td class="px-4 py-3 fw-semibold">
-                                    @(donation.Cause?.Name ?? "General Fund")
+                                <td class="px-4 py-3 text-muted font-mono fw-semibold">
+                                    #DON-@donation.Id.ToString("D5")
                                 </td>
 
-                                @* Donation amount formatted as currency *@
-                                <td class="px-4 py-3 fw-bold" style="color:#1E8E5A;">
-                                    $@donation.Amount.ToString("N2")
-                                </td>
-
-                                @* Last 4 digits of card — full number is never stored *@
                                 <td class="px-4 py-3">
-                                    <span class="text-muted">**** **** ****</span>
-                                    <strong>@(donation.CardLast4 ?? "----")</strong>
-                                </td>
-
-                                @* Donation date *@
-                                <td class="px-4 py-3 text-muted">
-                                    @donation.CreatedAt.ToString("dd MMM yyyy")
-                                </td>
-
-                                @* Status badge: green for Completed, yellow for Pending *@
-                                <td class="px-4 py-3">
-                                    @if (donation.Status == "Completed")
+                                    <div class="fw-semibold text-dark">
+                                        @(donation.Cause?.Name ?? "General Fund")
+                                    </div>
+                                    @if (donation.Ngo != null)
                                     {
-                                        <span class="badge bg-success">Completed</span>
+                                        <div class="small text-muted">via @donation.Ngo.Name</div>
                                     }
-                                    else if (donation.Status == "Pending")
+                                </td>
+
+                                <td class="px-4 py-3 fw-bold" style="color:#1E8E5A;">
+                                    Rs. @donation.Amount.ToString("N0")
+                                </td>
+
+                                <td class="px-4 py-3">
+                                    @if (donation.PaymentMethod == "Card")
                                     {
-                                        <span class="badge bg-warning text-dark">Pending</span>
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="bi bi-credit-card me-1 text-primary"></i>•••• @(donation.CardLast4 ?? "----")
+                                        </span>
+                                    }
+                                    else if (donation.PaymentMethod == "EasyPaisa")
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="bi bi-phone me-1"></i>EasyPaisa
+                                        </span>
+                                        @if (!string.IsNullOrEmpty(donation.TransactionRef))
+                                        {
+                                            <div class="small text-muted font-mono" style="font-size:0.75rem;">Ref: @donation.TransactionRef</div>
+                                        }
+                                    }
+                                    else if (donation.PaymentMethod == "JazzCash")
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                            <i class="bi bi-wallet2 me-1"></i>JazzCash
+                                        </span>
+                                        @if (!string.IsNullOrEmpty(donation.TransactionRef))
+                                        {
+                                            <div class="small text-muted font-mono" style="font-size:0.75rem;">Ref: @donation.TransactionRef</div>
+                                        }
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">@donation.Status</span>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                                            <i class="bi bi-bank me-1"></i>Bank Transfer
+                                        </span>
+                                        @if (!string.IsNullOrEmpty(donation.TransactionRef))
+                                        {
+                                            <div class="small text-muted font-mono" style="font-size:0.75rem;">Ref: @donation.TransactionRef</div>
+                                        }
+                                    }
+                                </td>
+
+                                <td class="px-4 py-3 text-muted small">
+                                    @donation.CreatedAt.ToString("dd MMM yyyy, HH:mm")
+                                </td>
+
+                                <td class="px-4 py-3">
+                                    @if (donation.Status == "Completed")
+                                    {
+                                        <span class="badge bg-success">Verified / Completed</span>
+                                    }
+                                    else if (donation.Status == "Pending")
+                                    {
+                                        <span class="badge bg-warning text-dark">Under Verification</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">@donation.Status</span>
+                                    }
+                                </td>
+
+                                <td class="px-4 py-3 text-center">
+                                    @if (!string.IsNullOrEmpty(donation.ReceiptPath))
+                                    {
+                                        <a href="@donation.ReceiptPath" target="_blank" class="btn btn-sm btn-outline-secondary py-1 px-2" title="View Uploaded Receipt">
+                                            <i class="bi bi-file-earmark-image text-primary me-1"></i>View
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">-</span>
                                     }
                                 </td>
                             </tr>
-                            rowNum++;
                         }
                     </tbody>
                 </table>
@@ -140,4 +187,3 @@
     }
 
 </div>
-

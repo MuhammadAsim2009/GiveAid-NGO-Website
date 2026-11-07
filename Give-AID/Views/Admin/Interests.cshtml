@@ -1,26 +1,44 @@
 @model IEnumerable<Give_AID.Models.ProgrammeInterests>
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Programme Volunteer Interests";
+    ViewData["Title"] = "Volunteer Interests";
 }
 
-<div class="pt-3 pb-2 mb-3 border-bottom">
-    <h2 class="fw-bold text-dark mb-0">Programme Volunteer Interests</h2>
-    <p class="text-muted small mb-0">Submissions from donors expressing interest to participate in welfare events</p>
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Volunteer & Participation Interests</h2>
+        <p class="text-muted small mb-0">Roster of registered members wishing to volunteer or participate in field initiatives.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-white border text-dark px-3 py-2 fw-semibold">
+            <i class="bi bi-star-fill text-warning me-1"></i> Total Registrations: @(Model?.Count() ?? 0)
+        </span>
+    </div>
 </div>
 
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-body p-0">
+<!-- SaaS Table Card -->
+<div class="saas-card">
+    <div class="saas-card-header">
+        <div class="saas-card-title">
+            <i class="bi bi-person-heart text-success"></i>
+            <span>Volunteer Registrations</span>
+        </div>
+        <div class="saas-table-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="interestSearchInput" class="form-control form-control-sm" placeholder="Search volunteer..." onkeyup="filterInterestTable()" />
+        </div>
+    </div>
+    <div class="p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light small text-muted">
+            <table class="saas-table align-middle" id="interestTable">
+                <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Member Name</th>
-                        <th>Email / Contact</th>
+                        <th style="width: 60px;">ID</th>
+                        <th>Member Details</th>
                         <th>Programme Title</th>
                         <th>Message / Availability</th>
-                        <th>Registered On</th>
+                        <th>Registration Date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,25 +47,51 @@
                         @foreach (var interest in Model)
                         {
                             <tr>
-                                <td>@interest.Id</td>
-                                <td class="fw-bold">@(interest.User?.Name ?? "Member")</td>
-                                <td class="small">
-                                    @(interest.User?.Email ?? "-")
-                                    @if (!string.IsNullOrEmpty(interest.User?.Phone))
-                                    {
-                                        <br /><span class="text-muted">@interest.User.Phone</span>
-                                    }
+                                <td>
+                                    <span class="font-mono text-muted small">#@interest.Id</span>
                                 </td>
-                                <td class="fw-semibold text-primary">@(interest.Programme?.Title ?? "General Programme")</td>
-                                <td class="small text-muted">@(interest.Message ?? "Interested in volunteering.")</td>
-                                <td class="small text-muted">@interest.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-circle" style="background: linear-gradient(135deg, #10B981, #059669);">
+                                            @((interest.User?.Name ?? "M").Substring(0, 1).ToUpper())
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark" style="font-size: 0.95rem;">@(interest.User?.Name ?? "Member")</div>
+                                            <div class="text-muted small">
+                                                @(interest.User?.Email ?? "No email")
+                                                @if (!string.IsNullOrEmpty(interest.User?.Phone))
+                                                {
+                                                    <span>&bull; @interest.User.Phone</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold text-dark" style="font-size: 0.9rem;">
+                                        <i class="bi bi-calendar-event me-1 text-primary"></i>@(interest.Programme?.Title ?? "General Programme")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="text-muted small" style="max-width: 320px;">
+                                        @(string.IsNullOrEmpty(interest.Message) ? "Interested in volunteering." : interest.Message)
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="text-muted small">
+                                        @interest.CreatedAt.ToString("MMM dd, yyyy")
+                                    </span>
+                                </td>
                             </tr>
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">No volunteer expressions of interest submitted yet.</td>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 text-muted d-block mb-2"></i>
+                                No volunteer expressions of interest submitted yet.
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -56,3 +100,15 @@
     </div>
 </div>
 
+@section Scripts {
+<script>
+    function filterInterestTable() {
+        const input = document.getElementById("interestSearchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#interestTable tbody tr");
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+</script>
+}

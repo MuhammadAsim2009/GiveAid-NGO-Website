@@ -1,69 +1,123 @@
 @model Give_AID.Models.Users
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = $"Edit User: {Model.Name}";
 }
 
-<h1>Edit</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <!-- Breadcrumbs -->
+            <div class="d-flex align-items-center gap-2 text-muted small mb-3">
+                <a asp-action="Index" class="text-decoration-none text-muted">Users Directory</a>
+                <span>/</span>
+                <span class="text-dark fw-semibold">Edit Member Profile</span>
+            </div>
 
-<h4>Users</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+            <div class="giveaid-card p-4 p-md-5 bg-white border">
+                <div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom flex-wrap gap-2">
+                    <div>
+                        <h3 class="fw-bold mb-1" style="color: var(--primary-green); font-size: 1.4rem;">
+                            <i class="bi bi-person-gear me-2"></i>Edit User Account
+                        </h3>
+                        <p class="text-muted small mb-0">Update contact credentials, membership role, and profile particulars.</p>
+                    </div>
+                    <span class="badge @(Model.Role == "Admin" ? "bg-danger" : "bg-primary") px-3 py-2 font-mono">
+                        @Model.Role Account
+                    </span>
+                </div>
+
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="Password" />
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Name" class="form-label fw-semibold small text-dark">Full Name <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                <input asp-for="Name" class="form-control border-start-0 ps-0" placeholder="John Doe" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-semibold small text-dark">Email Address <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" class="form-control border-start-0 ps-0" placeholder="user@example.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label fw-semibold small text-dark">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="Phone" class="form-control border-start-0 ps-0" placeholder="0300-1234567" />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Role" class="form-label fw-semibold small text-dark">System Role <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-lock"></i></span>
+                                <select asp-for="Role" class="form-select border-start-0 ps-0">
+                                    <option value="User">Standard User / Donor</option>
+                                    <option value="Admin">Administrator</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Role" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label fw-semibold small text-dark">Postal Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-geo-alt"></i></span>
+                            <input asp-for="Address" class="form-control border-start-0 ps-0" placeholder="Street Address, City, Country" />
+                        </div>
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="Occupation" class="form-label fw-semibold small text-dark">Occupation</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-briefcase"></i></span>
+                                <input asp-for="Occupation" class="form-control border-start-0 ps-0" placeholder="e.g. Software Engineer, Doctor" />
+                            </div>
+                            <span asp-validation-for="Occupation" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Organization" class="form-label fw-semibold small text-dark">Organization / Institute</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-building"></i></span>
+                                <input asp-for="Organization" class="form-control border-start-0 ps-0" placeholder="e.g. Tech Corp, Hospital" />
+                            </div>
+                            <span asp-validation-for="Organization" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary px-3">
+                            <i class="bi bi-arrow-left me-1"></i> Back to Directory
+                        </a>
+                        <button type="submit" class="btn btn-donate-amber px-4 fw-bold">
+                            <i class="bi bi-check-circle-fill me-1"></i> Save User Profile
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Role" class="control-label"></label>
-                <input asp-for="Role" class="form-control" />
-                <span asp-validation-for="Role" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Occupation" class="control-label"></label>
-                <input asp-for="Occupation" class="form-control" />
-                <span asp-validation-for="Occupation" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Organization" class="control-label"></label>
-                <input asp-for="Organization" class="form-control" />
-                <span asp-validation-for="Organization" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
 }

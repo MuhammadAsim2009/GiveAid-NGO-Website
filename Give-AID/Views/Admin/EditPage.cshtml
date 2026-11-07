@@ -1,59 +1,178 @@
 @model Give_AID.Models.PageContents
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = $"Edit {Model.Title}";
+    ViewData["Title"] = $"Edit Page: {Model.Title}";
 }
 
-<div class="pt-3 pb-2 mb-3 border-bottom">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb small mb-1">
-            <li class="breadcrumb-item"><a asp-action="Pages" class="text-success text-decoration-none">Pages</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Edit</li>
-        </ol>
-    </nav>
-    <h2 class="fw-bold text-dark mb-0">Edit Page: @Model.Title</h2>
+<!-- Page Header & Breadcrumb -->
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+        <a asp-action="Pages" class="text-decoration-none text-muted">CMS Pages</a>
+        <span>/</span>
+        <span class="text-dark fw-semibold">Edit Content</span>
+    </div>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Edit Article: @Model.Title</h2>
+            <p class="text-muted small mb-0">Modify information text, guidance, or public documentation on the portal.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Pages" class="btn btn-sm btn-saas-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Pages
+            </a>
+            <a asp-controller="Home" asp-action="Page" asp-route-slug="@Model.Slug" target="_blank" class="btn btn-sm btn-outline-success">
+                <i class="bi bi-box-arrow-up-right me-1"></i> Public Page
+            </a>
+        </div>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-3 p-4 bg-white">
-            <form asp-action="EditPage" asp-route-id="@Model.Id" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="Slug" />
-
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
-
-                <div class="mb-3">
-                    <label asp-for="Title" class="form-label fw-semibold small text-secondary">Display Title *</label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger small"></span>
+<div class="row g-4">
+    <!-- Left Column: Content Editor -->
+    <div class="col-12 col-lg-7">
+        <div class="saas-card">
+            <div class="saas-card-header">
+                <div class="saas-card-title">
+                    <i class="bi bi-file-earmark-diff text-primary"></i>
+                    <span>Content Editor</span>
                 </div>
+                <span class="badge bg-light text-muted border font-mono">
+                    Slug: /@Model.Slug
+                </span>
+            </div>
+            <div class="saas-card-body">
+                <form asp-action="EditPage" asp-route-id="@Model.Id" method="post" id="editPageForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="Slug" />
 
-                <div class="mb-3">
-                    <label class="form-label fw-semibold small text-secondary">Slug Identifier</label>
-                    <input class="form-control font-monospace bg-light" value="@Model.Slug" readonly />
-                    <small class="text-muted">Slug is fixed for system routing.</small>
-                </div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
 
-                <div class="mb-4">
-                    <label asp-for="Body" class="form-label fw-semibold small text-secondary">Page Content (Body) *</label>
-                    <textarea asp-for="Body" class="form-control" rows="10"></textarea>
-                    <span asp-validation-for="Body" class="text-danger small"></span>
-                </div>
+                    <!-- Page Title -->
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Page Heading / Title <span class="text-danger">*</span></span>
+                            <span class="text-muted fw-normal small">H1 Display Heading</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-fonts"></i>
+                            </span>
+                            <input asp-for="Title" id="pageTitleInput" class="form-control border-start-0 ps-0" placeholder="e.g. What We Do" autofocus />
+                        </div>
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary-green px-4 fw-semibold">
-                        <i class="bi bi-check-lg me-1"></i>Save Changes
-                    </button>
-                    <a asp-action="Pages" class="btn btn-outline-secondary px-3">Cancel</a>
+                    <!-- Body Content -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label asp-for="Body" class="form-label fw-semibold small text-dark mb-0">
+                                Page Body Content <span class="text-danger">*</span>
+                            </label>
+                            <div class="small text-muted font-mono" id="contentCounters" style="font-size: 0.75rem;">
+                                <span id="wordCount">0</span> words • <span id="charCount">0</span> chars
+                            </div>
+                        </div>
+                        <textarea asp-for="Body" id="pageBodyInput" class="form-control font-mono" rows="12" style="font-size: 0.9rem; line-height: 1.7;"></textarea>
+                        <div class="form-text small text-muted mt-1">
+                            Supports multiline formatted paragraphs, bullet points, and explanatory text.
+                        </div>
+                        <span asp-validation-for="Body" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Form Action Bar -->
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <a asp-action="Pages" class="btn btn-saas-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-saas-primary px-4">
+                            <i class="bi bi-check-circle-fill me-1"></i> Save Page Content
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Live Reader Preview & Stats -->
+    <div class="col-12 col-lg-5">
+        <!-- Live Reader Preview -->
+        <div class="saas-card mb-4">
+            <div class="saas-card-header">
+                <div class="saas-card-title">
+                    <i class="bi bi-eye text-primary"></i>
+                    <span>Live Public Reader Preview</span>
                 </div>
-            </form>
+                <span class="badge bg-light text-muted border small font-mono" id="readTimeBadge">1 min read</span>
+            </div>
+            <div class="saas-card-body">
+                <div class="giveaid-card p-4 border shadow-none" style="background: #FAFAFA;">
+                    <div class="small text-muted text-uppercase fw-bold mb-1" style="letter-spacing: 0.5px; font-size: 0.75rem;">
+                        GIVE-AID Institutional Guide
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3" id="previewTitle" style="color: var(--primary-green) !important;">
+                        @(string.IsNullOrWhiteSpace(Model.Title) ? "Page Heading" : Model.Title)
+                    </h4>
+                    <div class="text-muted small" id="previewBody" style="line-height: 1.8; white-space: pre-wrap;">@(string.IsNullOrWhiteSpace(Model.Body) ? "Article content will preview here in real-time..." : Model.Body)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Editorial Standards Card -->
+        <div class="saas-card">
+            <div class="saas-card-header">
+                <div class="saas-card-title">
+                    <i class="bi bi-journal-text text-success"></i>
+                    <span>Editorial Standards</span>
+                </div>
+            </div>
+            <div class="saas-card-body">
+                <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-2">
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check2 text-success fs-6 mt-0"></i>
+                        <span>Keep paragraphs concise (2-4 sentences) for optimal readability.</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check2 text-success fs-6 mt-0"></i>
+                        <span>Changes are published instantly on the navigation footer links.</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check2 text-success fs-6 mt-0"></i>
+                        <span>Slugs are permanent system identifiers and cannot be altered.</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+    <script>
+        const titleInput = document.getElementById("pageTitleInput");
+        const bodyInput = document.getElementById("pageBodyInput");
+        const previewTitle = document.getElementById("previewTitle");
+        const previewBody = document.getElementById("previewBody");
+        const wordCount = document.getElementById("wordCount");
+        const charCount = document.getElementById("charCount");
+        const readTimeBadge = document.getElementById("readTimeBadge");
 
+        function updateMetrics() {
+            const text = bodyInput.value.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            const chars = text.length;
+            const readMinutes = Math.max(1, Math.ceil(words / 200));
+
+            wordCount.textContent = words;
+            charCount.textContent = chars;
+            readTimeBadge.textContent = `${readMinutes} min read`;
+
+            previewTitle.textContent = titleInput.value.trim() || "Page Heading";
+            previewBody.textContent = text || "Article content will preview here in real-time...";
+        }
+
+        titleInput.addEventListener("input", updateMetrics);
+        bodyInput.addEventListener("input", updateMetrics);
+        updateMetrics();
+    </script>
+}

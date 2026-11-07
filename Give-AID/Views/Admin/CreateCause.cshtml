@@ -4,53 +4,191 @@
     ViewData["Title"] = "Create Cause";
 }
 
-<div class="pt-3 pb-2 mb-3 border-bottom">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb small mb-1">
-            <li class="breadcrumb-item"><a asp-action="Causes" class="text-success text-decoration-none">Causes</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Create</li>
-        </ol>
-    </nav>
-    <h2 class="fw-bold text-dark mb-0">Add New Cause</h2>
+<!-- Page Header & Breadcrumb -->
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+        <a asp-action="Causes" class="text-decoration-none text-muted">Causes</a>
+        <span>/</span>
+        <span class="text-dark fw-semibold">New Cause</span>
+    </div>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Add Charitable Cause</h2>
+            <p class="text-muted small mb-0">Define a high-impact welfare portfolio for direct public donations.</p>
+        </div>
+        <a asp-action="Causes" class="btn btn-sm btn-saas-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Causes
+        </a>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-6">
-        <div class="card border-0 shadow-sm rounded-3 p-4 bg-white">
-            <form asp-action="CreateCause" method="post">
-                @Html.AntiForgeryToken()
-
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
-
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label fw-semibold small text-secondary">Cause Name *</label>
-                    <input asp-for="Name" class="form-control" placeholder="e.g. Children Nutrition Drive" autofocus />
-                    <span asp-validation-for="Name" class="text-danger small"></span>
+<div class="row g-4">
+    <!-- Left Column: Primary Form -->
+    <div class="col-12 col-lg-7">
+        <div class="saas-card">
+            <div class="saas-card-header">
+                <div class="saas-card-title">
+                    <i class="bi bi-bookmark-plus text-success"></i>
+                    <span>Cause Specifications</span>
                 </div>
+                <span class="badge bg-light text-muted border small font-mono">Step 1 of 1</span>
+            </div>
+            <div class="saas-card-body">
+                <form asp-action="CreateCause" method="post" id="createCauseForm">
+                    @Html.AntiForgeryToken()
 
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label fw-semibold small text-secondary">Description *</label>
-                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Explain the impact and goals of this cause..."></textarea>
-                    <span asp-validation-for="Description" class="text-danger small"></span>
-                </div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
 
-                <div class="form-check form-switch mb-4">
-                    <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" checked />
-                    <label asp-for="IsActive" class="form-check-label fw-semibold small text-secondary">Accepting Donations Immediately</label>
-                </div>
+                    <!-- Cause Name Input -->
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Cause Title <span class="text-danger">*</span></span>
+                            <span class="text-muted fw-normal small">Max 100 characters</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-tag-fill"></i>
+                            </span>
+                            <input asp-for="Name" id="causeNameInput" class="form-control border-start-0 ps-0" placeholder="e.g. Children Nutrition & Clean Water" autofocus maxlength="100" />
+                        </div>
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary-green px-4 fw-semibold">
-                        <i class="bi bi-check-lg me-1"></i>Save Cause
-                    </button>
-                    <a asp-action="Causes" class="btn btn-outline-secondary px-3">Cancel</a>
+                    <!-- Description Input -->
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                            <span>Detailed Mission & Impact <span class="text-danger">*</span></span>
+                            <span class="text-muted fw-normal small">Clear & compelling</span>
+                        </label>
+                        <textarea asp-for="Description" id="causeDescInput" class="form-control" rows="5" placeholder="Detail the specific challenge, community beneficiaries, how funds are allocated, and expected milestones..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Visibility Toggle Switch Card -->
+                    <div class="p-3 rounded-3 mb-4 border" style="background: #F8FAFC; border-color: #E2E8F0 !important;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <label asp-for="IsActive" class="form-check-label fw-bold text-dark small d-block mb-1">
+                                    <i class="bi bi-broadcast text-success me-1"></i> Accept Public Donations Immediately
+                                </label>
+                                <span class="small text-muted d-block">
+                                    When enabled, this cause will feature on the public portal hero strip and checkout.
+                                </span>
+                            </div>
+                            <div class="form-check form-switch fs-5 mb-0 ms-3">
+                                <input asp-for="IsActive" id="causeActiveSwitch" class="form-check-input" type="checkbox" role="switch" checked />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Action Bar -->
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <a asp-action="Causes" class="btn btn-saas-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-saas-primary px-4">
+                            <i class="bi bi-check-circle-fill"></i> Save & Publish Cause
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Live Interactive Preview & Best Practices -->
+    <div class="col-12 col-lg-5">
+        <!-- Live Public Preview Card -->
+        <div class="saas-card mb-4">
+            <div class="saas-card-header bg-light">
+                <div class="saas-card-title small text-uppercase" style="font-size: 0.78rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-eye-fill text-primary"></i>
+                    <span>Live Public Card Preview</span>
                 </div>
-            </form>
+                <span id="previewStatusBadge" class="badge-status badge-status-success">Active</span>
+            </div>
+            <div class="saas-card-body p-4">
+                <div class="giveaid-card p-4 border bg-white shadow-sm" style="border-radius: 12px;">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="saas-stat-icon stat-icon-emerald" style="width: 38px; height: 38px; font-size: 1.1rem;">
+                            <i class="bi bi-heart-pulse-fill"></i>
+                        </div>
+                        <div>
+                            <span class="badge bg-light text-success border small fw-semibold">Welfare Cause</span>
+                        </div>
+                    </div>
+                    <h5 id="previewCauseName" class="fw-bold text-dark mb-2" style="font-size: 1.1rem;">
+                        Children Nutrition & Clean Water
+                    </h5>
+                    <p id="previewCauseDesc" class="text-muted small mb-3" style="min-height: 48px; line-height: 1.5;">
+                        Provide fortified meals, clean drinking water, and nutritional therapy to impoverished children.
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <span class="text-muted small font-mono">0 Donations</span>
+                        <span class="btn btn-sm btn-donate-amber py-1 px-3 disabled" style="font-size: 0.8rem;">
+                            <i class="bi bi-heart-fill me-1"></i> Donate Now
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Publishing Best Practices Checklist -->
+        <div class="saas-card p-4" style="background: #F8FAFC;">
+            <h6 class="fw-bold text-dark mb-3 small text-uppercase" style="letter-spacing: 0.5px;">
+                <i class="bi bi-lightbulb-fill text-warning me-1"></i> Cause Creation Guidelines
+            </h6>
+            <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-2">
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2-circle text-success fs-6 flex-shrink-0 mt-0"></i>
+                    <span><strong>Specific Title:</strong> Keep title under 50 characters for clean rendering on mobile devices.</span>
+                </li>
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2-circle text-success fs-6 flex-shrink-0 mt-0"></i>
+                    <span><strong>Outcome Driven:</strong> State measurable impacts (e.g., meals delivered, families sheltered).</span>
+                </li>
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2-circle text-success fs-6 flex-shrink-0 mt-0"></i>
+                    <span><strong>Financial Integrity:</strong> Donations directed to this cause will be audited in the transaction ledger.</span>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+    <script>
+        // Live Preview Binding
+        const nameInput = document.getElementById("causeNameInput");
+        const descInput = document.getElementById("causeDescInput");
+        const activeSwitch = document.getElementById("causeActiveSwitch");
 
+        const previewName = document.getElementById("previewCauseName");
+        const previewDesc = document.getElementById("previewCauseDesc");
+        const previewBadge = document.getElementById("previewStatusBadge");
+
+        if (nameInput) {
+            nameInput.addEventListener("input", function() {
+                previewName.innerText = this.value.trim() || "Children Nutrition & Clean Water";
+            });
+        }
+
+        if (descInput) {
+            descInput.addEventListener("input", function() {
+                previewDesc.innerText = this.value.trim() || "Provide fortified meals, clean drinking water, and nutritional therapy to impoverished children.";
+            });
+        }
+
+        if (activeSwitch) {
+            activeSwitch.addEventListener("change", function() {
+                if (this.checked) {
+                    previewBadge.className = "badge-status badge-status-success";
+                    previewBadge.innerText = "Active";
+                } else {
+                    previewBadge.className = "badge-status badge-status-neutral";
+                    previewBadge.innerText = "Paused";
+                }
+            });
+        }
+    </script>
+}
