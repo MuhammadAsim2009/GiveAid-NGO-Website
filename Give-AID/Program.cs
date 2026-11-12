@@ -20,6 +20,9 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Configure Email Service for transactional SaaS emails
+builder.Services.AddScoped<Give_AID.Services.IEmailService, Give_AID.Services.EmailService>();
+
 // Add MVC controllers and views
 builder.Services.AddControllersWithViews();
 

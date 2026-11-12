@@ -1,92 +1,137 @@
 @model Give_AID.Models.RegisterViewModel
 @{
-    ViewData["Title"] = "Register - GIVE-AID";
+    ViewData["Title"] = "Create Account - GIVE-AID";
 }
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-header bg-white text-center border-0 pt-4 pb-2">
-                    <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2 mb-2">Join Our Mission</span>
-                    <h3 class="fw-bold mb-1" style="color: #1E8E5A;">Create Your Donor Account</h3>
-                    <p class="text-muted small">Register to support noble causes, sponsor welfare programmes, and invite friends</p>
-                </div>
-                <div class="card-body p-4 pt-2">
-                    <form asp-action="Register" method="post">
-                        @Html.AntiForgeryToken()
-
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
-
-                        <h6 class="fw-bold text-uppercase small text-muted border-bottom pb-2 mb-3">1. Personal Information</h6>
-                        
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="Name" class="form-label fw-semibold small text-secondary">Full Name *</label>
-                                <input asp-for="Name" class="form-control" placeholder="John Doe" autofocus />
-                                <span asp-validation-for="Name" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Email" class="form-label fw-semibold small text-secondary">Email Address *</label>
-                                <input asp-for="Email" class="form-control" placeholder="john@example.com" />
-                                <span asp-validation-for="Email" class="text-danger small"></span>
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="Password" class="form-label fw-semibold small text-secondary">Password *</label>
-                                <input asp-for="Password" class="form-control" placeholder="At least 6 characters" />
-                                <span asp-validation-for="Password" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="ConfirmPassword" class="form-label fw-semibold small text-secondary">Confirm Password *</label>
-                                <input asp-for="ConfirmPassword" class="form-control" placeholder="Repeat your password" />
-                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <label asp-for="Phone" class="form-label fw-semibold small text-secondary">Phone Number</label>
-                                <input asp-for="Phone" class="form-control" placeholder="+92 300 1234567" />
-                                <span asp-validation-for="Phone" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Address" class="form-label fw-semibold small text-secondary">Residential Address</label>
-                                <input asp-for="Address" class="form-control" placeholder="Street, City, Country" />
-                                <span asp-validation-for="Address" class="text-danger small"></span>
-                            </div>
-                        </div>
-
-                        <h6 class="fw-bold text-uppercase small text-muted border-bottom pb-2 mb-3">2. Professional Information</h6>
-
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <label asp-for="Occupation" class="form-label fw-semibold small text-secondary">Occupation / Profession</label>
-                                <input asp-for="Occupation" class="form-control" placeholder="e.g. Software Engineer, Doctor, Teacher" />
-                                <span asp-validation-for="Occupation" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Organization" class="form-label fw-semibold small text-secondary">Company / Organization</label>
-                                <input asp-for="Organization" class="form-control" placeholder="e.g. TechCorp, Independent" />
-                                <span asp-validation-for="Organization" class="text-danger small"></span>
-                            </div>
-                        </div>
-
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn text-white fw-semibold py-2" style="background-color: #1E8E5A;">
-                                Complete Registration
-                            </button>
-                        </div>
-                    </form>
-
-                    <div class="text-center mt-4 pt-3 border-top">
-                        <p class="text-muted small mb-0">
-                            Already registered? 
-                            <a asp-action="Login" class="fw-semibold text-decoration-none" style="color: #1E8E5A;">Sign In here</a>
-                        </p>
+        <div class="col-12 col-lg-8">
+            <!-- SaaS Registration Card -->
+            <div class="giveaid-card p-4 p-md-5 bg-white border shadow-sm">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center text-white rounded-3 shadow-sm mb-3" style="width: 48px; height: 48px; background: linear-gradient(135deg, #10B981, #047857);">
+                        <i class="bi bi-person-plus-fill fs-4"></i>
                     </div>
+                    <h3 class="fw-bold text-dark mb-1" style="letter-spacing: -0.5px;">Join the GIVE-AID Community</h3>
+                    <p class="text-muted small mb-0">Create your transparent donor account to direct funding, sponsor campaigns, and track verified impact.</p>
+                </div>
+
+                <form asp-action="Register" method="post" id="registerForm">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small rounded-3" role="alert"></div>
+
+                    <!-- Section 1: Core Credentials -->
+                    <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                        <span class="badge bg-success rounded-circle px-2 py-1 font-mono">1</span>
+                        <h6 class="fw-bold text-dark mb-0">Account & Identity</h6>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Name" class="form-label fw-semibold small text-dark">Full Legal Name <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                <input asp-for="Name" class="form-control border-start-0 ps-0" placeholder="e.g. Sarah Jenkins" autofocus />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-semibold small text-dark">Email Address <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" class="form-control border-start-0 ps-0" placeholder="sarah@example.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="Password" class="form-label fw-semibold small text-dark">Password <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-key"></i></span>
+                                <input asp-for="Password" type="password" class="form-control border-start-0 ps-0" placeholder="Min. 6 characters" />
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold small text-dark">Confirm Password <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-check2-circle"></i></span>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control border-start-0 ps-0" placeholder="Repeat password" />
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Contact & Demographics -->
+                    <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                        <span class="badge bg-success rounded-circle px-2 py-1 font-mono">2</span>
+                        <h6 class="fw-bold text-dark mb-0">Contact & Background</h6>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label fw-semibold small text-dark">Mobile / Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="Phone" class="form-control border-start-0 ps-0" placeholder="+92 300 1234567" />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Address" class="form-label fw-semibold small text-dark">City & Country</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-geo-alt"></i></span>
+                                <input asp-for="Address" class="form-control border-start-0 ps-0" placeholder="e.g. Lahore, Pakistan" />
+                            </div>
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="Occupation" class="form-label fw-semibold small text-dark">Profession / Sector</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-briefcase"></i></span>
+                                <input asp-for="Occupation" class="form-control border-start-0 ps-0" placeholder="e.g. Physician, Consultant" />
+                            </div>
+                            <span asp-validation-for="Occupation" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Organization" class="form-label fw-semibold small text-dark">Affiliated Organization (Optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-building"></i></span>
+                                <input asp-for="Organization" class="form-control border-start-0 ps-0" placeholder="e.g. General Hospital, Self" />
+                            </div>
+                            <span asp-validation-for="Organization" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Trust Checklist Banner -->
+                    <div class="p-3 rounded-3 border bg-light mb-4 small text-muted d-flex align-items-center gap-3">
+                        <i class="bi bi-shield-check text-success fs-3"></i>
+                        <div>
+                            By registering, you gain access to digital tax receipts, official NGO verification records, and emergency welfare alerts. Your credentials remain encrypted.
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-saas-primary w-100 fw-bold py-3 fs-5 shadow-sm">
+                        <i class="bi bi-check2-circle me-1"></i> Register Free Donor Account
+                    </button>
+                </form>
+
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="text-muted small mb-0">
+                        Already have an active account?
+                        <a asp-action="Login" class="fw-bold text-decoration-none" style="color: var(--primary-green);">Sign In here</a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -96,4 +141,3 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-

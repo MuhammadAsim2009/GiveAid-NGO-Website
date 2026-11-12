@@ -1,18 +1,27 @@
 @model IEnumerable<Give_AID.Models.Partners>
 @{
-    ViewData["Title"] = "Our Partners - GIVE-AID";
+    ViewData["Title"] = "Corporate Sponsors & CSR Partners - GIVE-AID";
 }
 
-<section class="py-4 bg-light border-bottom">
+<!-- Page Header Strip -->
+<section class="py-4 border-bottom bg-white">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb small mb-1">
-                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-success text-decoration-none">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Our Partners</li>
-            </ol>
-        </nav>
-        <h2 class="fw-bold mb-1" style="color: #1E8E5A;">Strategic & Corporate Partners</h2>
-        <p class="text-muted mb-0">We collaborate with forward-thinking organizations committed to corporate social responsibility.</p>
+        <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+            <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Home</a>
+            <span>/</span>
+            <span class="text-dark fw-semibold">Corporate Sponsors</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h2 class="fw-bold mb-1 text-dark" style="font-size: 1.6rem; letter-spacing: -0.5px;">
+                    <i class="bi bi-award-fill me-2 text-success"></i>Strategic & Corporate Sponsors
+                </h2>
+                <p class="text-muted small mb-0">We collaborate with visionary enterprises committed to measurable Corporate Social Responsibility (CSR).</p>
+            </div>
+            <a asp-controller="Home" asp-action="Contact" class="btn btn-saas-primary btn-sm px-3 rounded-pill fw-semibold">
+                <i class="bi bi-envelope-plus me-1"></i>Become a Sponsor
+            </a>
+        </div>
     </div>
 </section>
 
@@ -22,27 +31,29 @@
         {
             @foreach (var partner in Model)
             {
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="giveaid-card p-4 text-center h-100 d-flex flex-column justify-content-between bg-white">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="giveaid-card p-4 text-center h-100 d-flex flex-column justify-content-between bg-white border shadow-sm">
                         <div>
-                            <div class="p-4 bg-light rounded-3 mb-3 d-flex align-items-center justify-content-center" style="height: 120px;">
+                            <div class="p-3 bg-light rounded-3 mb-3 d-flex align-items-center justify-content-center border" style="height: 100px;">
                                 @if (!string.IsNullOrEmpty(partner.LogoPath))
                                 {
-                                    <img src="@partner.LogoPath" alt="@partner.Name" class="img-fluid" style="max-height: 80px;" onerror="this.src='/images/partner-placeholder.png';" />
+                                    <img src="@partner.LogoPath" alt="@partner.Name" class="img-fluid" style="max-height: 60px; max-width: 100%; object-fit: contain;" onerror="this.src='/images/placeholder-logo.png';" />
                                 }
                                 else
                                 {
-                                    <i class="bi bi-building fs-1 text-success"></i>
+                                    <i class="bi bi-award fs-1 text-success"></i>
                                 }
                             </div>
-                            <h5 class="fw-bold mb-2">@partner.Name</h5>
-                            <span class="badge bg-success-subtle text-success small mb-3">CSR Partner</span>
+                            <h5 class="fw-bold text-dark mb-1" style="font-size: 1.1rem;">@partner.Name</h5>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-mono small mb-3">
+                                Corporate CSR Partner
+                            </span>
                         </div>
                         @if (!string.IsNullOrEmpty(partner.Website))
                         {
-                            <div class="mt-2">
-                                <a href="@partner.Website" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm w-100">
-                                    Visit Website <i class="bi bi-box-arrow-up-right small ms-1"></i>
+                            <div class="pt-2 border-top">
+                                <a href="@partner.Website" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm w-100 rounded-pill">
+                                    Visit Partner <i class="bi bi-box-arrow-up-right small ms-1"></i>
                                 </a>
                             </div>
                         }
@@ -52,64 +63,32 @@
         }
         else
         {
-            <!-- Default showcase cards when no custom partner records are entered -->
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="giveaid-card p-4 text-center h-100 bg-white">
-                    <div class="p-4 bg-light rounded-3 mb-3 d-flex align-items-center justify-content-center" style="height: 120px;">
-                        <span class="fs-1 text-success"><i class="bi bi-briefcase-fill"></i></span>
-                    </div>
-                    <h5 class="fw-bold mb-1">TechWelfare Global</h5>
-                    <p class="small text-muted mb-3">Digital classrooms & technology donation partner.</p>
-                    <span class="badge bg-success-subtle text-success">Gold Partner</span>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="giveaid-card p-4 text-center h-100 bg-white">
-                    <div class="p-4 bg-light rounded-3 mb-3 d-flex align-items-center justify-content-center" style="height: 120px;">
-                        <span class="fs-1 text-primary"><i class="bi bi-capsule"></i></span>
-                    </div>
-                    <h5 class="fw-bold mb-1">Apex Health Corp</h5>
-                    <p class="small text-muted mb-3">Emergency medicine supply & medical camp sponsor.</p>
-                    <span class="badge bg-primary-subtle text-primary">Healthcare Partner</span>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="giveaid-card p-4 text-center h-100 bg-white">
-                    <div class="p-4 bg-light rounded-3 mb-3 d-flex align-items-center justify-content-center" style="height: 120px;">
-                        <span class="fs-1 text-warning"><i class="bi bi-shield-fill-check"></i></span>
-                    </div>
-                    <h5 class="fw-bold mb-1">Hope Financial Group</h5>
-                    <p class="small text-muted mb-3">100% matched giving on student scholarships.</p>
-                    <span class="badge bg-warning-subtle text-warning">Matched Donor</span>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="giveaid-card p-4 text-center h-100 bg-white">
-                    <div class="p-4 bg-light rounded-3 mb-3 d-flex align-items-center justify-content-center" style="height: 120px;">
-                        <span class="fs-1 text-info"><i class="bi bi-mortarboard-fill"></i></span>
-                    </div>
-                    <h5 class="fw-bold mb-1">FutureEd Foundation</h5>
-                    <p class="small text-muted mb-3">Vocational training courses and career guidance.</p>
-                    <span class="badge bg-info-subtle text-info">Education Partner</span>
+            <div class="col-12 text-center py-5">
+                <div class="p-5 bg-white rounded-3 shadow-sm border">
+                    <i class="bi bi-award display-3 text-muted mb-3 d-inline-block"></i>
+                    <h4 class="fw-bold text-dark">Sponsorship Marquee Being Prepared</h4>
+                    <p class="text-muted small mb-0">Join our corporate giving program to feature your enterprise CSR initiatives.</p>
                 </div>
             </div>
         }
     </div>
 
-    <!-- Partnership Call to Action Card -->
-    <div class="giveaid-card p-5 bg-white border-start border-4 border-success text-center">
-        <h3 class="fw-bold mb-2">Become a Corporate Partner</h3>
-        <p class="lead text-muted col-lg-8 mx-auto mb-4">
-            Align your organization with impactful, audited social impact initiatives. Co-create welfare drives, match employee donations, or provide in-kind technological support.
+    <!-- Partnership Call to Action Banner -->
+    <div class="giveaid-card p-4 p-md-5 bg-white border shadow-sm text-center" style="border-left: 4px solid var(--primary-green) !important;">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success mb-3" style="width: 56px; height: 56px;">
+            <i class="bi bi-handshake fs-2"></i>
+        </div>
+        <h3 class="fw-bold text-dark mb-2">Partner With GIVE-AID on CSR Initiatives</h3>
+        <p class="text-muted small mb-4" style="max-width: 650px; margin: 0 auto; line-height: 1.7;">
+            We offer institutional matching programs, employee payroll giving integrations, and verified impact analytics for your annual ESG sustainability reporting.
         </p>
-        <div class="d-flex justify-content-center gap-3">
-            <a asp-controller="Home" asp-action="Contact" class="btn btn-primary-green btn-lg px-4 fw-semibold">
-                Inquire For Corporate Partnership
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a asp-controller="Home" asp-action="Contact" class="btn btn-donate-amber px-4 py-2 rounded-pill fw-bold">
+                <i class="bi bi-envelope me-1"></i>Contact CSR Desk
             </a>
-            <a asp-controller="Home" asp-action="HelpCentre" class="btn btn-outline-secondary btn-lg px-4">
-                CSR Guidelines
+            <a asp-controller="Home" asp-action="About" asp-route-slug="our-supporters" class="btn btn-outline-secondary px-4 py-2 rounded-pill fw-semibold">
+                Read Corporate Case Studies
             </a>
         </div>
     </div>
 </div>
-

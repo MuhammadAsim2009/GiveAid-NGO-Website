@@ -1,139 +1,170 @@
-@* Programme/Details — shows full programme info and interest registration form *@
 @model Give_AID.Models.Programmes
-
 @{
-    ViewData["Title"] = Model.Title;
+    ViewData["Title"] = $"{Model.Title} - GIVE-AID";
     bool alreadyRegistered = ViewBag.AlreadyRegistered ?? false;
     bool loggedIn = Context.Session.GetInt32("UserId").HasValue;
 }
 
-<div class="container py-5">
-
-    @* ── Back button ─────────────────────────────────────────────── *@
-    <a href="/Home/Programmes" class="btn btn-outline-secondary btn-sm mb-4">
-        <i class="bi bi-arrow-left me-1"></i> All Programmes
-    </a>
-
-    @* ── Show TempData messages ──────────────────────────────────── *@
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show">
-            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<!-- Page Header Strip -->
+<section class="py-4 border-bottom bg-white">
+    <div class="container">
+        <div class="d-flex align-items-center gap-2 text-muted small mb-2">
+            <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Home</a>
+            <span>/</span>
+            <a asp-controller="Home" asp-action="Programmes" class="text-decoration-none text-muted">Field Campaigns</a>
+            <span>/</span>
+            <span class="text-dark fw-semibold">@Model.Category</span>
         </div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show">
-            <i class="bi bi-exclamation-circle me-2"></i>@TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
-    <div class="row g-4">
-
-        @* ── LEFT: programme information ─────────────────────────── *@
-        <div class="col-lg-7">
-            <div class="giveaid-card p-4 p-md-5">
-
-                @* Category badge *@
-                <span class="badge mb-3" style="background:#1E8E5A; font-size:0.85rem;">
-                    @Model.Category
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <span class="badge bg-success-subtle text-success border border-success-subtle font-mono small mb-2">
+                    <i class="bi bi-tag-fill me-1"></i>@Model.Category
                 </span>
+                <h1 class="fw-bold mb-1" style="font-size: 1.8rem; letter-spacing: -0.5px; color: #0F172A;">
+                    @Model.Title
+                </h1>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-calendar3 me-1 text-success"></i> Scheduled for @Model.EventDate.ToString("dddd, MMMM dd, yyyy")
+                    @if (Model.Ngo != null)
+                    {
+                        <span class="ms-2">• <i class="bi bi-building me-1 text-primary"></i>Organized by <strong>@Model.Ngo.Name</strong></span>
+                    }
+                </p>
+            </div>
+            <a asp-controller="Home" asp-action="Programmes" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>All Campaigns
+            </a>
+        </div>
+    </div>
+</section>
 
-                <h2 class="fw-bold mb-2">@Model.Title</h2>
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Left Column: Detailed Programme Mission & Host Profile -->
+        <div class="col-12 col-lg-8">
+            <!-- Main Content Card -->
+            <div class="giveaid-card p-4 p-md-5 bg-white border mb-4">
+                <h4 class="fw-bold text-dark mb-3">Field Campaign Brief & Scope</h4>
+                <div class="text-dark lead" style="font-size: 1.05rem; line-height: 1.8; white-space: pre-wrap;">@Model.Description</div>
 
-                @* NGO name if linked *@
-                @if (Model.Ngo != null)
-                {
-                    <p class="text-muted mb-3">
-                        <i class="bi bi-building me-1"></i>
-                        Organised by <strong>@Model.Ngo.Name</strong>
-                    </p>
-                }
-
-                <hr />
-
-                @* Full programme description *@
-                <p class="lead" style="white-space:pre-wrap;">@Model.Description</p>
-
-                @* Event Date *@
-                <div class="row mt-4 g-3">
+                <div class="row g-3 mt-4 pt-4 border-top">
                     <div class="col-12 col-sm-6">
-                        <div class="p-3 rounded-3" style="background:#f0faf5;">
-                            <div class="text-muted small">Event Date</div>
-                            <div class="fw-semibold">
-                                <i class="bi bi-calendar-event me-1 text-success"></i>
-                                @Model.EventDate.ToString("dd MMM yyyy")
-                            </div>
+                        <div class="p-3 rounded-3 bg-light border">
+                            <span class="text-muted small d-block">Scheduled Implementation Date</span>
+                            <strong class="text-dark fs-6 font-mono">
+                                <i class="bi bi-calendar-check text-success me-1"></i>@Model.EventDate.ToString("MMM dd, yyyy")
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <div class="p-3 rounded-3 bg-light border">
+                            <span class="text-muted small d-block">Community Portfolio</span>
+                            <strong class="text-dark fs-6">
+                                <i class="bi bi-award text-primary me-1"></i>@Model.Category
+                            </strong>
                         </div>
                     </div>
                 </div>
-
             </div>
+
+            <!-- Host NGO Profile Card -->
+            @if (Model.Ngo != null)
+            {
+                <div class="giveaid-card p-4 bg-white border">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="rounded-3 border p-1 bg-white d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                            @if (!string.IsNullOrEmpty(Model.Ngo.Logo))
+                            {
+                                <img src="@Model.Ngo.Logo" alt="@Model.Ngo.Name" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-building text-muted fs-3"></i>
+                            }
+                        </div>
+                        <div>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle font-mono small">
+                                Verified Implementing Partner
+                            </span>
+                            <h5 class="fw-bold text-dark mb-0">@Model.Ngo.Name</h5>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-2" style="line-height: 1.6;">@Model.Ngo.Description</p>
+                    <div class="small text-muted d-flex align-items-center gap-2">
+                        <i class="bi bi-geo-alt text-danger"></i>
+                        <span>@Model.Ngo.Contact</span>
+                    </div>
+                </div>
+            }
         </div>
 
-        @* ── RIGHT: interest registration form ───────────────────── *@
-        <div class="col-lg-5">
-            <div class="giveaid-card p-4 p-md-5">
-
-                <h5 class="fw-bold mb-1" style="color:#1E8E5A;">
-                    <i class="bi bi-hand-thumbs-up me-2"></i>Register Your Interest
-                </h5>
+        <!-- Right Column: Interest Registration Box -->
+        <div class="col-12 col-lg-4">
+            <div class="giveaid-card p-4 bg-white border shadow-sm sticky-top" style="top: 80px;">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="bi bi-hand-thumbs-up-fill"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-0">Volunteer or Support</h5>
+                </div>
                 <p class="text-muted small mb-4">
-                    Let us know you are interested and we will keep you updated.
+                    Register your interest to join field logistics, donate targeted aid, or receive progress reports.
                 </p>
 
                 @if (!loggedIn)
                 {
-                    @* User is not logged in — prompt to sign in *@
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i>
-                        Please <a href="/Auth/Login" class="fw-semibold">sign in</a> to register your interest.
+                    <div class="p-3 rounded-3 bg-light border text-center mb-3">
+                        <i class="bi bi-person-lock text-primary fs-3 d-block mb-2"></i>
+                        <h6 class="fw-bold text-dark mb-1">Donor Sign-In Required</h6>
+                        <p class="text-muted small mb-3">Please sign in to register your interest in this initiative.</p>
+                        <a href="/Auth/Login" class="btn btn-saas-primary btn-sm w-100">
+                            Sign In to Register Interest
+                        </a>
                     </div>
                 }
                 else if (alreadyRegistered)
                 {
-                    @* User already registered for this programme *@
-                    <div class="alert alert-success">
-                        <i class="bi bi-check-circle me-2"></i>
-                        You have already registered interest in this programme.
+                    <div class="p-4 rounded-3 border text-center mb-3" style="background: #F0FDF4; border-color: #86EFAC !important;">
+                        <i class="bi bi-check-circle-fill text-success fs-1 d-block mb-2"></i>
+                        <h6 class="fw-bold text-dark mb-1">Interest Confirmed</h6>
+                        <p class="small text-muted mb-3">
+                            You have already registered your interest for this campaign. Our logistics coordinator will reach out via email.
+                        </p>
+                        <a asp-action="MyInterests" class="btn btn-outline-success btn-sm w-100">
+                            View In My Interests
+                        </a>
                     </div>
-                    <a href="/Programme/MyInterests" class="btn btn-outline-success w-100">
-                        <i class="bi bi-list-ul me-2"></i>View My Interests
-                    </a>
                 }
                 else
                 {
-                    @* Interest registration form *@
-                    <form method="post" action="/Programme/RegisterInterest">
+                    <form asp-action="RegisterInterest" method="post">
                         @Html.AntiForgeryToken()
-
-                        @* Hidden field: programme ID *@
                         <input type="hidden" name="programmeId" value="@Model.Id" />
 
-                        @* Optional message field *@
                         <div class="mb-3">
-                            <label for="message" class="form-label fw-semibold">
-                                Message <span class="text-muted small">(optional)</span>
+                            <label class="form-label fw-semibold small text-dark d-flex justify-content-between">
+                                <span>Note or Special Skill <span class="text-muted fw-normal">(Optional)</span></span>
                             </label>
-                            <textarea id="message"
-                                      name="message"
-                                      class="form-control"
-                                      rows="4"
-                                      placeholder="Tell us why you are interested or any questions you have…"
-                                      maxlength="500"></textarea>
+                            <textarea name="message" class="form-control" rows="4" placeholder="Let the host NGO know how you would like to participate (e.g. medical volunteer, logistics, corporate donor)..."></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-primary-green w-100">
-                            <i class="bi bi-hand-thumbs-up me-2"></i>Register Interest
+                        <button type="submit" class="btn btn-donate-amber w-100 fw-bold py-2 shadow-sm">
+                            <i class="bi bi-check2-circle me-1"></i> Confirm Interest Registration
                         </button>
                     </form>
                 }
 
+                <div class="mt-4 pt-3 border-top small text-muted">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-shield-check text-success"></i>
+                        <span>Zero Spam Guarantee</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-bell text-primary"></i>
+                        <span>Notification updates before event launch</span>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 </div>
-

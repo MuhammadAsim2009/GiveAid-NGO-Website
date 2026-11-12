@@ -1,59 +1,91 @@
 @model Give_AID.Models.HomeViewModel
 @{
-    ViewData["Title"] = "GIVE-AID - Empowering NGOs & Transforming Lives";
+    ViewData["Title"] = "GIVE-AID - Transparent Philanthropy & Community Relief";
 }
 
-<!-- Hero Section with Inspiring Call to Action -->
-<section class="py-5" style="background: linear-gradient(135deg, #e8f5ee 0%, #fef3c7 100%); border-radius: 0 0 2rem 2rem;">
+<!-- Hero Section with SaaS Modern Gradient & Floating Glassmorphism -->
+<section class="py-5 position-relative overflow-hidden" style="background: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.08) 0%, rgba(248, 250, 252, 1) 90%);">
     <div class="container py-4">
         <div class="row align-items-center g-5">
-            <div class="col-lg-7">
-                <span class="badge rounded-pill px-3 py-2 fw-semibold text-white mb-3" style="background-color: #1E8E5A;">
-                    <i class="bi bi-heart-fill me-1 text-warning"></i> Trusted Charity Platform
-                </span>
-                <h1 class="display-4 fw-bold mb-3" style="color: #1F2937; line-height: 1.2;">
-                    Connecting Generous Hearts With Noble Causes
+            <!-- Left Hero Content -->
+            <div class="col-12 col-lg-7">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-white border shadow-sm mb-3">
+                    <span class="badge bg-success rounded-pill font-mono px-2 py-1" style="font-size:0.7rem;">Verified</span>
+                    <span class="small fw-semibold text-dark">Zero Platform Fee • 100% Directed Impact</span>
+                </div>
+
+                <h1 class="display-4 fw-bold mb-3 text-dark" style="letter-spacing: -1.5px; line-height: 1.15;">
+                    Empowering Non-Profits. <br />
+                    <span style="color: #059669;">Transforming Human Lives.</span>
                 </h1>
-                <p class="lead text-muted mb-4">
-                    GIVE-AID bridges the gap between passionate donors and certified welfare NGOs. Together, we fund education, healthcare, nutrition, and empowerment programmes for underprivileged communities.
+
+                <p class="lead text-muted mb-4" style="font-size: 1.1rem; line-height: 1.7; max-width: 600px;">
+                    GIVE-AID is an accountable welfare portal uniting compassionate donors with accredited charities to deliver emergency medical camps, clean drinking water, education kits, and community relief.
                 </p>
-                <div class="d-flex flex-wrap gap-3">
-                    <a asp-controller="Donation" asp-action="Create" class="btn btn-donate-amber btn-lg px-4 shadow">
-                        <i class="bi bi-heart-fill me-2"></i>Donate Now
+
+                <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+                    <a asp-controller="Donation" asp-action="Create" class="btn btn-donate-amber btn-lg px-4 py-3 rounded-pill shadow-sm fw-bold">
+                        <i class="bi bi-heart-fill me-2 text-danger"></i>Make a Contribution
                     </a>
-                    <a href="#causes-section" class="btn btn-primary-green btn-lg px-4 shadow-sm">
-                        <i class="bi bi-grid-fill me-2"></i>Explore Causes
-                    </a>
-                    <a asp-controller="Home" asp-action="Programmes" class="btn btn-outline-secondary btn-lg px-4 bg-white">
-                        <i class="bi bi-calendar-check me-2"></i>View Programmes
+                    <a href="#causes-section" class="btn btn-outline-secondary btn-lg px-4 py-3 rounded-pill bg-white fw-semibold">
+                        <i class="bi bi-grid-fill me-2 text-success"></i>Explore Causes
                     </a>
                 </div>
+
+                <!-- Trust Strip -->
+                <div class="d-flex align-items-center gap-4 pt-2 text-muted small">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-check text-success fs-5"></i>
+                        <span>Audited Ledger</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-file-earmark-check text-success fs-5"></i>
+                        <span>Instant Tax Receipts</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-bank text-success fs-5"></i>
+                        <span>EasyPaisa & JazzCash</span>
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-5">
-                <div class="giveaid-card p-4 bg-white shadow-lg text-center position-relative">
-                    <div class="mb-3">
-                        <span class="display-1 text-success"><i class="bi bi-globe-americas"></i></span>
-                    </div>
-                    <h3 class="fw-bold mb-2">Every Penny Counts</h3>
-                    <p class="text-muted small mb-4">
-                        Your direct contributions fund essential medicines, school supplies, clean water, and relief packages for families in need.
-                    </p>
-                    <div class="p-3 rounded-3 bg-light mb-3 text-start">
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
-                            <span class="small fw-semibold">100% Verified Non-Profit Partners</span>
+
+            <!-- Right Hero Card -->
+            <div class="col-12 col-lg-5">
+                <div class="giveaid-card p-4 p-md-5 bg-white border shadow-lg position-relative" style="border-radius: 1.25rem;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <span class="text-uppercase small fw-bold text-success font-mono">Live Impact</span>
+                            <h4 class="fw-bold text-dark mb-0">Total Funds Directed</h4>
                         </div>
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
-                            <span class="small fw-semibold">Zero Commission On Welfare Relief</span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
-                            <span class="small fw-semibold">Instant Digital Donation Receipts</span>
+                        <div class="d-flex align-items-center justify-content-center rounded-3 bg-success-subtle text-success" style="width: 48px; height: 48px;">
+                            <i class="bi bi-wallet2 fs-4"></i>
                         </div>
                     </div>
-                    <a asp-controller="Auth" asp-action="Register" class="btn btn-outline-green w-100 fw-semibold">
-                        Register As A Donor
+
+                    <div class="mb-4">
+                        <div class="display-6 fw-bold font-mono text-dark" style="color: #059669 !important;">
+                            Rs. @(Model.TotalFundsRaised > 0 ? Model.TotalFundsRaised.ToString("N0") : "750,000")
+                        </div>
+                        <div class="small text-muted mt-1">Directly funded into verified relief field programs</div>
+                    </div>
+
+                    <div class="p-3 rounded-3 bg-light border mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2 small">
+                            <span class="text-muted">Total Donors</span>
+                            <strong class="text-dark font-mono">@(Model.TotalMembersCount > 0 ? Model.TotalMembersCount.ToString() : "920+")</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2 small">
+                            <span class="text-muted">Completed Transactions</span>
+                            <strong class="text-dark font-mono">@(Model.TotalDonationsCount > 0 ? Model.TotalDonationsCount.ToString() : "1,450+")</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center small">
+                            <span class="text-muted">Accredited NGOs</span>
+                            <strong class="text-dark font-mono">@(Model.TotalNgosCount > 0 ? Model.TotalNgosCount.ToString() : "16+")</strong>
+                        </div>
+                    </div>
+
+                    <a asp-controller="Donation" asp-action="Create" class="btn btn-saas-primary w-100 py-2 fw-semibold rounded-pill">
+                        Donate in 60 Seconds <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 </div>
             </div>
@@ -62,39 +94,39 @@
 </section>
 
 <!-- Impact Metrics Strip -->
-<section class="py-4 my-2">
+<section class="py-4 border-bottom bg-white">
     <div class="container">
         <div class="row g-3 text-center">
-            <div class="col-md-3 col-6">
-                <div class="giveaid-card p-3 h-100 border-start border-4 border-success">
-                    <h2 class="fw-bold text-success mb-1">
-                        Rs. @(Model.TotalFundsRaised > 0 ? Model.TotalFundsRaised.ToString("N0") : "550,000+")
-                    </h2>
-                    <span class="text-muted small text-uppercase fw-semibold">Funds Raised</span>
+            <div class="col-6 col-md-3">
+                <div class="p-3">
+                    <div class="font-mono fw-bold text-success fs-3">
+                        Rs. @(Model.TotalFundsRaised > 0 ? Model.TotalFundsRaised.ToString("N0") : "750,000+")
+                    </div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">Welfare Funded</span>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="giveaid-card p-3 h-100 border-start border-4 border-warning">
-                    <h2 class="fw-bold text-warning mb-1">
-                        @(Model.TotalDonationsCount > 0 ? Model.TotalDonationsCount.ToString() : "1,240+")
-                    </h2>
-                    <span class="text-muted small text-uppercase fw-semibold">Successful Donations</span>
+            <div class="col-6 col-md-3">
+                <div class="p-3">
+                    <div class="font-mono fw-bold text-primary fs-3">
+                        @(Model.TotalDonationsCount > 0 ? Model.TotalDonationsCount.ToString() : "1,450+")
+                    </div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">Transactions Settled</span>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="giveaid-card p-3 h-100 border-start border-4 border-primary">
-                    <h2 class="fw-bold text-primary mb-1">
-                        @(Model.TotalMembersCount > 0 ? Model.TotalMembersCount.ToString() : "850+")
-                    </h2>
-                    <span class="text-muted small text-uppercase fw-semibold">Active Donors</span>
+            <div class="col-6 col-md-3">
+                <div class="p-3">
+                    <div class="font-mono fw-bold text-warning fs-3">
+                        @(Model.TotalMembersCount > 0 ? Model.TotalMembersCount.ToString() : "920+")
+                    </div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">Active Donors</span>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="giveaid-card p-3 h-100 border-start border-4 border-info">
-                    <h2 class="fw-bold text-info mb-1">
-                        @(Model.TotalNgosCount > 0 ? Model.TotalNgosCount.ToString() : "18+")
-                    </h2>
-                    <span class="text-muted small text-uppercase fw-semibold">Partner NGOs</span>
+            <div class="col-6 col-md-3">
+                <div class="p-3">
+                    <div class="font-mono fw-bold text-info fs-3">
+                        @(Model.TotalNgosCount > 0 ? Model.TotalNgosCount.ToString() : "16+")
+                    </div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">Partner Charities</span>
                 </div>
             </div>
         </div>
@@ -102,16 +134,16 @@
 </section>
 
 <!-- Featured Causes Section -->
-<section id="causes-section" class="py-5 bg-white">
-    <div class="container">
+<section id="causes-section" class="py-5">
+    <div class="container py-3">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
             <div>
-                <span class="text-uppercase small fw-bold text-success">Where Your Support Goes</span>
-                <h2 class="fw-bold mb-1">Urgent Charitable Causes</h2>
-                <p class="text-muted mb-0">Select a welfare sector to directly support verified community projects.</p>
+                <span class="badge bg-success-subtle text-success border border-success-subtle font-mono small mb-1">Direct Impact Portfolios</span>
+                <h2 class="fw-bold text-dark mb-1" style="font-size: 1.8rem; letter-spacing: -0.5px;">Urgent Charitable Causes</h2>
+                <p class="text-muted small mb-0">Select a welfare sector to directly support verified community projects.</p>
             </div>
             <div class="mt-3 mt-md-0">
-                <a asp-controller="Donation" asp-action="Create" class="btn btn-outline-green btn-sm fw-semibold">
+                <a asp-controller="Donation" asp-action="Create" class="btn btn-outline-secondary btn-sm fw-semibold">
                     View All Causes <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
@@ -122,21 +154,23 @@
             {
                 @foreach (var cause in Model.FeaturedCauses)
                 {
-                    <div class="col-lg-4 col-md-6">
-                        <div class="giveaid-card p-4 h-100 d-flex flex-column justify-content-between">
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="giveaid-card p-4 bg-white border h-100 d-flex flex-column justify-content-between shadow-sm">
                             <div>
                                 <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <span class="p-2 rounded-circle bg-success-subtle text-success fs-4">
-                                        <i class="bi bi-heart-pulse"></i>
+                                    <div class="d-flex align-items-center justify-content-center rounded-3 bg-success-subtle text-success" style="width: 44px; height: 44px;">
+                                        <i class="bi bi-bookmark-heart-fill fs-5"></i>
+                                    </div>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle font-mono small">
+                                        Accepting Aid
                                     </span>
-                                    <span class="badge bg-success-subtle text-success">Active Campaign</span>
                                 </div>
-                                <h4 class="fw-bold mb-2">@cause.Name</h4>
-                                <p class="text-muted small mb-4">@cause.Description</p>
+                                <h4 class="fw-bold text-dark mb-2" style="font-size: 1.2rem;">@cause.Name</h4>
+                                <p class="text-muted small mb-4" style="line-height: 1.6;">@cause.Description</p>
                             </div>
-                            <div>
-                                <a asp-controller="Donation" asp-action="Create" asp-route-causeId="@cause.Id" class="btn btn-donate-amber w-100 fw-semibold">
-                                    <i class="bi bi-wallet2 me-1"></i>Donate to this Cause
+                            <div class="pt-3 border-top">
+                                <a asp-controller="Donation" asp-action="Create" asp-route-causeId="@cause.Id" class="btn btn-donate-amber w-100 fw-bold py-2 shadow-sm rounded-pill">
+                                    <i class="bi bi-heart-fill me-1 text-danger"></i>Contribute to Cause
                                 </a>
                             </div>
                         </div>
@@ -145,35 +179,8 @@
             }
             else
             {
-                <div class="col-md-4">
-                    <div class="giveaid-card p-4 h-100">
-                        <span class="p-2 rounded-circle bg-success-subtle text-success fs-4 d-inline-block mb-3">
-                            <i class="bi bi-book"></i>
-                        </span>
-                        <h4 class="fw-bold mb-2">Child Education & Nutrition</h4>
-                        <p class="text-muted small mb-4">Sponsoring primary school books, uniforms, and daily balanced meals for street children.</p>
-                        <a asp-controller="Donation" asp-action="Create" class="btn btn-donate-amber w-100 fw-semibold">Donate Now</a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="giveaid-card p-4 h-100">
-                        <span class="p-2 rounded-circle bg-success-subtle text-success fs-4 d-inline-block mb-3">
-                            <i class="bi bi-hospital"></i>
-                        </span>
-                        <h4 class="fw-bold mb-2">Emergency Healthcare Camps</h4>
-                        <p class="text-muted small mb-4">Free diagnostic screenings, essential medicines, and maternal healthcare in rural villages.</p>
-                        <a asp-controller="Donation" asp-action="Create" class="btn btn-donate-amber w-100 fw-semibold">Donate Now</a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="giveaid-card p-4 h-100">
-                        <span class="p-2 rounded-circle bg-success-subtle text-success fs-4 d-inline-block mb-3">
-                            <i class="bi bi-person-wheelchair"></i>
-                        </span>
-                        <h4 class="fw-bold mb-2">Specially Challenged Support</h4>
-                        <p class="text-muted small mb-4">Providing motorized wheelchairs, hearing aids, and specialized vocational computer training.</p>
-                        <a asp-controller="Donation" asp-action="Create" class="btn btn-donate-amber w-100 fw-semibold">Donate Now</a>
-                    </div>
+                <div class="col-12 text-center py-5 text-muted">
+                    <p>No active causes published at this time.</p>
                 </div>
             }
         </div>
@@ -181,17 +188,17 @@
 </section>
 
 <!-- Upcoming Welfare Programmes -->
-<section class="py-5 bg-light">
-    <div class="container">
+<section class="py-5 bg-white border-top border-bottom">
+    <div class="container py-3">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
             <div>
-                <span class="text-uppercase small fw-bold text-success">Grassroots Action</span>
-                <h2 class="fw-bold mb-1">Upcoming NGO Programmes</h2>
-                <p class="text-muted mb-0">Join, volunteer, or sponsor welfare initiatives organized by our verified partners.</p>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-mono small mb-1">On-Ground Action</span>
+                <h2 class="fw-bold text-dark mb-1" style="font-size: 1.8rem; letter-spacing: -0.5px;">Upcoming Field Campaigns</h2>
+                <p class="text-muted small mb-0">Join, volunteer, or support relief camps organized by our verified charity partners.</p>
             </div>
             <div class="mt-3 mt-md-0">
-                <a asp-controller="Home" asp-action="Programmes" class="btn btn-primary-green btn-sm fw-semibold">
-                    View All Programmes <i class="bi bi-arrow-right ms-1"></i>
+                <a asp-controller="Home" asp-action="Programmes" class="btn btn-saas-secondary btn-sm">
+                    Browse All Programmes <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
         </div>
@@ -199,27 +206,34 @@
         <div class="row g-4">
             @if (Model.UpcomingProgrammes.Any())
             {
-                @foreach (var prog in Model.UpcomingProgrammes)
+                @foreach (var prog in Model.UpcomingProgrammes.Take(3))
                 {
-                    <div class="col-lg-4 col-md-6">
-                        <div class="giveaid-card p-4 h-100 d-flex flex-column justify-content-between bg-white">
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="giveaid-card p-4 bg-light border h-100 d-flex flex-column justify-content-between">
                             <div>
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="badge bg-primary-subtle text-primary fw-semibold">@prog.Category</span>
-                                    <span class="small text-muted"><i class="bi bi-calendar3 me-1"></i>@prog.EventDate.ToString("MMM dd, yyyy")</span>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-mono small">
+                                        @prog.Category
+                                    </span>
+                                    <span class="small text-muted font-mono" style="font-size:0.75rem;">
+                                        <i class="bi bi-calendar3 me-1 text-success"></i>@prog.EventDate.ToString("MMM dd, yyyy")
+                                    </span>
                                 </div>
-                                <h5 class="fw-bold mb-2">@prog.Title</h5>
-                                <p class="text-muted small mb-3">@prog.Description</p>
+                                <h5 class="fw-bold text-dark mb-2">@prog.Title</h5>
+                                <p class="text-muted small mb-3" style="line-height: 1.6;">
+                                    @(prog.Description.Length > 110 ? prog.Description.Substring(0, 110) + "…" : prog.Description)
+                                </p>
                                 @if (prog.Ngo != null)
                                 {
-                                    <div class="small text-secondary mb-3">
-                                        <i class="bi bi-building me-1 text-success"></i>Organized by: <strong>@prog.Ngo.Name</strong>
+                                    <div class="small text-muted mb-3 d-flex align-items-center gap-1">
+                                        <i class="bi bi-building text-secondary"></i>
+                                        <span>Hosted by <strong>@prog.Ngo.Name</strong></span>
                                     </div>
                                 }
                             </div>
-                            <div>
-                                <a asp-controller="Programme" asp-action="Details" asp-route-id="@prog.Id" class="btn btn-outline-green w-100 btn-sm fw-semibold">
-                                    Express Interest / Volunteer
+                            <div class="pt-3 border-top">
+                                <a asp-controller="Programme" asp-action="Details" asp-route-id="@prog.Id" class="btn btn-outline-success btn-sm w-100 rounded-pill fw-semibold">
+                                    Express Interest & Volunteer <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>
                         </div>
@@ -228,38 +242,8 @@
             }
             else
             {
-                <div class="col-lg-4 col-md-6">
-                    <div class="giveaid-card p-4 h-100 bg-white">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-primary-subtle text-primary">Education</span>
-                            <span class="small text-muted"><i class="bi bi-calendar3 me-1"></i>Upcoming</span>
-                        </div>
-                        <h5 class="fw-bold mb-2">Digital Literacy Drive For Slum Schools</h5>
-                        <p class="text-muted small mb-3">Deploying 50 refurbished laptops and internet access to 5 underprivileged community schools.</p>
-                        <a asp-controller="Home" asp-action="Programmes" class="btn btn-outline-green w-100 btn-sm fw-semibold">Learn More</a>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="giveaid-card p-4 h-100 bg-white">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-success-subtle text-success">Healthcare</span>
-                            <span class="small text-muted"><i class="bi bi-calendar3 me-1"></i>Upcoming</span>
-                        </div>
-                        <h5 class="fw-bold mb-2">Free Eye Screening & Cataract Surgeries</h5>
-                        <p class="text-muted small mb-3">Conducting 200 free cataract replacement operations and distributing 1,000 reading glasses.</p>
-                        <a asp-controller="Home" asp-action="Programmes" class="btn btn-outline-green w-100 btn-sm fw-semibold">Learn More</a>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="giveaid-card p-4 h-100 bg-white">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-warning-subtle text-warning">Special Care</span>
-                            <span class="small text-muted"><i class="bi bi-calendar3 me-1"></i>Upcoming</span>
-                        </div>
-                        <h5 class="fw-bold mb-2">Assistive Hearing Aid Distribution</h5>
-                        <p class="text-muted small mb-3">Empowering 80 hearing-impaired children with digital auditory assistance devices.</p>
-                        <a asp-controller="Home" asp-action="Programmes" class="btn btn-outline-green w-100 btn-sm fw-semibold">Learn More</a>
-                    </div>
+                <div class="col-12 text-center py-4 text-muted">
+                    <p class="small mb-0">No active scheduled campaigns at the moment.</p>
                 </div>
             }
         </div>
@@ -267,78 +251,94 @@
 </section>
 
 <!-- Why Choose GIVE-AID Feature Grid -->
-<section class="py-5 bg-white">
-    <div class="container text-center">
-        <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2 mb-2">Transparent Giving</span>
-        <h2 class="fw-bold mb-2">Why Support Welfare With GIVE-AID?</h2>
-        <p class="text-muted mb-5">We ensure absolute accountability, rigorous partner vetting, and zero hidden deductions.</p>
+<section class="py-5">
+    <div class="container py-3">
+        <div class="text-center max-w-700 mx-auto mb-5">
+            <span class="badge bg-success-subtle text-success border border-success-subtle font-mono small mb-2">Institutional Integrity</span>
+            <h2 class="fw-bold text-dark mb-2" style="font-size: 1.8rem; letter-spacing: -0.5px;">Why Give Through GIVE-AID?</h2>
+            <p class="text-muted small mb-0">We ensure absolute accountability, rigorous charity partner vetting, and zero hidden deductions.</p>
+        </div>
 
-        <div class="row g-4 text-start">
-            <div class="col-md-4">
-                <div class="p-3">
-                    <div class="fs-2 text-success mb-2"><i class="bi bi-shield-check"></i></div>
-                    <h5 class="fw-bold mb-2">100% Vetted NGOs</h5>
-                    <p class="text-muted small">Every associated NGO undergoes strict legal, financial, and regulatory verification before listing programmes.</p>
+        <div class="row g-4">
+            <div class="col-12 col-md-4">
+                <div class="giveaid-card p-4 bg-white border h-100">
+                    <div class="d-flex align-items-center justify-content-center rounded-3 bg-success-subtle text-success mb-3" style="width: 48px; height: 48px;">
+                        <i class="bi bi-shield-check fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">100% Vetted Non-Profits</h5>
+                    <p class="text-muted small mb-0" style="line-height: 1.6;">
+                        Every affiliated NGO undergoes thorough legal documentation and governance audit before listing campaigns on the portal.
+                    </p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="p-3">
-                    <div class="fs-2 text-warning mb-2"><i class="bi bi-receipt-cutoff"></i></div>
-                    <h5 class="fw-bold mb-2">Transparent Receipts</h5>
-                    <p class="text-muted small">Access your complete donation history, downloadable receipts, and live status of funds utilized on the ground.</p>
+            <div class="col-12 col-md-4">
+                <div class="giveaid-card p-4 bg-white border h-100">
+                    <div class="d-flex align-items-center justify-content-center rounded-3 bg-warning-subtle text-warning-emphasis mb-3" style="width: 48px; height: 48px;">
+                        <i class="bi bi-receipt-cutoff fs-4 text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Immutable Donation Receipts</h5>
+                    <p class="text-muted small mb-0" style="line-height: 1.6;">
+                        Review your full contribution history, verify manual bank and mobile wallet transaction proofs, and download receipts anytime.
+                    </p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="p-3">
-                    <div class="fs-2 text-primary mb-2"><i class="bi bi-people"></i></div>
-                    <h5 class="fw-bold mb-2">Direct Volunteer Impact</h5>
-                    <p class="text-muted small">Donors can register interest to actively volunteer, visit welfare camps, and see their contributions at work.</p>
+            <div class="col-12 col-md-4">
+                <div class="giveaid-card p-4 bg-white border h-100">
+                    <div class="d-flex align-items-center justify-content-center rounded-3 bg-primary-subtle text-primary mb-3" style="width: 48px; height: 48px;">
+                        <i class="bi bi-people-fill fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Direct Volunteer Participation</h5>
+                    <p class="text-muted small mb-0" style="line-height: 1.6;">
+                        Connect directly with field personnel, visit on-ground relief camps, and observe firsthand the human lives your generosity touches.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Corporate Partners Strip -->
-<section class="py-5 bg-light border-top">
-    <div class="container text-center">
-        <span class="text-uppercase small fw-bold text-muted d-block mb-3">Our Valued Corporate & Strategic Partners</span>
-        <div class="row justify-content-center align-items-center g-4">
-            <div class="col-6 col-md-2">
-                <div class="p-3 bg-white rounded-3 shadow-sm fw-bold text-muted">TechWelfare</div>
-            </div>
-            <div class="col-6 col-md-2">
-                <div class="p-3 bg-white rounded-3 shadow-sm fw-bold text-muted">GlobalCare</div>
-            </div>
-            <div class="col-6 col-md-2">
-                <div class="p-3 bg-white rounded-3 shadow-sm fw-bold text-muted">HopeCorp</div>
-            </div>
-            <div class="col-6 col-md-2">
-                <div class="p-3 bg-white rounded-3 shadow-sm fw-bold text-muted">ApexPharma</div>
-            </div>
-            <div class="col-6 col-md-2">
-                <div class="p-3 bg-white rounded-3 shadow-sm fw-bold text-muted">FutureEd</div>
+<!-- Corporate Partners & Sponsors Grid -->
+@if (Model.Partners != null && Model.Partners.Any())
+{
+    <section class="py-5 bg-white border-top">
+        <div class="container text-center">
+            <span class="badge bg-light text-muted border font-mono small mb-2">Corporate Alliances</span>
+            <h4 class="fw-bold text-dark mb-4" style="font-size: 1.4rem;">Our Corporate & Strategic Sponsors</h4>
+            <div class="row justify-content-center align-items-center g-4">
+                @foreach (var partner in Model.Partners.Take(6))
+                {
+                    <div class="col-6 col-md-3 col-lg-2">
+                        <div class="p-3 bg-light rounded-3 border text-center d-flex align-items-center justify-content-center" style="height: 70px;">
+                            @if (!string.IsNullOrEmpty(partner.LogoPath))
+                            {
+                                <img src="@partner.LogoPath" alt="@partner.Name" style="max-height: 40px; max-width: 100%; object-fit: contain;" />
+                            }
+                            else
+                            {
+                                <span class="fw-bold text-muted small">@partner.Name</span>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
         </div>
-        <div class="mt-4">
-            <a asp-controller="Home" asp-action="Partners" class="text-success text-decoration-none fw-semibold small">
-                Explore All Partners & Sponsorship Opportunities <i class="bi bi-arrow-right"></i>
-            </a>
-        </div>
-    </div>
-</section>
+    </section>
+}
 
-<!-- Final Call-to-Action Banner (No Blank Space) -->
-<section class="py-5" style="background-color: #1E8E5A; color: #ffffff;">
-    <div class="container text-center py-3">
-        <h2 class="fw-bold text-white mb-3">Ready to Make an Everlasting Difference?</h2>
-        <p class="lead mb-4 text-white-50">Join over 800+ registered donors and help us provide hope, nutrition, and dignity today.</p>
-        <div class="d-flex justify-content-center gap-3">
-            <a asp-controller="Donation" asp-action="Create" class="btn btn-donate-amber btn-lg px-5 shadow fw-bold">
-                Donate Now
+<!-- Final Call-to-Action Banner -->
+<section class="py-5 text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #0F172A 0%, #064E3B 100%);">
+    <div class="container text-center py-4">
+        <span class="badge bg-emerald-subtle text-success border border-success-subtle font-mono small mb-2">Collective Philanthropy</span>
+        <h2 class="display-6 fw-bold text-white mb-3" style="letter-spacing: -0.5px;">Ready to Make an Everlasting Difference?</h2>
+        <p class="lead text-white-50 mb-4" style="max-width: 650px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem;">
+            Join over 900+ registered donors and help us provide dignified shelter, nutrition, and emergency healthcare today.
+        </p>
+        <div class="d-flex justify-content-center flex-wrap gap-3">
+            <a asp-controller="Donation" asp-action="Create" class="btn btn-donate-amber btn-lg px-5 py-3 rounded-pill fw-bold shadow">
+                <i class="bi bi-heart-fill me-2 text-danger"></i>Contribute Now
             </a>
-            <a asp-controller="Auth" asp-action="Register" class="btn btn-outline-light btn-lg px-4 fw-semibold">
-                Join Community
+            <a asp-controller="Auth" asp-action="Register" class="btn btn-outline-light btn-lg px-4 py-3 rounded-pill fw-semibold">
+                Join As A Member
             </a>
         </div>
     </div>

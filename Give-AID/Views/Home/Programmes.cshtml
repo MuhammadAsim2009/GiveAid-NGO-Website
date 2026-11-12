@@ -1,39 +1,54 @@
 @model IEnumerable<Give_AID.Models.Programmes>
 @{
-    ViewData["Title"] = "Welfare Programmes - GIVE-AID";
+    ViewData["Title"] = "Welfare Programmes & Activities - GIVE-AID";
     string selectedCategory = ViewBag.SelectedCategory as string ?? "";
 }
 
-<section class="py-4 bg-light border-bottom">
+<!-- Page Header Strip -->
+<section class="py-4 border-bottom bg-white">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb small mb-1">
-                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-success text-decoration-none">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Programmes</li>
-            </ol>
-        </nav>
-        <h2 class="fw-bold mb-1" style="color: #1E8E5A;">Welfare Programmes & Activities</h2>
-        <p class="text-muted mb-0">Browse humanitarian programmes organized by partner NGOs. Volunteer or register your interest.</p>
+        <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+            <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Home</a>
+            <span>/</span>
+            <span class="text-dark fw-semibold">Field Campaigns</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h2 class="fw-bold mb-1 text-dark" style="font-size: 1.6rem; letter-spacing: -0.5px;">
+                    <i class="bi bi-calendar2-week-fill me-2 text-success"></i>Welfare Programmes & Activities
+                </h2>
+                <p class="text-muted small mb-0">Browse humanitarian programmes organized by partner NGOs. Volunteer or register your interest.</p>
+            </div>
+            <a asp-controller="Donation" asp-action="Create" class="btn btn-donate-amber btn-sm px-3 rounded-pill fw-bold">
+                <i class="bi bi-heart-fill me-1 text-danger"></i>Make a Contribution
+            </a>
+        </div>
     </div>
 </section>
 
 <div class="container py-5">
     <!-- Category Filter Pills -->
     <div class="d-flex flex-wrap gap-2 mb-4 justify-content-center">
-        <a asp-action="Programmes" class="btn btn-sm rounded-pill px-3 @(string.IsNullOrEmpty(selectedCategory) ? "btn-primary-green" : "btn-outline-secondary")">
-            All Programmes
+        <a asp-action="Programmes" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold @(string.IsNullOrEmpty(selectedCategory) ? "btn-saas-primary" : "btn-outline-secondary bg-white")">
+            All Initiatives
         </a>
-        <a asp-action="Programmes" asp-route-category="Education" class="btn btn-sm rounded-pill px-3 @(selectedCategory.Equals("Education", StringComparison.OrdinalIgnoreCase) ? "btn-primary-green" : "btn-outline-secondary")">
+        <a asp-action="Programmes" asp-route-category="Education" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold @(selectedCategory.Equals("Education", StringComparison.OrdinalIgnoreCase) ? "btn-saas-primary" : "btn-outline-secondary bg-white")">
             Education
         </a>
-        <a asp-action="Programmes" asp-route-category="Health Care" class="btn btn-sm rounded-pill px-3 @(selectedCategory.Equals("Health Care", StringComparison.OrdinalIgnoreCase) ? "btn-primary-green" : "btn-outline-secondary")">
+        <a asp-action="Programmes" asp-route-category="Health Care" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold @(selectedCategory.Equals("Health Care", StringComparison.OrdinalIgnoreCase) ? "btn-saas-primary" : "btn-outline-secondary bg-white")">
             Health Care
         </a>
-        <a asp-action="Programmes" asp-route-category="Specially Challenged Children" class="btn btn-sm rounded-pill px-3 @(selectedCategory.Equals("Specially Challenged Children", StringComparison.OrdinalIgnoreCase) ? "btn-primary-green" : "btn-outline-secondary")">
-            Specially Challenged Children
+        <a asp-action="Programmes" asp-route-category="Specially Challenged Children" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold @(selectedCategory.Equals("Specially Challenged Children", StringComparison.OrdinalIgnoreCase) ? "btn-saas-primary" : "btn-outline-secondary bg-white")">
+            Specially Challenged
         </a>
-        <a asp-action="Programmes" asp-route-category="Community Relief" class="btn btn-sm rounded-pill px-3 @(selectedCategory.Equals("Community Relief", StringComparison.OrdinalIgnoreCase) ? "btn-primary-green" : "btn-outline-secondary")">
+        <a asp-action="Programmes" asp-route-category="Community Relief" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold @(selectedCategory.Equals("Community Relief", StringComparison.OrdinalIgnoreCase) ? "btn-saas-primary" : "btn-outline-secondary bg-white")">
             Community Relief
+        </a>
+        <a asp-action="Programmes" asp-route-category="Women Empowerment" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold @(selectedCategory.Equals("Women Empowerment", StringComparison.OrdinalIgnoreCase) ? "btn-saas-primary" : "btn-outline-secondary bg-white")">
+            Women Empowerment
+        </a>
+        <a asp-action="Programmes" asp-route-category="Elderly Care" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold @(selectedCategory.Equals("Elderly Care", StringComparison.OrdinalIgnoreCase) ? "btn-saas-primary" : "btn-outline-secondary bg-white")">
+            Elderly Care
         </a>
     </div>
 
@@ -43,37 +58,43 @@
         {
             @foreach (var programme in Model)
             {
-                <div class="col-lg-4 col-md-6">
-                    <div class="giveaid-card p-4 h-100 d-flex flex-column justify-content-between bg-white">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="giveaid-card p-4 h-100 d-flex flex-column justify-content-between bg-white border shadow-sm">
                         <div>
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="badge bg-success-subtle text-success fw-semibold px-3 py-2">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle font-mono small">
                                     @programme.Category
                                 </span>
-                                <span class="small text-muted">
-                                    <i class="bi bi-calendar-event me-1 text-danger"></i>@programme.EventDate.ToString("MMM dd, yyyy")
+                                <span class="small text-muted font-mono" style="font-size:0.75rem;">
+                                    <i class="bi bi-calendar3 me-1 text-success"></i>@programme.EventDate.ToString("MMM dd, yyyy")
                                 </span>
                             </div>
 
-                            <h4 class="fw-bold mb-2">@programme.Title</h4>
-                            <p class="text-muted small mb-3">@programme.Description</p>
+                            <h4 class="fw-bold text-dark mb-2" style="font-size: 1.2rem;">@programme.Title</h4>
+                            <p class="text-muted small mb-3" style="line-height: 1.6;">
+                                @(programme.Description.Length > 120 ? programme.Description.Substring(0, 120) + "…" : programme.Description)
+                            </p>
 
                             @if (programme.Ngo != null)
                             {
-                                <div class="p-2 rounded-2 bg-light small mb-3 text-secondary">
-                                    <i class="bi bi-building me-1 text-success"></i>Host NGO: <strong>@programme.Ngo.Name</strong>
-                                    <br />
-                                    <i class="bi bi-telephone me-1 text-muted"></i>Contact: @programme.Ngo.Contact
+                                <div class="p-2 rounded-2 bg-light small mb-3 text-secondary border">
+                                    <div class="d-flex align-items-center gap-1 mb-1">
+                                        <i class="bi bi-building text-success"></i>
+                                        <span>Host NGO: <strong>@programme.Ngo.Name</strong></span>
+                                    </div>
+                                    <div class="text-muted" style="font-size:0.75rem;">
+                                        <i class="bi bi-geo-alt text-danger me-1"></i>@programme.Ngo.Contact
+                                    </div>
                                 </div>
                             }
                         </div>
 
                         <div class="mt-3 pt-3 border-top d-flex gap-2">
-                            <a asp-controller="Programme" asp-action="Details" asp-route-id="@programme.Id" class="btn btn-primary-green btn-sm w-100 fw-semibold">
+                            <a asp-controller="Programme" asp-action="Details" asp-route-id="@programme.Id" class="btn btn-outline-success btn-sm w-100 fw-semibold rounded-pill">
                                 <i class="bi bi-star me-1"></i>Register Interest
                             </a>
-                            <a asp-controller="Donation" asp-action="Create" class="btn btn-donate-amber btn-sm px-3 fw-bold">
-                                Sponsor
+                            <a asp-controller="Donation" asp-action="Create" class="btn btn-donate-amber btn-sm px-3 fw-bold rounded-pill">
+                                Donate
                             </a>
                         </div>
                     </div>
@@ -83,14 +104,13 @@
         else
         {
             <div class="col-12 text-center py-5">
-                <div class="p-5 bg-white rounded-3 shadow-sm">
+                <div class="p-5 bg-white rounded-3 shadow-sm border">
                     <i class="bi bi-calendar-x display-3 text-muted mb-3 d-inline-block"></i>
-                    <h4 class="fw-bold text-secondary">No Programmes Found</h4>
-                    <p class="text-muted mb-3">There are currently no active programmes listed in this category.</p>
-                    <a asp-action="Programmes" class="btn btn-primary-green btn-sm px-4">View All Programmes</a>
+                    <h4 class="fw-bold text-dark">No Active Campaigns in this Category</h4>
+                    <p class="text-muted small mb-3">Partner NGOs regularly schedule new outreach campaigns. View all active initiatives below.</p>
+                    <a asp-action="Programmes" class="btn btn-saas-primary btn-sm px-4 rounded-pill">View All Initiatives</a>
                 </div>
             </div>
         }
     </div>
 </div>
-

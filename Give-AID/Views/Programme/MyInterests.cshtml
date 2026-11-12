@@ -1,100 +1,99 @@
-@* Programme/MyInterests — shows all programmes the user has registered interest in *@
 @model IEnumerable<Give_AID.Models.ProgrammeInterests>
-
 @{
-    ViewData["Title"] = "My Programme Interests";
+    ViewData["Title"] = "My Registered Interests - GIVE-AID";
 }
 
-<div class="container py-5">
-
-    @* ── Page heading ───────────────────────────────────────────── *@
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
+<!-- Page Header Strip -->
+<section class="py-4 border-bottom bg-white">
+    <div class="container">
+        <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+            <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Home</a>
+            <span>/</span>
+            <span class="text-dark fw-semibold">My Programme Interests</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div>
-                <h2 class="fw-bold" style="color:#1E8E5A;">
-                    <i class="bi bi-bookmark-heart me-2"></i>My Programme Interests
+                <h2 class="fw-bold mb-1" style="color: var(--primary-green); font-size: 1.6rem; letter-spacing: -0.5px;">
+                    <i class="bi bi-bookmark-heart-fill me-2 text-success"></i>My Registered Interests
                 </h2>
-                <p class="text-muted mb-0">Programmes you have registered interest in.</p>
+                <p class="text-muted small mb-0">Welfare programmes and volunteer campaigns you have signed up to support.</p>
             </div>
-            <a href="/Home/Programmes" class="btn btn-primary-green">
-                <i class="bi bi-grid me-1"></i> Browse Programmes
+            <a asp-controller="Home" asp-action="Programmes" class="btn btn-sm btn-saas-secondary">
+                <i class="bi bi-grid-fill me-1"></i>Browse All Campaigns
             </a>
         </div>
     </div>
+</section>
 
-    @* ── Empty state ─────────────────────────────────────────────── *@
+<div class="container py-5">
     @if (!Model.Any())
     {
-        <div class="text-center py-5">
-            <i class="bi bi-bookmark" style="font-size:4rem; color:#1E8E5A;"></i>
-            <h4 class="mt-3 fw-semibold">No interests registered yet</h4>
-            <p class="text-muted">Browse our programmes and register your interest in any that inspire you.</p>
-            <a href="/Home/Programmes" class="btn btn-primary-green mt-2">
-                <i class="bi bi-grid me-1"></i> Explore Programmes
+        <div class="giveaid-card p-5 text-center bg-white border">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-muted mb-3" style="width: 72px; height: 72px;">
+                <i class="bi bi-bookmark fs-1 text-success"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-2">No Registered Interests Yet</h4>
+            <p class="text-muted small mb-4" style="max-width: 480px; margin: 0 auto;">
+                Explore ongoing medical camps, food drives, and educational initiatives across partner charities to get involved.
+            </p>
+            <a asp-controller="Home" asp-action="Programmes" class="btn btn-saas-primary px-4 py-2">
+                <i class="bi bi-compass me-1"></i>Explore Welfare Campaigns
             </a>
         </div>
     }
     else
     {
-        @* ── Interests list as cards ─────────────────────────────── *@
         <div class="row g-4">
             @foreach (var interest in Model)
             {
-                <div class="col-md-6 col-lg-4">
-                    <div class="giveaid-card p-4 h-100">
-
-                        @* Programme category badge *@
-                        @if (interest.Programme != null)
-                        {
-                            <span class="badge mb-2" style="background:#1E8E5A;">
-                                @interest.Programme.Category
-                            </span>
-                        }
-
-                        @* Programme title *@
-                        <h5 class="fw-bold mb-2">
-                            @(interest.Programme?.Title ?? "Programme")
-                        </h5>
-
-                        @* Short description *@
-                        @if (interest.Programme?.Description != null)
-                        {
-                            <p class="text-muted small mb-3">
-                                @(interest.Programme.Description.Length > 100
-                                    ? interest.Programme.Description.Substring(0, 100) + "…"
-                                    : interest.Programme.Description)
-                            </p>
-                        }
-
-                        @* User's message if provided *@
-                        @if (!string.IsNullOrWhiteSpace(interest.Message))
-                        {
-                            <div class="p-3 rounded-3 mb-3" style="background:#f0faf5; font-size:0.88rem;">
-                                <i class="bi bi-chat-quote me-1 text-muted"></i>
-                                <em>@interest.Message</em>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="giveaid-card p-4 bg-white border h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle font-mono small">
+                                    @(interest.Programme?.Category ?? "Welfare")
+                                </span>
+                                <span class="badge bg-light text-muted border small font-mono">
+                                    <i class="bi bi-check2-circle text-success me-1"></i>Enrolled
+                                </span>
                             </div>
-                        }
 
-                        @* Registration date *@
-                        <p class="text-muted small mb-3">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            Registered on @interest.CreatedAt.ToString("dd MMM yyyy")
-                        </p>
+                            <h5 class="fw-bold text-dark mb-2">
+                                @(interest.Programme?.Title ?? "Initiative")
+                            </h5>
 
-                        @* Link to programme detail page *@
-                        @if (interest.Programme != null)
-                        {
-                            <a href="/Programme/Details/@interest.ProgrammeId"
-                               class="btn btn-outline-success btn-sm">
-                                <i class="bi bi-eye me-1"></i> View Programme
-                            </a>
-                        }
+                            @if (!string.IsNullOrEmpty(interest.Programme?.Description))
+                            {
+                                <p class="text-muted small mb-3" style="line-height: 1.6;">
+                                    @(interest.Programme.Description.Length > 110
+                                        ? interest.Programme.Description.Substring(0, 110) + "…"
+                                        : interest.Programme.Description)
+                                </p>
+                            }
 
+                            @if (!string.IsNullOrWhiteSpace(interest.Message))
+                            {
+                                <div class="p-3 rounded-3 bg-light border small text-muted mb-3">
+                                    <span class="d-block fw-semibold text-dark mb-1" style="font-size:0.75rem;">Your Message:</span>
+                                    <em>"@interest.Message"</em>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="pt-3 border-top d-flex justify-content-between align-items-center">
+                            <span class="small text-muted font-mono" style="font-size: 0.75rem;">
+                                Registered @interest.CreatedAt.ToString("MMM dd, yyyy")
+                            </span>
+                            @if (interest.Programme != null)
+                            {
+                                <a asp-action="Details" asp-route-id="@interest.ProgrammeId" class="btn btn-sm btn-outline-success">
+                                    View Details <i class="bi bi-arrow-right"></i>
+                                </a>
+                            }
+                        </div>
                     </div>
                 </div>
             }
         </div>
     }
-
 </div>
-

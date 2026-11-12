@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Give_AID.Models;
+using Give_AID.Services;
 
 namespace Give_AID.Controllers
 {
@@ -10,12 +11,14 @@ namespace Give_AID.Controllers
     {
         private readonly Give_AIDContext _context;
         private readonly IWebHostEnvironment _env;
+        private readonly IEmailService _emailService;
 
-        // Constructor injecting the database context and hosting environment for receipt uploads
-        public DonationController(Give_AIDContext context, IWebHostEnvironment env)
+        // Constructor injecting the database context, hosting environment, and email service
+        public DonationController(Give_AIDContext context, IWebHostEnvironment env, IEmailService emailService)
         {
             _context = context;
             _env = env;
+            _emailService = emailService;
         }
 
         // Helper method to get the currently logged-in user ID from session
@@ -209,6 +212,27 @@ namespace Give_AID.Controllers
                 if (status == "Completed")
                 {
                     TempData["SuccessMessage"] = $"Thank you! Your donation of Rs. {model.Amount:N0} has been processed successfully. Receipt: #DON-{donation.Id:D5}";
+
+                    // Dispatch SaaS-branded donation confirmation receipt email
+                    var donor = await _context.Users.FindAsync(userId.Value);
+                    if (donor != null && !string.IsNullOrEmpty(donor.Email))
+                    {
+                        var cause = await _context.Causes.FindAsync(model.CauseId);
+                        try
+                        {
+                            await _emailService.SendDonationReceiptEmailAsync(
+                                donor.Email,
+                                donor.Name,
+                                model.Amount,
+                                $"DON-{donation.Id:D5}",
+                                cause?.Name ?? "General Relief Fund",
+                                model.PaymentMethod);
+                        }
+                        catch
+                        {
+                            // Email failure is caught gracefully so transaction completes
+                        }
+                    }
                 }
                 else
                 {

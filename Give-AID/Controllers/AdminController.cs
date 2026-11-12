@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Give_AID.Models;
+using Give_AID.Services;
 
 namespace Give_AID.Controllers
 {
@@ -10,12 +11,14 @@ namespace Give_AID.Controllers
     {
         private readonly Give_AIDContext _context;
         private readonly IWebHostEnvironment _env;
+        private readonly IEmailService _emailService;
 
-        // Constructor injecting the database context and hosting environment for asset uploads
-        public AdminController(Give_AIDContext context, IWebHostEnvironment env)
+        // Constructor injecting the database context, hosting environment, and email service
+        public AdminController(Give_AIDContext context, IWebHostEnvironment env, IEmailService emailService)
         {
             _context = context;
             _env = env;
+            _emailService = emailService;
         }
 
         // Helper method to safely store uploaded files and return their public web path
@@ -642,7 +645,7 @@ namespace Give_AID.Controllers
         {
             if (!IsAdminLoggedIn()) return RedirectToAction("Login", "Auth");
 
-            var query = await _context.Queries.FindAsync(id);
+            var query = await _context.Queries.Include(q => q.User).FirstOrDefaultAsync(q => q.Id == id);
             if (query != null)
             {
                 query.Reply = reply?.Trim();
@@ -650,6 +653,23 @@ namespace Give_AID.Controllers
                 _context.Update(query);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Query response saved successfully!";
+
+                // Dispatch notification email to user
+                if (query.User != null && !string.IsNullOrEmpty(query.User.Email))
+                {
+                    try
+                    {
+                        await _emailService.SendQueryReplyEmailAsync(
+                            query.User.Email,
+                            query.User.Name,
+                            query.Subject,
+                            query.Reply ?? "");
+                    }
+                    catch
+                    {
+                        // Email error is caught gracefully
+                    }
+                }
             }
 
             return RedirectToAction(nameof(Queries));
@@ -722,13 +742,36 @@ namespace Give_AID.Controllers
         {
             if (!IsAdminLoggedIn()) return RedirectToAction("Login", "Auth");
 
-            var donation = await _context.Donations.FindAsync(id);
+            var donation = await _context.Donations
+                .Include(d => d.User)
+                .Include(d => d.Cause)
+                .FirstOrDefaultAsync(d => d.Id == id);
+
             if (donation != null)
             {
                 donation.Status = status;
                 _context.Update(donation);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = $"Donation #DON-{donation.Id:D5} status updated to {status}.";
+
+                // If donation is approved, dispatch official donation receipt email
+                if (status == "Completed" && donation.User != null && !string.IsNullOrEmpty(donation.User.Email))
+                {
+                    try
+                    {
+                        await _emailService.SendDonationReceiptEmailAsync(
+                            donation.User.Email,
+                            donation.User.Name,
+                            donation.Amount,
+                            $"DON-{donation.Id:D5}",
+                            donation.Cause?.Name ?? "General Welfare Fund",
+                            donation.PaymentMethod);
+                    }
+                    catch
+                    {
+                        // Email dispatch is non-blocking
+                    }
+                }
             }
 
             return RedirectToAction(nameof(Donations));

@@ -1,74 +1,93 @@
-@* Query/Details — shows a single query and the admin reply if one exists *@
 @model Give_AID.Models.Queries
-
 @{
-    ViewData["Title"] = "Query Details";
+    ViewData["Title"] = $"Ticket #{Model.Id:D4} - GIVE-AID";
 }
+
+<!-- Page Header Strip -->
+<section class="py-4 border-bottom bg-white">
+    <div class="container">
+        <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+            <a asp-action="Index" class="text-decoration-none text-muted">Support Desk</a>
+            <span>/</span>
+            <span class="text-dark fw-semibold">Ticket #TKT-@Model.Id.ToString("D4")</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <span class="badge @(Model.Status == "Resolved" ? "bg-success-subtle text-success border border-success-subtle" : "bg-warning-subtle text-warning-emphasis border border-warning-subtle") font-mono small mb-1">
+                    @(Model.Status == "Resolved" ? "Resolved Inquiry" : "Awaiting Administrator Reply")
+                </span>
+                <h2 class="fw-bold mb-0 text-dark" style="font-size: 1.5rem; letter-spacing: -0.5px;">
+                    @Model.Subject
+                </h2>
+            </div>
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back to My Tickets
+            </a>
+        </div>
+    </div>
+</section>
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-
-            @* ── Back button ─────────────────────────────────────── *@
-            <a href="/Query/Index" class="btn btn-outline-secondary btn-sm mb-4">
-                <i class="bi bi-arrow-left me-1"></i> Back to My Queries
-            </a>
-
-            @* ── Query card ──────────────────────────────────────── *@
-            <div class="giveaid-card p-4 p-md-5 mb-4">
-
-                @* Status badge at top-right *@
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <h4 class="fw-bold" style="color:#1E8E5A;">
-                        <i class="bi bi-chat-dots me-2"></i>@Model.Subject
-                    </h4>
-                    @if (Model.Status == "Resolved")
-                    {
-                        <span class="badge bg-success fs-6">Resolved</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-warning text-dark fs-6">Open</span>
-                    }
+        <div class="col-12 col-lg-8">
+            <!-- User Original Inquiry Card -->
+            <div class="giveaid-card p-4 p-md-5 bg-white border mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <i class="bi bi-person-fill text-muted"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark small">Your Message</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Submitted on @Model.CreatedAt.ToString("MMM dd, yyyy 'at' hh:mm tt")</div>
+                        </div>
+                    </div>
+                    <span class="badge bg-light text-muted border font-mono">Original Inquiry</span>
                 </div>
 
-                @* Submitted date *@
-                <p class="text-muted small mb-3">
-                    <i class="bi bi-calendar3 me-1"></i>
-                    Submitted on @Model.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")
-                </p>
-
-                <hr />
-
-                @* The original query message *@
-                <h6 class="fw-semibold text-muted text-uppercase mb-2">Your Message</h6>
-                <p class="lead" style="white-space:pre-wrap;">@Model.Message</p>
-
+                <div class="text-dark lead" style="font-size: 1rem; line-height: 1.8; white-space: pre-wrap;">@Model.Message</div>
             </div>
 
-            @* ── Admin reply card — only shown if a reply exists ─── *@
-            @* The Reply property is set by the admin from the Admin panel *@
+            <!-- Admin Response Thread -->
             @if (!string.IsNullOrWhiteSpace(Model.Reply))
             {
-                <div class="giveaid-card p-4 p-md-5"
-                     style="border-left: 4px solid #1E8E5A;">
-                    <h6 class="fw-semibold text-uppercase mb-2" style="color:#1E8E5A;">
-                        <i class="bi bi-person-badge me-2"></i>GIVE-AID Support Reply
-                    </h6>
-                    <p style="white-space:pre-wrap;">@Model.Reply</p>
+                <div class="giveaid-card p-4 p-md-5 bg-white border" style="border-left: 4px solid var(--primary-green) !important;">
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; background: linear-gradient(135deg, #10B981, #047857);">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark small">Official Response from GIVE-AID Administration</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">Verified Secretariat Support Staff</div>
+                            </div>
+                        </div>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle font-mono small">
+                            <i class="bi bi-check2-circle me-1"></i>Official Reply
+                        </span>
+                    </div>
+
+                    <div class="text-dark" style="font-size: 1rem; line-height: 1.8; white-space: pre-wrap;">@Model.Reply</div>
                 </div>
             }
             else
             {
-                @* Waiting for reply *@
-                <div class="giveaid-card p-4 text-center text-muted">
-                    <i class="bi bi-hourglass-split" style="font-size:2rem; color:#F59E0B;"></i>
-                    <p class="mt-2 mb-0">
-                        No reply yet. Our support team will respond within 24 hours.
+                <div class="giveaid-card p-4 text-center bg-white border">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-warning mb-2" style="width: 48px; height: 48px;">
+                        <i class="bi bi-hourglass-split fs-4"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark mb-1">Inquiry Queued for Coordinator Review</h6>
+                    <p class="text-muted small mb-0">
+                        Our administrative staff is currently examining your inquiry. You will see their reply directly on this page once resolved.
                     </p>
                 </div>
             }
 
+            <div class="text-center mt-4">
+                <a asp-action="Create" class="btn btn-link text-decoration-none text-muted small">
+                    <i class="bi bi-plus-circle me-1"></i>Need to ask something else? Open a separate ticket
+                </a>
+            </div>
         </div>
     </div>
 </div>

@@ -1,19 +1,28 @@
 @model IEnumerable<Give_AID.Models.GalleryImages>
 @{
-    ViewData["Title"] = "Photo Gallery - GIVE-AID";
+    ViewData["Title"] = "Media Gallery - GIVE-AID";
     var programmes = ViewBag.Programmes as List<Give_AID.Models.Programmes> ?? new List<Give_AID.Models.Programmes>();
 }
 
-<section class="py-4 bg-light border-bottom">
+<!-- Page Header Strip -->
+<section class="py-4 border-bottom bg-white">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb small mb-1">
-                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-success text-decoration-none">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Photo Gallery</li>
-            </ol>
-        </nav>
-        <h2 class="fw-bold mb-1" style="color: #1E8E5A;">Welfare In Action: Media Gallery</h2>
-        <p class="text-muted mb-0">Visual proof of aid delivery, medical camps, student distributions, and community smiles.</p>
+        <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+            <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Home</a>
+            <span>/</span>
+            <span class="text-dark fw-semibold">Photo Gallery</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h2 class="fw-bold mb-1 text-dark" style="font-size: 1.6rem; letter-spacing: -0.5px;">
+                    <i class="bi bi-images me-2 text-success"></i>Welfare in Action: Media Gallery
+                </h2>
+                <p class="text-muted small mb-0">Visual documentation of field distributions, medical camps, and community smiles.</p>
+            </div>
+            <a asp-controller="Donation" asp-action="Create" class="btn btn-donate-amber btn-sm px-3 rounded-pill fw-bold">
+                <i class="bi bi-heart-fill me-1 text-danger"></i>Support a Cause
+            </a>
+        </div>
     </div>
 </section>
 
@@ -21,14 +30,17 @@
     <!-- Filter by Programme dropdown -->
     @if (programmes.Any())
     {
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <span class="text-muted small fw-semibold">Filter by Programme:</span>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <span class="text-muted small fw-semibold">
+                <i class="bi bi-funnel me-1 text-success"></i>Filter by Campaign:
+            </span>
             <div class="dropdown">
-                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    Select Programme
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown">
+                    Filter by Programme
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                    <li><a class="dropdown-item" asp-action="Gallery">All Photos</a></li>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3">
+                    <li><a class="dropdown-item" asp-action="Gallery">All Media Photos</a></li>
+                    <li><hr class="dropdown-divider"></li>
                     @foreach (var prog in programmes)
                     {
                         <li><a class="dropdown-item" asp-action="Gallery" asp-route-programmeId="@prog.Id">@prog.Title</a></li>
@@ -44,12 +56,12 @@
         {
             @foreach (var item in Model)
             {
-                <div class="col-lg-4 col-md-6">
-                    <div class="giveaid-card overflow-hidden h-100 bg-white">
-                        <div style="height: 240px; overflow: hidden; background-color: #f3f4f6;" class="d-flex align-items-center justify-content-center">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="giveaid-card overflow-hidden h-100 bg-white border shadow-sm d-flex flex-column justify-content-between">
+                        <div style="height: 220px; overflow: hidden; background-color: #F8FAFC;" class="d-flex align-items-center justify-content-center">
                             @if (!string.IsNullOrEmpty(item.ImagePath))
                             {
-                                <img src="@item.ImagePath" alt="@item.Title" class="img-fluid w-100 h-100 object-fit-cover" />
+                                <img src="@item.ImagePath" alt="@item.Title" class="w-100 h-100 object-fit-cover" onerror="this.src='/images/placeholder-photo.png';" />
                             }
                             else
                             {
@@ -57,10 +69,12 @@
                             }
                         </div>
                         <div class="p-3">
-                            <h6 class="fw-bold mb-1">@item.Title</h6>
+                            <h6 class="fw-bold text-dark mb-1">@item.Title</h6>
                             @if (item.Programme != null)
                             {
-                                <span class="badge bg-success-subtle text-success small">@item.Programme.Title</span>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle font-mono small">
+                                    <i class="bi bi-calendar-check me-1"></i>@item.Programme.Title
+                                </span>
                             }
                         </div>
                     </div>
@@ -69,41 +83,13 @@
         }
         else
         {
-            <!-- Default photo showcase when no database photos exist yet -->
-            <div class="col-lg-4 col-md-6">
-                <div class="giveaid-card overflow-hidden h-100 bg-white">
-                    <div class="p-5 bg-light text-center d-flex align-items-center justify-content-center" style="height: 220px;">
-                        <i class="bi bi-book-fill display-3 text-success"></i>
-                    </div>
-                    <div class="p-3">
-                        <h6 class="fw-bold mb-1">School Book Distribution 2026</h6>
-                        <span class="badge bg-success-subtle text-success small">Education Drive</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="giveaid-card overflow-hidden h-100 bg-white">
-                    <div class="p-5 bg-light text-center d-flex align-items-center justify-content-center" style="height: 220px;">
-                        <i class="bi bi-heart-pulse-fill display-3 text-danger"></i>
-                    </div>
-                    <div class="p-3">
-                        <h6 class="fw-bold mb-1">Rural Medical Relief Camp</h6>
-                        <span class="badge bg-danger-subtle text-danger small">Healthcare Camp</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="giveaid-card overflow-hidden h-100 bg-white">
-                    <div class="p-5 bg-light text-center d-flex align-items-center justify-content-center" style="height: 220px;">
-                        <i class="bi bi-person-wheelchair display-3 text-warning"></i>
-                    </div>
-                    <div class="p-3">
-                        <h6 class="fw-bold mb-1">Assistive Devices Handover</h6>
-                        <span class="badge bg-warning-subtle text-warning small">Specially Challenged Care</span>
-                    </div>
+            <div class="col-12 text-center py-5">
+                <div class="p-5 bg-white rounded-3 shadow-sm border">
+                    <i class="bi bi-camera display-3 text-muted mb-3 d-inline-block"></i>
+                    <h4 class="fw-bold text-dark">Field Media Being Compiled</h4>
+                    <p class="text-muted small mb-0">Our media coordinators upload high-resolution photos after every successful welfare drive.</p>
                 </div>
             </div>
         }
     </div>
 </div>
-

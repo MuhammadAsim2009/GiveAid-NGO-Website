@@ -1,96 +1,108 @@
 @model Give_AID.Models.PageContents
 @{
-    ViewData["Title"] = "Help Centre & FAQs - GIVE-AID";
+    ViewData["Title"] = "Help Centre & Donor FAQs - GIVE-AID";
 }
 
-<section class="py-4 bg-light border-bottom">
+<!-- Page Header Strip -->
+<section class="py-4 border-bottom bg-white">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb small mb-1">
-                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-success text-decoration-none">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Help Centre</li>
-            </ol>
-        </nav>
-        <h2 class="fw-bold mb-1" style="color: #1E8E5A;">Help Centre & Donor Support</h2>
-        <p class="text-muted mb-0">Answers to frequently asked questions, donation guidelines, and inquiry assistance.</p>
+        <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+            <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Home</a>
+            <span>/</span>
+            <span class="text-dark fw-semibold">Help Centre</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h2 class="fw-bold mb-1 text-dark" style="font-size: 1.6rem; letter-spacing: -0.5px;">
+                    <i class="bi bi-question-circle-fill me-2 text-success"></i>Help Centre & Donor Guidance
+                </h2>
+                <p class="text-muted small mb-0">Frequently asked questions, tax deduction protocols, and direct support ticketing.</p>
+            </div>
+            <a asp-controller="Query" asp-action="Create" class="btn btn-donate-amber btn-sm px-3 rounded-pill fw-bold">
+                <i class="bi bi-chat-dots-fill me-1"></i>Open Support Ticket
+            </a>
+        </div>
     </div>
 </section>
 
 <div class="container py-5">
-    <div class="row g-5">
-        <!-- Main Column: FAQs Accordion & CMS overview -->
-        <div class="col-lg-8">
+    <div class="row g-4">
+        <!-- Main Column: FAQs Accordion & Overview -->
+        <div class="col-12 col-lg-8">
             <!-- Dynamic CMS Help Centre text -->
-            <div class="giveaid-card p-4 bg-white mb-4">
-                <h4 class="fw-bold mb-3" style="color: #1F2937;">@Model.Title</h4>
-                <p class="text-muted leading-relaxed mb-0">@Model.Body</p>
+            <div class="giveaid-card p-4 p-md-5 bg-white border mb-4 shadow-sm">
+                <span class="badge bg-success-subtle text-success border border-success-subtle font-mono small mb-2">
+                    <i class="bi bi-info-circle me-1"></i>Knowledge Base
+                </span>
+                <h4 class="fw-bold text-dark mb-3">@Model.Title</h4>
+                <div class="text-muted lead" style="font-size: 1rem; line-height: 1.8;">@Model.Body</div>
             </div>
 
             <!-- FAQ Accordion -->
-            <h4 class="fw-bold mb-3 mt-4">Frequently Asked Questions</h4>
-            <div class="accordion shadow-sm rounded-3 overflow-hidden" id="faqAccordion">
+            <h4 class="fw-bold text-dark mb-3">Frequently Answered Inquiries</h4>
+            <div class="accordion shadow-sm rounded-3 overflow-hidden border" id="faqAccordion">
                 
                 <div class="accordion-item border-0 border-bottom">
                     <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            1. How does GIVE-AID verify partner NGOs?
+                        <button class="accordion-button fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            1. How does GIVE-AID verify and audit partner non-profits?
                         </button>
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body text-muted small">
-                            Every NGO registered with GIVE-AID undergoes a comprehensive vetting process. We review their legal incorporation, tax-exempt certification, audited financial statements for the past 3 years, and conduct on-site inspections of their field projects before they can list welfare programmes or receive public donations.
+                        <div class="accordion-body text-muted small" style="line-height: 1.7;">
+                            Every NGO registered with GIVE-AID undergoes a comprehensive vetting process. We verify their certified legal incorporation, tax-exempt accreditation, audited financial accounts, and conduct on-site inspections of their field campaigns before they can list welfare programmes or receive public contributions.
                         </div>
                     </div>
                 </div>
 
                 <div class="accordion-item border-0 border-bottom">
                     <h2 class="accordion-header" id="headingTwo">
-                        <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            2. Are online donations secure and encrypted?
+                        <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            2. Are online donations secure and compliant?
                         </button>
                     </h2>
                     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body text-muted small">
-                            Yes. All donation transactions pass through strict encryption protocols. Card information is validated securely, and GIVE-AID never stores your full card number or CVV code in our database. We only record the last 4 digits for donor verification and receipt generation.
+                        <div class="accordion-body text-muted small" style="line-height: 1.7;">
+                            Yes. All card donations pass through strict Luhn validation with bank-grade encryption. GIVE-AID never stores your full card number or CVV code. We only store the last 4 digits for donor ledger tracking. Manual transfers via EasyPaisa, JazzCash, or bank wire require transaction receipts reviewed directly by our financial auditing team.
                         </div>
                     </div>
                 </div>
 
                 <div class="accordion-item border-0 border-bottom">
                     <h2 class="accordion-header" id="headingThree">
-                        <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            3. Can I track my past donations and obtain receipts?
+                        <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            3. Can I track my historical contributions and print receipts?
                         </button>
                     </h2>
                     <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body text-muted small">
-                            Registered donors can log in at any time and visit their "My Donations" portal. There, you can view a comprehensive log of every contribution made, including transaction date, cause supported, amount, and payment status.
+                        <div class="accordion-body text-muted small" style="line-height: 1.7;">
+                            Yes. Registered donors can log in at any time and open their <strong>My Donations</strong> ledger. There, you can view your complete timeline of contributions, status badges (Completed vs Under Verification), and download official receipt vouchers.
                         </div>
                     </div>
                 </div>
 
                 <div class="accordion-item border-0 border-bottom">
                     <h2 class="accordion-header" id="headingFour">
-                        <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                            4. How can I volunteer or participate in upcoming programmes?
+                        <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            4. How can I participate as a volunteer in field campaigns?
                         </button>
                     </h2>
                     <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body text-muted small">
-                            Browse the "Programmes" section on our website. When you find an event you wish to support, click "Register Interest" and submit your message. The organizing NGO will review your submission and contact you with volunteer schedules and details.
+                        <div class="accordion-body text-muted small" style="line-height: 1.7;">
+                            Browse the <strong>Programmes</strong> directory on our portal. When you find an initiative you wish to volunteer for, click "Register Interest" and submit your details. The host NGO will review your message and contact you with volunteer orientation and schedule logistics.
                         </div>
                     </div>
                 </div>
 
                 <div class="accordion-item border-0">
                     <h2 class="accordion-header" id="headingFive">
-                        <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                            5. What if I have a question not covered here?
+                        <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            5. What if I have a question or specific inquiry not answered here?
                         </button>
                     </h2>
                     <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body text-muted small">
-                            Registered donors can raise a direct inquiry through our "My Queries" ticketing feature. Our administrator team will review your question and respond directly to your account dashboard.
+                        <div class="accordion-body text-muted small" style="line-height: 1.7;">
+                            Registered donors can raise a direct inquiry through our <strong>My Queries</strong> ticketing feature. Our secretariat administration will review your ticket and reply directly into your private correspondence feed.
                         </div>
                     </div>
                 </div>
@@ -98,37 +110,39 @@
             </div>
         </div>
 
-        <!-- Right Side: Contact & Support Actions -->
-        <div class="col-lg-4">
-            <div class="giveaid-card p-4 bg-white mb-4">
-                <h5 class="fw-bold mb-3"><i class="bi bi-question-circle text-success me-2"></i>Have a Custom Query?</h5>
-                <p class="small text-muted mb-3">
-                    Need help with a donation, partnership inquiry, or technical difficulty? Registered donors can submit questions directly to our support desk.
-                </p>
-                <div class="d-grid gap-2">
-                    <a asp-controller="Query" asp-action="Create" class="btn btn-primary-green btn-sm fw-semibold">
-                        <i class="bi bi-chat-left-dots me-1"></i>Raise A Query
-                    </a>
-                    <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-envelope me-1"></i>Contact Secretariat
-                    </a>
+        <!-- Right Column: Support Channels & Desk Info -->
+        <div class="col-12 col-lg-4">
+            <!-- Direct Ticket Desk Card -->
+            <div class="giveaid-card p-4 bg-white border shadow-sm mb-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-0">Need Personal Assistance?</h5>
                 </div>
+                <p class="text-muted small mb-3">
+                    Submit an inquiry ticket directly to our secretariat desk for prompt assistance.
+                </p>
+                <a asp-controller="Query" asp-action="Create" class="btn btn-saas-primary w-100 py-2 rounded-pill fw-semibold">
+                    <i class="bi bi-send-fill me-1"></i>Open Support Ticket
+                </a>
             </div>
 
-            <!-- Direct Contact Box -->
-            <div class="giveaid-card p-4 bg-light border-0">
-                <h6 class="fw-bold text-uppercase small text-muted mb-3">Direct Support Desk</h6>
-                <div class="small mb-2">
-                    <i class="bi bi-telephone-fill text-success me-2"></i><strong>Phone:</strong> +92 300 1234567
+            <!-- Operating Hours & Direct Line -->
+            <div class="giveaid-card p-4 bg-white border shadow-sm">
+                <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-telephone-fill text-success"></i> Direct Hotline & Hours
+                </h6>
+                <div class="small text-muted d-flex flex-column gap-2 mb-3">
+                    <div><strong>Helpline:</strong> +92 300 1234567</div>
+                    <div><strong>Landline:</strong> +92 21 35890000</div>
+                    <div><strong>Email:</strong> donorcare@giveaid.org</div>
+                    <div class="pt-2 border-top"><strong>Hours:</strong> Mon – Sat: 9:00 AM – 6:00 PM PKT</div>
                 </div>
-                <div class="small mb-2">
-                    <i class="bi bi-envelope-fill text-success me-2"></i><strong>Email:</strong> help@giveaid.org
-                </div>
-                <div class="small text-muted mt-3 pt-3 border-top">
-                    <i class="bi bi-clock me-1"></i>Response time: typically within 24-48 business hours.
-                </div>
+                <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-secondary btn-sm w-100 rounded-pill">
+                    View Secretariat Map
+                </a>
             </div>
         </div>
     </div>
 </div>
-
